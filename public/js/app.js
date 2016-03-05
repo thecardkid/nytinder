@@ -38,9 +38,10 @@ var Article = React.createClass({displayName: "Article",
 						React.createElement("h1", null, article['headline']['main'])
 					), 
 					React.createElement("div", {className: "article-content"}, 
-						React.createElement("p", null, article['lead_paragraph'])
+						article['lead_paragraph']
 					)
-				)
+				), 
+				React.createElement("br", null), React.createElement("br", null)
 			)
 		)
 	}

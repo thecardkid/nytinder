@@ -29,9 +29,10 @@ var Article = React.createClass({
 						<h1>{article['headline']['main']}</h1>
 					</div>
 					<div className='article-content'>
-						<p>{article['lead_paragraph']}</p>
+						{article['lead_paragraph']}
 					</div>
 				</div>
+				<br/><br/>
 			</div>
 		)
 	}
