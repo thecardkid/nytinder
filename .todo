@@ -1,0 +1,36 @@
+COLLECTIONS
+
+User {
+	'userId': STRING,
+	'displayName': STRING
+	'articles': [STRING]
+}
+
+Articles {
+	'article': OBJECT,
+}
+
+ROUTES
+
+users.js
+	GET /user/:id
+	expect {
+		_id: '',
+		userId: '',
+		displayName: '',
+		articles: [{}, {}, {}],
+	}
+
+	POST /user/
+	body: {
+		userId: '',
+		displayName: '',
+	}
+
+articles.js
+	POST /
+	body: {
+		userId: '',
+		article: {}
+	}
+
