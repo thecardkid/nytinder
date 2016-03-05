@@ -6,12 +6,14 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var index = require('./routes/index');
-// var dinos = require('./routes/dinos');
+var users = require('./routes/users');
+var articles = require('./routes/articles');
 
 var app = express();
 
 // Connect to database
-mongoose.connect('mongodb://yunhsincynthiachen:nytinderolinjs7@ds019668.mlab.com:19668/nytinder')
+mongoose.connect('mongodb://localhost/tindertimes');
+// mongoose.connect('mongodb://yunhsincynthiachen:nytinderolinjs7@ds019668.mlab.com:19668/nytinder')
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -32,7 +34,8 @@ app.use(require('node-sass-middleware')({
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-// app.use('/api/dinos', dinos);
+app.use('/api/user', users);
+app.use('/api/article', articles);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -28,7 +28,7 @@ users.js
 	}
 
 articles.js
-	POST /
+	POST /article/
 	body: {
 		userId: '',
 		article: {}
