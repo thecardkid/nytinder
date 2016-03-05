@@ -11,7 +11,7 @@ var index = require('./routes/index');
 var app = express();
 
 // Connect to database
-mongoose.connect('mongodb://user:olinjs@ds017678.mlab.com:17678/dinowiki')
+mongoose.connect('mongodb://yunhsincynthiachen:nytinderolinjs7@ds019668.mlab.com:19668/nytinder')
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
