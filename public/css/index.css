@@ -16,20 +16,20 @@ div.article-container {
 	width: 55%;
 	margin-left: 22%;
 	position: absolute;
-	margin-top: 16%;
+	margin-top: 25vw;
 	padding: 0.5% 0.5%;
 	border-radius: 5%;
 }
 
 .article-words h1 {
 	color: #BBBBBB;
-	font-size: 45px;
+	font-size: 2vw;
 }
 
 .article-words p {
 	text-align: left;
-	color: #BBBBBB;
-	font-size: 20px;
+	color: #DDDDDD;
+	font-size: 1vw;
 }
 
 .article-header {
@@ -37,10 +37,14 @@ div.article-container {
 	padding: 0% 2%;
 }
 
+.article-content {
+	margin: -2% 1% 4%;
+}
+
 .bg-image {
 	width: 100%;
   z-index: 0;
-  height: 800px;
+  height: 40vw;
 }
 
 .bg-image:after {
@@ -50,10 +54,10 @@ div.article-container {
 
 .bg-image img {
 	height: 100%;
-	-webkit-filter: blur(3px) brightness(50%);
-  -moz-filter: blur(3px) brightness(50%);
-  -o-filter: blur(3px) brightness(50%);
-  -ms-filter: blur(3px) brightness(50%);
-  filter: blur(3px) brightness(50%);
+	-webkit-filter: blur(3px) brightness(30%);
+  -moz-filter: blur(3px) brightness(30%);
+  -o-filter: blur(3px) brightness(30%);
+  -ms-filter: blur(3px) brightness(30%);
+  filter: blur(3px) brightness(30%);
   opacity: 0.8;
 }
