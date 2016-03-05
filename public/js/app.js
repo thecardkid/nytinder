@@ -34,10 +34,13 @@ var Article = React.createClass({displayName: "Article",
 			React.createElement("div", {className: "article-container"}, 
 				image, 
 				React.createElement("div", {className: "article-words"}, 
-					React.createElement("h1", null, article['headline']['main']), 
-					React.createElement("h2", null, article['pub_date']), 
-					React.createElement("h4", null, article['abstract']), 
-					React.createElement("h4", null, article['lead_paragraph'])
+					React.createElement("div", {className: "article-header"}, 
+						React.createElement("h1", null, article['headline']['main'])
+					), 
+					React.createElement("div", {className: "article-content"}, 
+						React.createElement("p", null, article['abstract']), 
+						React.createElement("p", null, article['lead_paragraph'])
+					)
 				)
 			)
 		)

@@ -1,6 +1,7 @@
 // Top component of app.
+var Article = require('./article.jsx');
 
 ReactDOM.render(
-  <h1>Hello</h1>,
+  <Article />,
   document.getElementById('content')
 );

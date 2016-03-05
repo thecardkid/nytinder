@@ -1,51 +1,3 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-// Top component of app.
-var Article = require('./article.jsx');
-
-ReactDOM.render(
-  React.createElement(Article, null),
-  document.getElementById('content')
-);
-},{"./article.jsx":2}],2:[function(require,module,exports){
-var article = require('./testdata');
-
-var Article = React.createClass({displayName: "Article",
-	getInitialState: function() {
-    return null;
-	},
-
-	componentDidMount: function() {
-  	return null;
-	},
-
-	render: function() {
-		var image = '';
-		var images = article['multimedia'];
-		if (images) {
-			var src = 'https://www.nytimes.com/' + images[images.length-1].url;
-			image = (
-				React.createElement("div", {className: "bg-image"}, 
-					React.createElement("img", {src: src})
-				)
-			);
-		}
-
-		return (
-			React.createElement("div", {className: "article-container"}, 
-				image, 
-				React.createElement("div", {className: "article-words"}, 
-					React.createElement("h1", null, article['headline']['main']), 
-					React.createElement("h2", null, article['pub_date']), 
-					React.createElement("h4", null, article['abstract']), 
-					React.createElement("h4", null, article['lead_paragraph'])
-				)
-			)
-		)
-	}
-});
-
-module.exports = Article;
-},{"./testdata":3}],3:[function(require,module,exports){
 module.exports = {
 	"web_url": "http://www.nytimes.com/2012/01/01/us/politics/republicans-wage-hidden-ground-war-in-iowa.html",
 	"snippet": "Far from candidates’ spotlights, hundreds of aides and volunteers are waging an unglamorous ground war unfolding with hidden intensity.",
@@ -117,4 +69,3 @@ module.exports = {
 	"type_of_material": "News",
 	"_id": "4fd2ba9a8eb7c8105d8b0a8b"
 }
-},{}]},{},[1]);

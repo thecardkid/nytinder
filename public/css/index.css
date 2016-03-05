@@ -1,0 +1,59 @@
+div.article-container {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	text-align: center;
+}
+
+.article-words, .bg-image {
+	margin-top: 2%;
+	text-align: center;
+	position: absolute;
+}
+
+.article-words {
+	background-image: url('/img/opacity.png');
+	width: 55%;
+	margin-left: 22%;
+	position: absolute;
+	margin-top: 16%;
+	padding: 0.5% 0.5%;
+	border-radius: 5%;
+}
+
+.article-words h1 {
+	color: #BBBBBB;
+	font-size: 45px;
+}
+
+.article-words p {
+	text-align: left;
+	color: #BBBBBB;
+	font-size: 20px;
+}
+
+.article-header {
+	display: inline-block;
+	padding: 0% 2%;
+}
+
+.bg-image {
+	width: 100%;
+  z-index: 0;
+  height: 800px;
+}
+
+.bg-image:after {
+	content: '.';
+	display: 'none';
+}
+
+.bg-image img {
+	height: 100%;
+	-webkit-filter: blur(3px) brightness(50%);
+  -moz-filter: blur(3px) brightness(50%);
+  -o-filter: blur(3px) brightness(50%);
+  -ms-filter: blur(3px) brightness(50%);
+  filter: blur(3px) brightness(50%);
+  opacity: 0.8;
+}
