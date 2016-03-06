@@ -2,7 +2,6 @@ var Article = require('./article.jsx');
 var testdata = require('./testdata');
 
 // Animation modules
-var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
 var spring = require('react-motion').spring;
 var TransitionMotion = require('react-motion').TransitionMotion;
 var Motion = require('react-motion').Motion;
