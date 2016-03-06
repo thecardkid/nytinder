@@ -21214,7 +21214,6 @@ module.exports = require('./lib/React');
 
 },{"./lib/React":68}],179:[function(require,module,exports){
 // Top component of app.
-
 var TinderNews = require('./tinderNews.jsx');
 
 ReactDOM.render(
@@ -21224,38 +21223,25 @@ ReactDOM.render(
   document.getElementById('content')
 );
 },{"./tinderNews.jsx":182}],180:[function(require,module,exports){
-// var article = require('./testdata');
+var spring = require('react-motion').spring;
 
 var Article = React.createClass({displayName: "Article",
-	getInitialState: function() {
-    return null;
-	},
-
-	componentDidMount: function() {
-  	return null;
-	},
-
 	render: function() {
-		var image = '';
 		var images = this.props.article['multimedia'];
+		var src = 'http://www.trbimg.com/img-56b0e859/turbine/la-na-inside-iowa-caucus-precinct-20160202';
+		
 		if (images.length > 0) {
 			var src = 'https://www.nytimes.com/' + images[images.length-1].url;
-			image = (
-				React.createElement("div", {className: "bg-image"}, 
-					React.createElement("img", {src: src})
-				)
-			);
-		} else {
-			var src = 'http://static01.nyt.com/images/2016/02/26/us/obama-video/obama-video-videoSmall.jpg';
-			image = (
-				React.createElement("div", {className: "bg-image"}, 
-					React.createElement("img", {src: src})
-				)
-			);
 		}
 
+		var image = (
+			React.createElement("div", {className: "bg-image"}, 
+				React.createElement("img", {src: src})
+			)
+		);
+
 		return (
-			React.createElement("div", {className: "article-container"}, 
+			React.createElement("div", {className: "container", style: this.props.style}, 
 				image, 
 				React.createElement("div", {className: "article-words"}, 
 					React.createElement("div", {className: "article-header"}, 
@@ -21272,7 +21258,7 @@ var Article = React.createClass({displayName: "Article",
 });
 
 module.exports = Article;
-},{}],181:[function(require,module,exports){
+},{"react-motion":39}],181:[function(require,module,exports){
 module.exports = {
 	"data": [{
 		"web_url": "http://www.nytimes.com/2012/01/01/us/politics/republicans-wage-hidden-ground-war-in-iowa.html",
@@ -21432,66 +21418,74 @@ module.exports = {
 },{}],182:[function(require,module,exports){
 var Article = require('./article.jsx');
 var testdata = require('./testdata');
+
+// Animation modules
 var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
 var spring = require('react-motion').spring;
 var TransitionMotion = require('react-motion').TransitionMotion;
 var Motion = require('react-motion').Motion;
-var style = {'text-align': 'center'};
 
-var springSettings = {stiffness: 170, damping: 26};
+// Other globals
+var springSettings = {stiffness: 170, damping: 26}; // Animation spring
+var size = 40; // Number of viewwidths for background image
 
 var TinderNews = React.createClass({displayName: "TinderNews",
 	getInitialState: function() {
-		var size = 60;
-
-		var vw = document.documentElement.clientWidth/100;
-		var photos = testdata.data.map(function(elem, i) {
-			if (elem.multimedia.length > 0) {
-				var image = elem.multimedia[elem.multimedia.length-1];
-				return [image.width * (size*vw)/image.height, size*vw];
-			} else {
-				return [500 * (size*vw)/281, size*vw];
-			}
-		});
-
-		console.log(photos);
-
     return {
-    	articles: testdata.data,
-    	photos: photos,
-    	currPhoto: 0
+    	vw: size*document.documentElement.clientWidth/100,
+    	articles: testdata.data, // TODO: change this to this.props.article
+    	currArticle: 0
     }
+	},
+
+	updateVw: function() {
+		this.setState({
+			vw: size*document.documentElement.clientWidth/100
+		});
+	},
+
+	componentDidMount: function() {
+    window.addEventListener('resize', this.updateVw);
 	},
 
 	handleNext: function() {
 		var next = this.state.currArticle === 0 ? 1 : 0;
 		this.setState({
-			currPhoto: next
+			currArticle: next
 		});
-		// this.setState({
-		// 	currPhoto: ev.target.value
-		// });
 	},
 
 	render: function() {
-		console.log("1vw equals ", document.documentElement.clientWidth/100);
-		var data = this.state;
-		var currWidth = data.photos[data.currPhoto][0];
-		var currHeight = data.photos[data.currPhoto][1];
+		var root = this;
 
-		var widths = data.photos.map(function(elem, i) {
+		// Compute new dimensions for each photo used
+		var photos = testdata.data.map(function(elem, i) {
+			if (elem.multimedia.length > 0) {
+				var image = elem.multimedia[elem.multimedia.length-1];
+				return [image.width * (root.state.vw)/image.height, root.state.vw];
+			} else {
+				return [500 * (root.state.vw)/281, root.state.vw];
+			}
+		});
+
+		// Figure out how to line up the article divs to
+		// set them up for animation
+		var currWidth = photos[this.state.currArticle][0];
+		var currHeight = photos[this.state.currArticle][1];
+
+		var widths = photos.map(function(elem, i) {
 			return currHeight/elem[1] * elem[0];
 		});
 
 		var leftStartCoords = 0;
-		if (data.currPhoto != 0) {
-			leftStartCoords = widths.slice(0, data.currPhoto).reduce(function(prev, elem, i, arr) {
+		if (this.state.currArticle != 0) {
+			leftStartCoords = widths.slice(0, this.state.currArticle).reduce(function(prev, elem, i, arr) {
 				return prev-elem;
 			}, 0);
 		}
 
 		var configs = [];
-		data.photos.reduce(function(prev, elem, i, arr) {
+		photos.reduce(function(prev, elem, i, arr) {
 			configs.push({
 				left: spring(prev, springSettings),
 				height: spring(currHeight, springSettings),
@@ -21500,14 +21494,12 @@ var TinderNews = React.createClass({displayName: "TinderNews",
 			return prev + widths[i];
 		}, leftStartCoords);
 
-		console.log(configs);
-
-		var articleComponents = this.state.articles.map(function(article, i) {
-			console.log(configs);
+		// React variable to host all articles we have
+		var articleComponents = configs.map(function(style, i) {
       return (
-      	React.createElement(Motion, {key: i, style: configs[i]}, 
+      	React.createElement(Motion, {key: i, style: style}, 
       		function (style) {
-      			return React.createElement(Article, {article: article})
+      			return React.createElement(Article, {article: root.state.articles[i], style: style})
       		}
         )
       )
@@ -21518,11 +21510,11 @@ var TinderNews = React.createClass({displayName: "TinderNews",
         React.createElement("div", null, 
         	React.createElement("button", {onClick: this.handleNext}, "Next")
       	), 
-        React.createElement("div", {className: "demo4"}, 
+        React.createElement("div", {className: "slider"}, 
           React.createElement(Motion, {style: {height: spring(currHeight), width: spring(currWidth)}}, 
             function(container) {
               return (
-              	React.createElement("div", {className: "demo4-inner", style: container}, 
+              	React.createElement("div", {className: "slider-inner", style: container}, 
 	                articleComponents
 	              )
               );
@@ -21531,30 +21523,6 @@ var TinderNews = React.createClass({displayName: "TinderNews",
         )
       )
     );
-
-		// var thisArticle = data.data[this.state.currArticle];
-		// var style = {'text-align': 'center'};
-		// return (
-		// 	<div>
-		// 		<div style={style}>
-		// 			<button onClick={this.handleNext}>Next</button>
-		// 		</div>
-		// 		<div>
-		// 			<Motion defaultStyle={{x: 2000}} style={{x: spring(0, {stiffness: 100})}}>
-		// 				{function (value) {
-		// 					var style = {
-		// 						'width': '100%',
-		// 						'margin-left': value.x,
-		// 					}
-		// 					return (
-		// 						<div style={style}>
-		// 							<Article article={thisArticle}/>
-		// 						</div>
-		// 					)
-		// 				}}
-		// 			</Motion>
-		// 		</div>
-		// 	</div>
 	}
 });
 

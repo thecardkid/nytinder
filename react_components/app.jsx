@@ -1,5 +1,4 @@
 // Top component of app.
-
 var TinderNews = require('./tinderNews.jsx');
 
 ReactDOM.render(
