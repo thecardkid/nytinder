@@ -1,6 +1,8 @@
 // Top component of app.
 
+var TimeTinderBox = require('./timetinderbox.jsx');
+
 ReactDOM.render(
-  <h1>Hello</h1>,
-  document.getElementById('content')
+	<TimeTinderBox />,
+  	document.getElementById('content')
 );

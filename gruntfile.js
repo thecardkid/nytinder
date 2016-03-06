@@ -9,7 +9,7 @@ module.exports = function(grunt) {
 			},
 			app: {
 				src: ['react_components/app.jsx'],
-				dest: 'public/javascripts/app.js'
+				dest: 'public/js/app.js'
 			}
 		}
 	});
