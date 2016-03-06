@@ -32,7 +32,7 @@ var Carousel = React.createClass({
                         <img className src={d.image} onClick={parentThis.openimage.bind(null,d.url)} alt={i} height={"100%"} width={"100%"}/>
                     </div>
                     <div className="imagetextdash">
-                        <p style={{fontSize:"4vw"}}>"{d.headline}"</p>
+                        <p style={{fontSize:"3.7vw"}}>"{d.headline}"</p>
                     </div>
                 </div>
             </figure>);

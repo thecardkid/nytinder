@@ -234,7 +234,7 @@ var Carousel = React.createClass({displayName: "Carousel",
                         React.createElement("img", {className: true, src: d.image, onClick: parentThis.openimage.bind(null,d.url), alt: i, height: "100%", width: "100%"})
                     ), 
                     React.createElement("div", {className: "imagetextdash"}, 
-                        React.createElement("p", {style: {fontSize:"4vw"}}, "\"", d.headline, "\"")
+                        React.createElement("p", {style: {fontSize:"3.7vw"}}, "\"", d.headline, "\"")
                     )
                 )
             ));
@@ -569,7 +569,7 @@ var DashboardHistory = React.createClass({displayName: "DashboardHistory",
     getInitialState: function () {
         return {
         	all_info: get_all_necessary_info,
-            width: 300,
+            width: 400,
             layout: 'classic',
             ease: 'linear',
             duration: 400

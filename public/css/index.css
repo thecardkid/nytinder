@@ -135,10 +135,14 @@ li.linav a:hover:not(.active) {
 
 /*Dashboard History Carousel*/
 .carouselhistory {
-            width: 400px;
+            width: 35vw;
             margin-left: auto;
             margin-right: auto;
             margin-top: 50px;
+}
+
+.carouselhistory h1 {
+  font-weight: 100;
 }
 
 .carouselhistory figure {
@@ -146,8 +150,8 @@ li.linav a:hover:not(.active) {
 }
 
 .react-3d-carousel {
-    width: 400px;
-    height: 300px;
+    width: 100%;
+    height: 25vw;
     position: relative;
     perspective: 1000px;
 }
@@ -162,11 +166,10 @@ li.linav a:hover:not(.active) {
 .react-3d-carousel .carousel  figure {
     display: block;
     position: absolute;
-    width: 400px;
-    height: 300px;
+    width: 100%;
+    height: 25vw;
     left: 10px;
     top: 10px;
-    border: 2px solid black;
     line-height: 116px;
     font-size: 80px;
     font-weight: bold;
@@ -175,7 +178,7 @@ li.linav a:hover:not(.active) {
 }
 
 .react-3d-carousel .carousel figure {
-    background: hsla( 160, 100%, 50%, 0.8);
+    background: black;
 }
 
 .react-3d-carousel   .prev {
@@ -228,10 +231,13 @@ li.linav a:hover:not(.active) {
   position: absolute;
   height: 100%;
   z-index: 0;
+  opacity: 0.5;
 }
 
 .imagetextdash {
-  width: 100%;
+  width: 80%;
+  margin-left: 4vw;
+  margin-right: 4vw;
   text-align:center;
   position: absolute; 
   line-height: 4vw;

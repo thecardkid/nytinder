@@ -42,7 +42,7 @@ var DashboardHistory = React.createClass({
     getInitialState: function () {
         return {
         	all_info: get_all_necessary_info,
-            width: 300,
+            width: 400,
             layout: 'classic',
             ease: 'linear',
             duration: 400
