@@ -8,6 +8,7 @@ var mongoose = require('mongoose');
 var index = require('./routes/index');
 var users = require('./routes/users');
 var articles = require('./routes/articles');
+
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 var session = require('express-session');

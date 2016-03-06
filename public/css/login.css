@@ -1,0 +1,102 @@
+input:focus, button:focus {
+	outline: 0;
+}
+
+button, input {
+	font-family: 'Old Standard TT', serif;
+}
+
+div#login-form {
+	width: 50%;
+	text-align: center;
+	margin: 10% 25% 0;
+}
+
+.login-username {
+	border: none;
+  border-bottom: solid 0.1vw #c9c9c9;
+  transition: border 0.1s;
+  font-size: 1.5vw;
+  width: 60%;
+  text-align: center;
+  margin: 2vw;
+  padding: 0.2vw;
+}
+
+.login-username:focus {
+	border-bottom: solid 4px #969696;
+}
+
+div#login-error-message {
+	background: #FD8182;
+	display: inline;
+	padding: 0 1vw;
+}
+
+div.login-button {
+	display: inline-block;
+	margin: 0 0.5vw;
+}
+
+button#login-facebook {
+	background: url('/img/fbblue.png') no-repeat #484B4F;
+	background-size: 2vw 2vw;
+	background-position: 0.6vw 0.35vw;
+  width: 13vw;
+  cursor: pointer;
+  border-radius: 4.5vw;
+  padding: 0.6vw 0 0.6vw 0;
+  font-size: 1vw;
+  text-align: left;
+  text-indent: 3vw;
+  display: inline-block;
+  margin: 0 auto;
+  color: white;
+  border: none;
+ 
+  /* Animations: */
+  -moz-transition: all 0.4s ease-in-out;
+  -o-transition: all 0.4s ease-in-out;
+  -ms-transition: all 0.4s ease-in-out;
+  transition: all 0.4s ease-in-out;
+}
+
+button#login-facebook:hover {
+  background-image: url('/img/fbblack.png');
+  background-color: #4E71A8;
+  background-size: 2vw 2vw;
+  background-position: 10.5vw 0.35vw;
+  text-indent: 1vw;  
+}
+
+button#login-create-user {
+	background: url('/img/lock.png') no-repeat #484B4F;
+	background-size: 2vw 2vw;
+	background-position: 0.6vw 0.3vw;
+  width: 7vw;
+  cursor: pointer;
+  border-radius: 4.5vw;
+  padding: 0.6vw 0 0.6vw 0;
+  color: white;
+  font-size: 1vw;
+  text-align: left;
+  text-indent: 2.8vw;
+  display: block;
+  margin: 0 auto;
+  border: none;
+ 
+  /* Animations: */
+  -moz-transition: all 0.4s ease-in-out;
+  -o-transition: all 0.4s ease-in-out;
+  -ms-transition: all 0.4s ease-in-out;
+  transition: all 0.4s ease-in-out;
+}
+
+button#login-create-user:hover {
+  background-image: url('/img/openlock.png');
+  background-color: #EEEEEE;
+  color: black;
+  background-size: 2vw 2vw;
+  background-position: 4.5vw 0.3vw;
+  text-indent: 1vw;  
+}
