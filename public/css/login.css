@@ -27,6 +27,12 @@ div#login-form {
 	border-bottom: solid 4px #969696;
 }
 
+div#login-error-message {
+	background: #FD8182;
+	display: inline;
+	padding: 0 1vw;
+}
+
 div.login-button {
 	display: inline-block;
 	margin: 0 0.5vw;

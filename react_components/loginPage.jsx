@@ -2,7 +2,8 @@ var loginPage = React.createClass({
 	getInitialState: function() {
     return {
      	userId: '',
-     	displayName: ''    
+     	displayName: '',
+     	errorMessage: 'That username already exists',
     };
 	},
 
@@ -28,20 +29,24 @@ var loginPage = React.createClass({
 		return (
 			<div>
 				<div id='login-form'>
-						<input className='login-username' 
-									type='text' 
-									onChange={this.handleUserInfoChange} 
-									value={this.userId} 
-									placeholder='Your username'/>
-						<br/>
-						<div>
-							<div className='login-button'>
-								<button id='login-facebook' onClick={this.handleFacebookLogin}>Login with Facebook</button>
-							</div>
-							<div className='login-button'>
-								<button id='login-create-user' onClick={this.handleUserLogin}>Log In</button>
-							</div>
+					<div id='login-error-message'>
+						{this.state.errorMessage}
+					</div>
+					<br/>
+					<input className='login-username'
+								type='text' 
+								onChange={this.handleUserInfoChange} 
+								value={this.userId} 
+								placeholder='Your username'/>
+					<br/>
+					<div>
+						<div className='login-button'>
+							<button id='login-facebook' onClick={this.handleFacebookLogin}>Login with Facebook</button>
 						</div>
+						<div className='login-button'>
+							<button id='login-create-user' onClick={this.handleUserLogin}>Log In</button>
+						</div>
+					</div>
 				</div>
 			</div>
 		);

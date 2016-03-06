@@ -20575,12 +20575,13 @@ var loginPage = React.createClass({displayName: "loginPage",
 	getInitialState: function() {
     return {
      	userId: '',
-     	displayName: ''    
+     	displayName: '',
+     	errorMessage: 'That username already exists',
     };
 	},
 
 	handleUserLogin: function() {
-		console.log('Logging in as ', this.state.userId)
+		console.log('Logging in as', this.state.userId)
 		// handles login with site account
 	},
 
@@ -20601,20 +20602,24 @@ var loginPage = React.createClass({displayName: "loginPage",
 		return (
 			React.createElement("div", null, 
 				React.createElement("div", {id: "login-form"}, 
-						React.createElement("input", {className: "login-username", 
-									type: "text", 
-									onChange: this.handleUserInfoChange, 
-									value: this.userId, 
-									placeholder: "Your username"}), 
-						React.createElement("br", null), 
-						React.createElement("div", null, 
-							React.createElement("div", {className: "login-button"}, 
-								React.createElement("button", {id: "login-facebook", onClick: this.handleFacebookLogin}, "Login with Facebook")
-							), 
-							React.createElement("div", {className: "login-button"}, 
-								React.createElement("button", {id: "login-create-user", onClick: this.handleUserLogin}, "Log In")
-							)
+					React.createElement("div", {id: "login-error-message"}, 
+						this.state.errorMessage
+					), 
+					React.createElement("br", null), 
+					React.createElement("input", {className: "login-username", 
+								type: "text", 
+								onChange: this.handleUserInfoChange, 
+								value: this.userId, 
+								placeholder: "Your username"}), 
+					React.createElement("br", null), 
+					React.createElement("div", null, 
+						React.createElement("div", {className: "login-button"}, 
+							React.createElement("button", {id: "login-facebook", onClick: this.handleFacebookLogin}, "Login with Facebook")
+						), 
+						React.createElement("div", {className: "login-button"}, 
+							React.createElement("button", {id: "login-create-user", onClick: this.handleUserLogin}, "Log In")
 						)
+					)
 				)
 			)
 		);
