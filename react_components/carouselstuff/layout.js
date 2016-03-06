@@ -6,7 +6,7 @@ exports.prism = {
     distance: function apothem(width, sides) {
         return Math.ceil(width / (2 * Math.tan(Math.PI / sides)));
     },
-    figures: function (width, images, initial) {
+    figures: function (width, images, urls, initial) {
         var sides = images.length;
         var angle = 2 * Math.PI / sides;
         var acceptable = Math.round(initial / angle) * angle;
@@ -18,7 +18,9 @@ exports.prism = {
                 opacity: 1,
                 present: true,
                 key: d,
-                image: images[d]
+                image: all_info[d].image_url,
+                url: all_info[d].web_url,
+                headline: all_info[d].headline
             };
         });
     }
@@ -27,8 +29,8 @@ exports.classic = {
     distance: function (width, sides) {
         return Math.round(width * Math.log(sides))
     },
-    figures: function (width, images, initial) {
-        var sides = images.length;
+    figures: function (width, all_info, initial) {
+        var sides = all_info.length;
         var angle = 2 * Math.PI / sides;
         var distance = exports.classic.distance(width, sides);
         var acceptable = Math.round(initial / angle) * angle;
@@ -41,7 +43,9 @@ exports.classic = {
                 opacity: 1,
                 present: true,
                 key: d,
-                image: images[d]
+                image: all_info[d].image_url,
+                url: all_info[d].web_url,
+                headline: all_info[d].headline
             };
         });
     }

@@ -5,13 +5,12 @@ var Depot = require('./depot');
 var Carousel = React.createClass({
     getInitialState: function () {
         return {
-            images: this.props.images,
-            figures: Layout[this.props.layout].figures(this.props.width, this.props.images, 0),
+            all_info: this.props.all_info,
+            figures: Layout[this.props.layout].figures(this.props.width, this.props.all_info, 0),
             rotationY: 0
         };
     },
     openimage: function (imagehref) {
-        console.log("here")
         window.open(imagehref);
     },
     componentWillMount: function () {
@@ -28,7 +27,14 @@ var Carousel = React.createClass({
         var parentThis = this;
         var figures = this.state.figures.map(function (d, i) {
             return (<figure key={i} style={Util.figureStyle(d)}>
-                <img src={d.image} onClick={parentThis.openimage.bind(null,d.image)} alt={i} height={"100%"} width={"100%"}></img>
+                <div className="imagedashdiv">
+                    <div className="imagedash">
+                        <img className src={d.image} onClick={parentThis.openimage.bind(null,d.url)} alt={i} height={"100%"} width={"100%"}/>
+                    </div>
+                    <div className="imagetextdash">
+                        <p style={{fontSize:"4vw"}}>"{d.headline}"</p>
+                    </div>
+                </div>
             </figure>);
         });
         return (

@@ -199,7 +199,7 @@ ReactDOM.render(
 	React.createElement(TimeTinderBox, null),
   	document.getElementById('content')
 );
-},{"./timetinderbox.jsx":9}],3:[function(require,module,exports){
+},{"./timetinderbox.jsx":10}],3:[function(require,module,exports){
 var Util = require('./util');
 var Layout = require('./layout');
 var Depot = require('./depot');
@@ -207,13 +207,12 @@ var Depot = require('./depot');
 var Carousel = React.createClass({displayName: "Carousel",
     getInitialState: function () {
         return {
-            images: this.props.images,
-            figures: Layout[this.props.layout].figures(this.props.width, this.props.images, 0),
+            all_info: this.props.all_info,
+            figures: Layout[this.props.layout].figures(this.props.width, this.props.all_info, 0),
             rotationY: 0
         };
     },
     openimage: function (imagehref) {
-        console.log("here")
         window.open(imagehref);
     },
     componentWillMount: function () {
@@ -230,7 +229,14 @@ var Carousel = React.createClass({displayName: "Carousel",
         var parentThis = this;
         var figures = this.state.figures.map(function (d, i) {
             return (React.createElement("figure", {key: i, style: Util.figureStyle(d)}, 
-                React.createElement("img", {src: d.image, onClick: parentThis.openimage.bind(null,d.image), alt: i, height: "100%", width: "100%"})
+                React.createElement("div", {className: "imagedashdiv"}, 
+                    React.createElement("div", {className: "imagedash"}, 
+                        React.createElement("img", {className: true, src: d.image, onClick: parentThis.openimage.bind(null,d.url), alt: i, height: "100%", width: "100%"})
+                    ), 
+                    React.createElement("div", {className: "imagetextdash"}, 
+                        React.createElement("p", {style: {fontSize:"4vw"}}, "\"", d.headline, "\"")
+                    )
+                )
             ));
         });
         return (
@@ -258,9 +264,9 @@ module.exports = function depot(initialState, initialProps,callback) {
     var requestID;
 
     res.onNextProps = function onNextProps(nextProps) {
-        if(props.layout != nextProps.layout || props.images != nextProps.images) {
+        if(props.layout != nextProps.layout || props.all_info != nextProps.all_info) {
             props = nextProps;
-            var to = Layout[props.layout].figures(props.width, props.images, state.rotationY);
+            var to = Layout[props.layout].figures(props.width, props.all_info, state.rotationY);
             var bounds = transitionFigures(state.figures, to,Ease[props.ease], props.duration);
             var stepper = transit(bounds, to, props.duration);
             playAnimation(state,to,stepper,callback);
@@ -268,7 +274,7 @@ module.exports = function depot(initialState, initialProps,callback) {
         props = nextProps;
     };
     res.onRotate = function(angle){
-        var to = Layout[props.layout].figures(props.width,props.images,state.rotationY + angle);
+        var to = Layout[props.layout].figures(props.width,props.all_info,state.rotationY + angle);
         state.rotationY +=angle;
         var bounds = transitionFigures(state.figures,to,Ease[props.ease],props.duration);
         var stepper = transit(bounds, to, props.duration);
@@ -394,7 +400,7 @@ exports.prism = {
     distance: function apothem(width, sides) {
         return Math.ceil(width / (2 * Math.tan(Math.PI / sides)));
     },
-    figures: function (width, images, initial) {
+    figures: function (width, images, urls, initial) {
         var sides = images.length;
         var angle = 2 * Math.PI / sides;
         var acceptable = Math.round(initial / angle) * angle;
@@ -406,7 +412,9 @@ exports.prism = {
                 opacity: 1,
                 present: true,
                 key: d,
-                image: images[d]
+                image: all_info[d].image_url,
+                url: all_info[d].web_url,
+                headline: all_info[d].headline
             };
         });
     }
@@ -415,8 +423,8 @@ exports.classic = {
     distance: function (width, sides) {
         return Math.round(width * Math.log(sides))
     },
-    figures: function (width, images, initial) {
-        var sides = images.length;
+    figures: function (width, all_info, initial) {
+        var sides = all_info.length;
         var angle = 2 * Math.PI / sides;
         var distance = exports.classic.distance(width, sides);
         var acceptable = Math.round(initial / angle) * angle;
@@ -429,7 +437,9 @@ exports.classic = {
                 opacity: 1,
                 present: true,
                 key: d,
-                image: images[d]
+                image: all_info[d].image_url,
+                url: all_info[d].web_url,
+                headline: all_info[d].headline
             };
         });
     }
@@ -517,12 +527,48 @@ exports.mapObj = function mapObj(fn,obj){
 },{}],7:[function(require,module,exports){
 var Carousel = require('./carouselstuff/carousel.jsx');
 var Ease = require('ease-functions');
+var testdata = require('./testdata').data;
 var images = require('./images');
+
+var get_image_url = testdata.map(function(obj){
+	try {
+		return "http://nytimes.com/"+ obj.multimedia[(obj.multimedia).length-1].url
+	} catch(err) {
+		return "https://www.petfinder.com/wp-content/uploads/2012/11/dog-how-to-select-your-new-best-friend-thinkstock99062463.jpg"
+	}
+});
+
+var get_urls = testdata.map(function(obj){
+	try {
+		return obj.web_url
+	} catch(err) {
+		return "https://www.nytimes.com/"
+	}
+});
+
+var get_all_necessary_info = testdata.map(function(obj){
+	var new_obj = {}
+
+	try {
+		new_obj["image_url"] = "http://nytimes.com/"+ obj.multimedia[(obj.multimedia).length-1].url;
+	} catch(err) {
+		new_obj["image_url"] = "https://www.petfinder.com/wp-content/uploads/2012/11/dog-how-to-select-your-new-best-friend-thinkstock99062463.jpg";		
+	}
+
+	var web_url = obj.web_url || "https://www.nytimes.com/";
+	var headline = obj.headline.main || "No headline";
+	new_obj["web_url"] = web_url;
+	new_obj["headline"] = headline;
+	return new_obj;
+});
+
+console.log(get_all_necessary_info);
+
 
 var DashboardHistory = React.createClass({displayName: "DashboardHistory",
     getInitialState: function () {
         return {
-            images: images.slice(0, 6),
+        	all_info: get_all_necessary_info,
             width: 300,
             layout: 'classic',
             ease: 'linear',
@@ -531,7 +577,7 @@ var DashboardHistory = React.createClass({displayName: "DashboardHistory",
     },
     componentWillMount: function () {
         this.onSides = function (event) {
-            this.setState( {images: images.slice(0, event.target.value) });
+            this.setState( {images: get_image_url.slice(0, event.target.value) });
         }.bind(this);
         this.onLayout = function (event) {
             this.setState({layout: event.target.value});
@@ -546,8 +592,9 @@ var DashboardHistory = React.createClass({displayName: "DashboardHistory",
     render: function () {
         return (
             React.createElement("div", {className: "carouselhistory"}, 
-                React.createElement(Carousel, {width: this.state.width, 
-                          images: this.state.images, 
+            	React.createElement("h1", null, "Saved Articles"), 
+                React.createElement(Carousel, {all_info: this.state.all_info, 
+                		  width: this.state.width, 
                           ease: this.state.ease, 
                           duration: this.state.duration, 
                           layout: this.state.layout})
@@ -557,19 +604,7 @@ var DashboardHistory = React.createClass({displayName: "DashboardHistory",
 });
 
 module.exports = DashboardHistory; 
-
-// var DashboardHistory = React.createClass({
-//   render: function(){
-//     return (
-//       <div className="dashboardhistorydiv">
-//       	<h1>DASHBOARD</h1>
-//       </div>
-//     );
-//   }
-// });
-
-// module.exports = DashboardHistory;
-},{"./carouselstuff/carousel.jsx":3,"./images":8,"ease-functions":1}],8:[function(require,module,exports){
+},{"./carouselstuff/carousel.jsx":3,"./images":8,"./testdata":9,"ease-functions":1}],8:[function(require,module,exports){
 module.exports = [
     'http://s7.postimg.org/dbamgegu3/zen8.jpg',
     'http://s21.postimg.org/er8b066p3/zen2.jpg',
@@ -593,6 +628,157 @@ module.exports = [
     'http://s15.postimg.org/40kb5u63v/zen20.jpg'
 ];
 },{}],9:[function(require,module,exports){
+module.exports = {
+	"data": [{
+		"web_url": "http://www.nytimes.com/2012/01/01/us/politics/republicans-wage-hidden-ground-war-in-iowa.html",
+		"snippet": "Far from candidates’ spotlights, hundreds of aides and volunteers are waging an unglamorous ground war unfolding with hidden intensity.",
+		"lead_paragraph": "DES MOINES -- A few days before the Iowa caucuses, Newt Gingrich's campaign headquarters just outside the city is a spectacle of pre-computer-age disorder, with volunteers rushing voter updates across the room on yellow Post-it notes. At the offices of Mitt Romney, who has built a ground organization aimed at matching the intensity of his television advertising barrage, aides are methodically analyzing data on each voter to create the perfect pitch: those worried about illegal immigration, for example, are invited to join a conference call with a border county sheriff in Arizona.",
+		"abstract": "Hundreds of campaign staff members, aides and volunteers are waging an unglamorous ground war that will largely determine the outcome of the Republican presidential caucuses in Iowa; in the closing hours before the caucuses, the tedious and time-consuming work of identifying voters and persuading them to show up at the caucuses could make the difference among Republican who cannot seem to make up their minds. Photos (L)d",
+		"print_page": "1",
+		"blog": [ ],
+		"source": "The New York Times",
+		"multimedia": [
+			{
+				"url": "images/2012/01/01/us/01ground-span/01ground-span-thumbStandard.jpg",
+				"subtype": "thumbnail",
+				"legacy": {
+					"hasthumbnail": "Y",
+					"thumbnailheight": 75,
+					"thumbnail": "images/2012/01/01/us/01ground-span/01ground-span-thumbStandard.jpg"
+				},
+				"type": "image",
+				"height": 75
+			},
+			{
+				"width": 600,
+				"url": "images/2012/01/01/us/01ground-span/01ground-span-articleLarge.jpg",
+				"height": 370,
+				"subtype": "xlarge",
+				"legacy": {
+					"xlargewidth": 600,
+					"xlargeheight": 370,
+					"xlarge": "images/2012/01/01/us/01ground-span/01ground-span-articleLarge.jpg",
+					"hasxlarge": "Y"
+				},
+				"type": "image"
+			}
+		],
+		"headline": {
+			"main": "Over Phones and Greasy Pizza, a Battle for Iowa"
+		},
+		"keywords": [
+			{
+				"name": "subject",
+				"value": "PRESIDENTIAL ELECTION OF 2012"
+			}
+		],
+		"pub_date": "2012-01-01T00:00:00Z",
+		"document_type": "article",
+		"news_desk": "National Desk",
+		"section_name": "Front Page; U.S.",
+		"byline": {
+			"person": [
+				{
+					"firstname": "A.",
+					"middlename": "G.",
+					"lastname": "SULZBERGER",
+					"rank": 1,
+					"role": "reported",
+					"organization": ""
+				},
+				{
+					"organization": "",
+					"role": "reported",
+					"firstname": "Michael",
+					"rank": 2,
+					"lastname": "BARBARO"
+				}
+			],
+			"original": "By A. G. SULZBERGER and MICHAEL BARBARO"
+		},
+		"word_count": 2365,
+		"type_of_material": "News",
+		"_id": "4fd2ba9a8eb7c8105d8b0a8b"
+	}, {
+      "web_url": "http://thecaucus.blogs.nytimes.com/2012/01/01/virginia-attorney-general-backs-off-ballot-proposal/",
+      "snippet": "Virginia's attorney general on Sunday backed off of a proposal to loosen the state's ballot access rules to allow more Republican presidential candidates to qualify.",
+      "lead_paragraph": "DES MOINES -- Virginia's attorney general on Sunday backed off of a proposal to loosen the state's ballot access rules to allow more Republican presidential candidates to qualify.",
+      "abstract": "Virginia's attorney general on Sunday backed off of a proposal to loosen the state's ballot access rules to allow more Republican presidential candidates to qualify.",
+      "print_page": null,
+      "blog": [ ],
+      "source": "The New York Times",
+      "multimedia": [ ],
+      "headline": {
+          "main": "Virginia Attorney General Backs Off Ballot Proposal",
+          "kicker": "The Caucus"
+      },
+      "keywords": [
+          {
+              "rank": "4",
+              "name": "persons",
+              "value": "Paul, Ron"
+          },
+          {
+              "rank": "3",
+              "name": "persons",
+              "value": "Gingrich, Newt"
+          },
+          {
+              "rank": "2",
+              "name": "persons",
+              "value": "Cuccinelli, Kenneth T II"
+          },
+          {
+              "rank": "5",
+              "name": "persons",
+              "value": "Perry, Rick"
+          },
+          {
+              "rank": "1",
+              "name": "type_of_material",
+              "value": "News"
+          },
+          {
+              "rank": "6",
+              "name": "persons",
+              "value": "Romney, Mitt"
+          },
+          {
+              "rank": "7",
+              "name": "subject",
+              "value": "Presidential Election of 2012"
+          },
+          {
+              "rank": "8",
+              "name": "organizations",
+              "value": "Republican Party"
+          },
+          {
+              "rank": "9",
+              "name": "glocations",
+              "value": "Virginia"
+          }
+      ],
+      "pub_date": "2012-01-01T18:46:02Z",
+      "document_type": "blogpost",
+      "news_desk": null,
+      "section_name": "U.S.",
+      "byline": {
+          "person": [
+              {
+                  "organization": "",
+                  "role": "reported",
+                  "rank": 1
+              }
+          ],
+          "original": "By MICHAEL D. SHEAR"
+      },
+      "word_count": 185,
+      "type_of_material": "Blog",
+      "_id": "4fd3a2548eb7c8105d8ea27e"
+  	}]
+};
+},{}],10:[function(require,module,exports){
 var DashboardHistory = require('./dashboardhistory.jsx')
 
 var TimeTinderBox = React.createClass({displayName: "TimeTinderBox",

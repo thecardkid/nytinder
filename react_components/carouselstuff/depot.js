@@ -9,9 +9,9 @@ module.exports = function depot(initialState, initialProps,callback) {
     var requestID;
 
     res.onNextProps = function onNextProps(nextProps) {
-        if(props.layout != nextProps.layout || props.images != nextProps.images) {
+        if(props.layout != nextProps.layout || props.all_info != nextProps.all_info) {
             props = nextProps;
-            var to = Layout[props.layout].figures(props.width, props.images, state.rotationY);
+            var to = Layout[props.layout].figures(props.width, props.all_info, state.rotationY);
             var bounds = transitionFigures(state.figures, to,Ease[props.ease], props.duration);
             var stepper = transit(bounds, to, props.duration);
             playAnimation(state,to,stepper,callback);
@@ -19,7 +19,7 @@ module.exports = function depot(initialState, initialProps,callback) {
         props = nextProps;
     };
     res.onRotate = function(angle){
-        var to = Layout[props.layout].figures(props.width,props.images,state.rotationY + angle);
+        var to = Layout[props.layout].figures(props.width,props.all_info,state.rotationY + angle);
         state.rotationY +=angle;
         var bounds = transitionFigures(state.figures,to,Ease[props.ease],props.duration);
         var stepper = transit(bounds, to, props.duration);
