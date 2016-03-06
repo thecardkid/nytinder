@@ -1,7 +1,10 @@
 // Top component of app.
-var Article = require('./article.jsx');
+
+var TinderNews = require('./tinderNews.jsx');
 
 ReactDOM.render(
-  <Article />,
+	<div>
+	  <TinderNews />
+  </div>,
   document.getElementById('content')
 );

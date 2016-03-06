@@ -1,4 +1,4 @@
-var article = require('./testdata');
+// var article = require('./testdata');
 
 var Article = React.createClass({
 	getInitialState: function() {
@@ -11,9 +11,16 @@ var Article = React.createClass({
 
 	render: function() {
 		var image = '';
-		var images = article['multimedia'];
-		if (images) {
+		var images = this.props.article['multimedia'];
+		if (images.length > 0) {
 			var src = 'https://www.nytimes.com/' + images[images.length-1].url;
+			image = (
+				<div className='bg-image'>
+					<img src={src}/>
+				</div>
+			);
+		} else {
+			var src = 'http://static01.nyt.com/images/2016/02/26/us/obama-video/obama-video-videoSmall.jpg';
 			image = (
 				<div className='bg-image'>
 					<img src={src}/>
@@ -26,12 +33,13 @@ var Article = React.createClass({
 				{image}
 				<div className='article-words'>
 					<div className='article-header'>
-						<h1>{article['headline']['main']}</h1>
+						<h1>{this.props.article['headline']['main']}</h1>
 					</div>
 					<div className='article-content'>
-						<p>{article['lead_paragraph']}</p>
+						{this.props.article['lead_paragraph']}
 					</div>
 				</div>
+				<br/><br/>
 			</div>
 		)
 	}
