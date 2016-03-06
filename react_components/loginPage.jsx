@@ -41,7 +41,7 @@ var loginPage = React.createClass({
 					<br/>
 					<div>
 						<div className='login-button'>
-							<button id='login-facebook' onClick={this.handleFacebookLogin}>Login with Facebook</button>
+							<a id='login-facebook' href='/auth/facebook'>Login with Facebook</a>
 						</div>
 						<div className='login-button'>
 							<button id='login-create-user' onClick={this.handleUserLogin}>Log In</button>

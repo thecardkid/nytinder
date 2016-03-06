@@ -24,7 +24,7 @@
     "passport": "^0.3.2",
     "passport-facebook": "^2.1.0",
     "react": "^0.14.7",
-    "ease-functions": "*"
+    "ease-functions": "*",
     "react-addons-css-transition-group": "^0.14.7",
     "react-motion": "^0.4.2",
     "serve-favicon": "~2.3.0",
