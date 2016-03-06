@@ -1,5 +1,5 @@
 var Article = require('./article.jsx');
-var testdata = require('./testdata');
+var testdata = require('./testdata').data;
 
 // Animation modules
 var spring = require('react-motion').spring;
@@ -14,7 +14,7 @@ var TinderNews = React.createClass({
 	getInitialState: function() {
     return {
     	vw: size*document.documentElement.clientWidth/100,
-    	articles: testdata.data, // TODO: change this to this.props.article
+    	articles: testdata, // TODO: change this to this.props.article
     	currArticle: 0
     }
 	},
@@ -40,7 +40,7 @@ var TinderNews = React.createClass({
 		var root = this;
 
 		// Compute new dimensions for each photo used
-		var photos = testdata.data.map(function(elem, i) {
+		var photos = testdata.map(function(elem, i) {
 			if (elem.multimedia.length > 0) {
 				var image = elem.multimedia[elem.multimedia.length-1];
 				return [image.width * (root.state.vw)/image.height, root.state.vw];

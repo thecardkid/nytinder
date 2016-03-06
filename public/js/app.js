@@ -20447,15 +20447,94 @@ module.exports = require('./lib/React');
 
 },{"./lib/React":66}],172:[function(require,module,exports){
 // Top component of app.
+
+// Different views
 var TinderNews = require('./tinderNews.jsx');
+var LoginPage = require('./loginPage.jsx');
+
+var DisplayEnum = Object.freeze({
+	DISPLAY_DASHBOARD: 0,
+	DISPLAY_TINDERNEWS: 1,
+	DISPLAY_LOGIN: 2,
+});
+
+var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
+	getInitialState: function() {
+    return {
+    	display: DisplayEnum.DISPLAY_LOGIN,
+    };
+	},
+
+	componentDidMount: function() {
+    return null;
+	},
+
+	handleArticlesGet: function() {
+		// Get all articles from NYTimes and update this.state.display
+	},
+
+	loadUserData: function() {
+		// Get user's history and info from DB
+	},
+
+	handleArticlePost: function() {
+		// Add new article to user's info
+	},
+
+	handlePageChange: function(ev) {
+		this.setState({
+			display: Number(ev.target.value)
+		});
+	},
+
+	render: function() {
+		var page;
+
+		switch (this.state.display) {
+			case DisplayEnum.DISPLAY_DASHBOARD:
+				page = (
+					React.createElement("div", null, 
+						React.createElement("h1", null, "This is your dashboard.")
+					)
+				);
+				break;
+
+			case DisplayEnum.DISPLAY_TINDERNEWS:
+				page = (
+					React.createElement("div", null, 
+					  React.createElement(TinderNews, null)
+				  )
+				);
+				break;
+
+			case DisplayEnum.DISPLAY_LOGIN:
+				page = (
+					React.createElement("div", null, 
+						React.createElement(LoginPage, null)
+					)
+				);
+				break;
+		}
+
+		return (
+			React.createElement("div", null, 
+				React.createElement("input", {
+          type: "range", 
+          min: 0, 
+          max: 2, 
+          value: this.state.display, 
+          onChange: this.handlePageChange}), 
+        page
+			)
+		);
+	},
+});
 
 ReactDOM.render(
-	React.createElement("div", null, 
-	  React.createElement(TinderNews, null)
-  ),
+	React.createElement(TinderTimesApp, null),
   document.getElementById('content')
 );
-},{"./tinderNews.jsx":175}],173:[function(require,module,exports){
+},{"./loginPage.jsx":174,"./tinderNews.jsx":176}],173:[function(require,module,exports){
 var spring = require('react-motion').spring;
 
 var Article = React.createClass({displayName: "Article",
@@ -20492,6 +20571,58 @@ var Article = React.createClass({displayName: "Article",
 
 module.exports = Article;
 },{"react-motion":37}],174:[function(require,module,exports){
+var loginPage = React.createClass({displayName: "loginPage",
+	getInitialState: function() {
+    return {
+     	userId: '',
+     	displayName: ''    
+    };
+	},
+
+	handleUserLogin: function() {
+		console.log('Logging in as ', this.state.userId)
+		// handles login with site account
+	},
+
+	handleFacebookLogin: function() {
+		console.log('Logging in with facebook.');
+		// handles facebook login
+	},
+
+	handleUserInfoChange: function(ev) {
+		console.log(ev.target.value);
+		this.setState({
+			userId: ev.target.value,
+			displayName: ev.target.value
+		});
+	},
+
+	render: function() {
+		return (
+			React.createElement("div", null, 
+				React.createElement("div", {id: "login-form"}, 
+						React.createElement("input", {className: "login-username", 
+									type: "text", 
+									onChange: this.handleUserInfoChange, 
+									value: this.userId, 
+									placeholder: "Your username"}), 
+						React.createElement("br", null), 
+						React.createElement("div", null, 
+							React.createElement("div", {className: "login-button"}, 
+								React.createElement("button", {id: "login-facebook", onClick: this.handleFacebookLogin}, "Login with Facebook")
+							), 
+							React.createElement("div", {className: "login-button"}, 
+								React.createElement("button", {id: "login-create-user", onClick: this.handleUserLogin}, "Log In")
+							)
+						)
+				)
+			)
+		);
+	},
+});
+
+module.exports = loginPage;
+},{}],175:[function(require,module,exports){
 module.exports = {
 	"data": [{
 		"web_url": "http://www.nytimes.com/2012/01/01/us/politics/republicans-wage-hidden-ground-war-in-iowa.html",
@@ -20648,9 +20779,9 @@ module.exports = {
 
 
 
-},{}],175:[function(require,module,exports){
+},{}],176:[function(require,module,exports){
 var Article = require('./article.jsx');
-var testdata = require('./testdata');
+var testdata = require('./testdata').data;
 
 // Animation modules
 var spring = require('react-motion').spring;
@@ -20658,14 +20789,14 @@ var TransitionMotion = require('react-motion').TransitionMotion;
 var Motion = require('react-motion').Motion;
 
 // Other globals
-var springSettings = {stiffness: 100, damping: 26}; // Animation spring
+var springSettings = {stiffness: 170, damping: 26}; // Animation spring
 var size = 40; // Number of viewwidths for background image
 
 var TinderNews = React.createClass({displayName: "TinderNews",
 	getInitialState: function() {
     return {
     	vw: size*document.documentElement.clientWidth/100,
-    	articles: testdata.data, // TODO: change this to this.props.article
+    	articles: testdata, // TODO: change this to this.props.article
     	currArticle: 0
     }
 	},
@@ -20691,7 +20822,7 @@ var TinderNews = React.createClass({displayName: "TinderNews",
 		var root = this;
 
 		// Compute new dimensions for each photo used
-		var photos = testdata.data.map(function(elem, i) {
+		var photos = testdata.map(function(elem, i) {
 			if (elem.multimedia.length > 0) {
 				var image = elem.multimedia[elem.multimedia.length-1];
 				return [image.width * (root.state.vw)/image.height, root.state.vw];
@@ -20765,4 +20896,4 @@ module.exports = TinderNews;
 
 
 
-},{"./article.jsx":173,"./testdata":174,"react-motion":37}]},{},[172]);
+},{"./article.jsx":173,"./testdata":175,"react-motion":37}]},{},[172]);

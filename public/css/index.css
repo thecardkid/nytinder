@@ -24,7 +24,6 @@ body {
 .article-words {
 	background: #CCCCCC;
 	width: 85%;
-	position: absolute;
 	margin-top: 28vw;
 	padding: 0.5% 0.5%;
 	-moz-transition: all 0.8s ease-in-out;
