@@ -3,12 +3,17 @@ var loginPage = React.createClass({
     return {
      	userId: '',
      	displayName: '',
-     	errorMessage: 'That username already exists',
+     	errorMessage: '',
     };
 	},
 
 	handleUserLogin: function() {
 		console.log('Logging in as', this.state.userId)
+		if (this.state.userId.length < 5 || this.state.userId.length > 20) {
+			this.setState({
+				errorMessage: 'Username must be between 5 and 20 characters.'
+			});
+		}
 		// handles login with site account
 	},
 

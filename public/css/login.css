@@ -28,7 +28,7 @@ div#login-form {
 }
 
 div#login-error-message {
-	background: #FD8182;
+	color: #FD8182;
 	display: inline;
 	padding: 0 1vw;
 }

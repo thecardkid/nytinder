@@ -15,7 +15,8 @@ var TinderNews = React.createClass({
     return {
     	vw: size*document.documentElement.clientWidth/100,
     	articles: testdata, // TODO: change this to this.props.article
-    	currArticle: 0
+    	currArticle: 0,
+    	hover: false,
     }
 	},
 
@@ -30,9 +31,19 @@ var TinderNews = React.createClass({
 	},
 
 	handleNext: function() {
-		var next = this.state.currArticle === 0 ? 1 : 0;
+		var next = 0;
+		if (this.state.currArticle+1 < this.state.articles.length) {
+			next = this.state.currArticle+1;
+		}
 		this.setState({
 			currArticle: next
+		});
+	},
+
+	changeHover: function() {
+		console.log('changing');
+		this.setState({
+			hover: !this.state.hover
 		});
 	},
 
@@ -41,12 +52,17 @@ var TinderNews = React.createClass({
 
 		// Compute new dimensions for each photo used
 		var photos = testdata.map(function(elem, i) {
+			var dims = [500 * (root.state.vw)/281, root.state.vw];
 			if (elem.multimedia.length > 0) {
-				var image = elem.multimedia[elem.multimedia.length-1];
-				return [image.width * (root.state.vw)/image.height, root.state.vw];
-			} else {
-				return [500 * (root.state.vw)/281, root.state.vw];
+				var image = elem.multimedia.filter(function(elem) {
+					return elem.subtype === 'xlarge';
+				})[0];
+
+				if (image) {
+					dims = [image.width * (root.state.vw)/image.height, root.state.vw];
+				}
 			}
+			return dims;
 		});
 
 		// Figure out how to line up the article divs to
@@ -80,7 +96,7 @@ var TinderNews = React.createClass({
       return (
       	<Motion key={i} style={style}>
       		{function (style) {
-      			return <Article article={root.state.articles[i]} style={style}/>
+      			return <Article article={root.state.articles[i]} style={style} hovering={root.state.hover}/>
       		}}
         </Motion>
       )
@@ -95,7 +111,10 @@ var TinderNews = React.createClass({
           <Motion style={{height: spring(currHeight), width: spring(currWidth)}}>
             {function(container) {
               return (
-              	<div className="slider-inner" style={container}>
+              	<div className="slider-inner" 
+              			style={container}
+              			onMouseOver={root.changeHover}
+              			onMouseOut={root.changeHover}>
 	                {articleComponents}
 	              </div>
               );

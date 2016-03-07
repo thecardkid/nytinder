@@ -6,7 +6,8 @@ body {
   display: flex;
   display: -webkit-flex;
   align-items: center;
-  height: 700px;
+  height: 40vw;
+  width: 100%;
   position: relative;
 }
 
@@ -24,17 +25,16 @@ body {
 .article-words {
 	background: #CCCCCC;
 	width: 85%;
-	margin-top: 28vw;
-	padding: 0.5% 0.5%;
-	-moz-transition: all 0.8s ease-in-out;
-  -o-transition: all 0.8s ease-in-out;
-  -ms-transition: all 0.8s ease-in-out;
-  transition: all 0.8s ease-in-out;
-  height: 5.5vw;
+	/*margin-top: 28vw;*/
+	-moz-transition: all 0.55s ease-in-out;
+  -o-transition: all 0.55s ease-in-out;
+  -ms-transition: all 0.55s ease-in-out;
+  transition: all 0.55s ease-in-out;
+  /*height: 4.3vw;*/
 }
 
 .article-words h1 {
-	font-size: 2vw;
+	font-size: 1.6vw;
 	text-align: left;
 }
 
@@ -42,10 +42,11 @@ body {
 	text-align: left;
 	display: inline-block;
 	padding: 0% 2%;
-	-moz-transition: all 0.8s ease-in-out;
-  -o-transition: all 0.8s ease-in-out;
-  -ms-transition: all 0.8s ease-in-out;
-  transition: all 0.8s ease-in-out;
+	-moz-transition: all 0.5s ease-in-out;
+  -o-transition: all 0.5s ease-in-out;
+  -ms-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+  margin-bottom: 1vw;
 }
 
 .article-content {
@@ -54,10 +55,10 @@ body {
 	font-size: 1vw;
 	text-align: left;
 	overflow: hidden;
-	-moz-transition: all 0.8s ease-in-out;
-  -o-transition: all 0.8s ease-in-out;
-  -ms-transition: all 0.8s ease-in-out;
-  transition: all 0.8s ease-in-out;
+	-moz-transition: all 0.5s ease-in-out;
+  -o-transition: all 0.5s ease-in-out;
+  -ms-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
 }
 
 .bg-image {
@@ -72,22 +73,20 @@ body {
 .bg-image img {
 	height: 100%;
 	opacity: 0.8;
-	-webkit-filter: blur(0px) brightness(70%) grayscale(0%);
-  -moz-filter: blur(0px) brightness(70%) grayscale(0%);
-  -o-filter: blur(0px) brightness(70%) grayscale(0%);
-  -ms-filter: blur(0px) brightness(70%) grayscale(0%);
-  filter: blur(0px) brightness(70%) grayscale(0%);
-  -moz-transition: all 0.8s ease-in-out;
-  -o-transition: all 0.8s ease-in-out;
-  -ms-transition: all 0.8s ease-in-out;
-  transition: all 0.8s ease-in-out;
+	-webkit-filter: blur(0px) grayscale(0%);
+  -moz-filter: blur(0px) grayscale(0%);
+  -o-filter: blur(0px) grayscale(0%);
+  -ms-filter: blur(0px) grayscale(0%);
+  filter: blur(0px) grayscale(0%);
+  -moz-transition: all 0.5s ease-in-out;
+  -o-transition: all 0.5s ease-in-out;
+  -ms-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
 }
 
 /* Hover animations */
 div.slider-inner:hover > .container > .article-words {
 	background: #EEEEEE;
-	height: 14vw;
-	margin-top: 24vw;
 }
 
 div.slider-inner:hover > .container > .article-words > .article-content {
@@ -95,9 +94,9 @@ div.slider-inner:hover > .container > .article-words > .article-content {
 }
 
 div.slider-inner:hover > .container > .bg-image > img {
-	-webkit-filter: blur(3px) brightness(70%) grayscale(100%);
-  -moz-filter: blur(3px) brightness(70%) grayscale(100%);
-  -o-filter: blur(3px) brightness(70%) grayscale(100%);
-  -ms-filter: blur(3px) brightness(70%) grayscale(100%);
-  filter: blur(3px) brightness(70%) grayscale(100%);
+	-webkit-filter: blur(1px) grayscale(70%);
+  -moz-filter: blur(1px) grayscale(70%);
+  -o-filter: blur(1px) grayscale(70%);
+  -ms-filter: blur(1px) grayscale(70%);
+  filter: blur(1px) grayscale(70%);
 }

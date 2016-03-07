@@ -4,6 +4,8 @@
 var TinderNews = require('./tinderNews.jsx');
 var LoginPage = require('./loginPage.jsx');
 
+console.log(process.env);
+
 var DisplayEnum = Object.freeze({
 	DISPLAY_DASHBOARD: 0,
 	DISPLAY_TINDERNEWS: 1,
@@ -13,7 +15,7 @@ var DisplayEnum = Object.freeze({
 var TinderTimesApp = React.createClass({
 	getInitialState: function() {
     return {
-    	display: DisplayEnum.DISPLAY_LOGIN,
+    	display: DisplayEnum.DISPLAY_TINDERNEWS,
     };
 	},
 
