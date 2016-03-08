@@ -20637,12 +20637,8 @@ module.exports = validateDOMNesting;
 
 module.exports = require('./lib/React');
 
-<<<<<<< HEAD
-},{"./lib/React":66}],172:[function(require,module,exports){
-(function (process){
-=======
 },{"./lib/React":67}],173:[function(require,module,exports){
->>>>>>> Components
+(function (process){
 // Top component of app.
 
 var TimeTinderBox = require('./timetinderbox.jsx');
@@ -20735,12 +20731,8 @@ ReactDOM.render(
 	React.createElement(TinderTimesApp, null),
   document.getElementById('content')
 );
-<<<<<<< HEAD
 }).call(this,require('_process'))
-},{"./loginPage.jsx":174,"./tinderNews.jsx":176,"_process":29}],173:[function(require,module,exports){
-=======
-},{"./loginPage.jsx":181,"./timetinderbox.jsx":183,"./tinderNews.jsx":184}],174:[function(require,module,exports){
->>>>>>> Components
+},{"./loginPage.jsx":181,"./timetinderbox.jsx":183,"./tinderNews.jsx":184,"_process":30}],174:[function(require,module,exports){
 var spring = require('react-motion').spring;
 
 var Article = React.createClass({displayName: "Article",
@@ -21153,7 +21145,7 @@ var get_all_necessary_info = testdata.map(function(obj){
 	var new_obj = {}
 
 	try {
-		new_obj["image_url"] = "http://nytimes.com/"+ obj.multimedia[(obj.multimedia).length-1].url;
+		new_obj["image_url"] = "http://nytimes.com/"+ obj.multimedia[(obj.multimedia).length-2].url;
 	} catch(err) {
 		new_obj["image_url"] = "https://www.petfinder.com/wp-content/uploads/2012/11/dog-how-to-select-your-new-best-friend-thinkstock99062463.jpg";		
 	}
@@ -21259,7 +21251,7 @@ var loginPage = React.createClass({displayName: "loginPage",
 		console.log(ev.target.value);
 		this.setState({
 			userId: ev.target.value,
-			displayName: ev.target.value
+			displayName: ev.target.value 
 		});
 	},
 
@@ -22264,6 +22256,7 @@ module.exports = {
       }
     ]
 };
+
 },{}],183:[function(require,module,exports){
 var DashboardHistory = require('./dashboardhistory.jsx')
 

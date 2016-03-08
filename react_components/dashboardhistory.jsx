@@ -23,7 +23,7 @@ var get_all_necessary_info = testdata.map(function(obj){
 	var new_obj = {}
 
 	try {
-		new_obj["image_url"] = "http://nytimes.com/"+ obj.multimedia[(obj.multimedia).length-1].url;
+		new_obj["image_url"] = "http://nytimes.com/"+ obj.multimedia[(obj.multimedia).length-2].url;
 	} catch(err) {
 		new_obj["image_url"] = "https://www.petfinder.com/wp-content/uploads/2012/11/dog-how-to-select-your-new-best-friend-thinkstock99062463.jpg";		
 	}
