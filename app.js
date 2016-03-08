@@ -9,11 +9,17 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 var articles = require('./routes/articles');
 
+var passport = require('passport');
+var FacebookStrategy = require('passport-facebook').Strategy;
+var session = require('express-session');
+
 var app = express();
 
+var password = require("./password")(passport);
+
 // Connect to database
-mongoose.connect('mongodb://localhost/tindertimes');
-// mongoose.connect('mongodb://yunhsincynthiachen:nytinderolinjs7@ds019668.mlab.com:19668/nytinder')
+// mongoose.connect('mongodb://localhost/tindertimes');
+mongoose.connect('mongodb://yunhsincynthiachen:nytinderolinjs7@ds019668.mlab.com:19668/nytinder')
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -32,6 +38,27 @@ app.use(require('node-sass-middleware')({
   sourceMap: true
 }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(session({ secret: 'this is not a secret ;)',
+  cookie:{},
+  resave: false,
+  saveUninitialized: false }));
+app.use(passport.initialize());
+app.use(passport.session());
+
+//GET Requests for Facebook LogIn
+app.get('/auth/facebook', passport.authenticate('facebook'));
+
+app.get('/auth/facebook/callback',
+  passport.authenticate('facebook', { successRedirect: '/',
+                                      failureRedirect: '/' })
+);
+
+// Logout of Facebook
+app.get("/logout", function(req, res) {
+    req.logout();
+    res.redirect("/");
+});
 
 app.use('/', index);
 app.use('/api/user', users);

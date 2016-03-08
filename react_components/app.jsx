@@ -1,5 +1,7 @@
 // Top component of app.
 
+var TimeTinderBox = require('./timetinderbox.jsx');
+
 // Different views
 var TinderNews = require('./tinderNews.jsx');
 var LoginPage = require('./loginPage.jsx');
@@ -48,7 +50,7 @@ var TinderTimesApp = React.createClass({
 			case DisplayEnum.DISPLAY_DASHBOARD:
 				page = (
 					<div>
-						<h1>This is your dashboard.</h1>
+						<TimeTinderBox/>
 					</div>
 				);
 				break;

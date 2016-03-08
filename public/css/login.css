@@ -38,7 +38,7 @@ div.login-button {
 	margin: 0 0.5vw;
 }
 
-button#login-facebook {
+a#login-facebook {
 	background: url('/img/fbblue.png') no-repeat #484B4F;
 	background-size: 2vw 2vw;
 	background-position: 0.6vw 0.35vw;
@@ -53,6 +53,7 @@ button#login-facebook {
   margin: 0 auto;
   color: white;
   border: none;
+  text-decoration: none;
  
   /* Animations: */
   -moz-transition: all 0.4s ease-in-out;
@@ -61,7 +62,7 @@ button#login-facebook {
   transition: all 0.4s ease-in-out;
 }
 
-button#login-facebook:hover {
+a#login-facebook:hover {
   background-image: url('/img/fbblack.png');
   background-color: #4E71A8;
   background-size: 2vw 2vw;
