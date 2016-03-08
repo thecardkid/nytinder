@@ -21,7 +21,7 @@ var loginPage = React.createClass({
 		console.log(ev.target.value);
 		this.setState({
 			userId: ev.target.value,
-			displayName: ev.target.value
+			displayName: ev.target.value 
 		});
 	},
 
