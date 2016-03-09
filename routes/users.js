@@ -14,24 +14,23 @@ router.get('/:id', function(req, res, next) {
   	'_id': new ObjectId(req.params.id)
   }, function(err, user) {
   	if (!err) {
-  		console.log(user.articles);
-  		Article.find({
-  			'article_id': {$in: user.articles}
-  		}, function(err, articles) {
-  			if (!err) {
-  				console.log(articles);
-  				res.send({
-  					'userId': user.userId,
-  					'displayName': user.displayName,
-  					'articles': articles
-  				});
-  			}
-  		});
+			res.send(user);
   	} else {
-  		console.log(err);
+  		console.log('error', err);
   		res.send(err);
   	}
   })
+});
+
+router.put('/', function(req, res, next) {
+  console.log(req.body);
+  User.update({
+    '_id': new ObjectId(req.body.userId)
+  }, {$inc: {
+    'onArticle': req.body.seen
+  }}, function(err, model) {
+    err ? res.json(String(err.code)) : res.json('Updated');
+  });
 });
 
 /*

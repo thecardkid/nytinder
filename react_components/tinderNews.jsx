@@ -11,10 +11,17 @@ var springSettings = {stiffness: 170, damping: 26}; // Animation spring
 var size = 40; // Number of viewwidths for background image
 
 var TinderNews = React.createClass({
+	propTypes: {
+		updateSeen: React.PropTypes.func.isRequired,
+		articles: React.PropTypes.array.isRequired,
+		onArticle: 0,
+	},
+
 	getInitialState: function() {
+		console.log('received:', this.props.articles);
     return {
     	vw: size*document.documentElement.clientWidth/100,
-    	articles: testdata, // TODO: change this to this.props.article
+    	// articles: testdata, // TODO: change this to this.props.articles
     	currArticle: 0,
     	hover: false,
     }
@@ -31,17 +38,14 @@ var TinderNews = React.createClass({
 	},
 
 	handleNext: function() {
-		var next = 0;
-		if (this.state.currArticle+1 < this.state.articles.length) {
-			next = this.state.currArticle+1;
-		}
+		var next = Math.min(this.state.currArticle+1, this.props.articles.length-1);
 		this.setState({
 			currArticle: next
 		});
+		this.props.updateSeen();
 	},
 
 	changeHover: function() {
-		console.log('changing');
 		this.setState({
 			hover: !this.state.hover
 		});
@@ -51,18 +55,8 @@ var TinderNews = React.createClass({
 		var root = this;
 
 		// Compute new dimensions for each photo used
-		var photos = testdata.map(function(elem, i) {
-			var dims = [500 * (root.state.vw)/281, root.state.vw];
-			if (elem.multimedia.length > 0) {
-				var image = elem.multimedia.filter(function(elem) {
-					return elem.subtype === 'xlarge';
-				})[0];
-
-				if (image) {
-					dims = [image.width * (root.state.vw)/image.height, root.state.vw];
-				}
-			}
-			return dims;
+		var photos = this.props.articles.map(function(elem, i) {
+			return [elem.img.width * (root.state.vw)/elem.img.height, root.state.vw];
 		});
 
 		// Figure out how to line up the article divs to
@@ -93,10 +87,11 @@ var TinderNews = React.createClass({
 
 		// React variable to host all articles we have
 		var articleComponents = configs.map(function(style, i) {
+			console.log('gonna pass', root.props.articles[i]);
       return (
       	<Motion key={i} style={style}>
       		{function (style) {
-      			return <Article article={root.state.articles[i]} style={style} hovering={root.state.hover}/>
+      			return <Article article={root.props.articles[i]} style={style} hovering={root.state.hover}/>
       		}}
         </Motion>
       )
