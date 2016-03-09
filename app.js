@@ -18,8 +18,8 @@ var app = express();
 var password = require("./password")(passport);
 
 // Connect to database
-// mongoose.connect('mongodb://localhost/tindertimes');
-mongoose.connect('mongodb://yunhsincynthiachen:nytinderolinjs7@ds019668.mlab.com:19668/nytinder')
+mongoose.connect('mongodb://localhost/tindertimes');
+// mongoose.connect('mongodb://yunhsincynthiachen:nytinderolinjs7@ds019668.mlab.com:19668/nytinder')
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
