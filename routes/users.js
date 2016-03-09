@@ -14,19 +14,12 @@ router.get('/:id', function(req, res, next) {
   	'_id': new ObjectId(req.params.id)
   }, function(err, user) {
   	if (!err) {
-  		console.log(user.articles);
-  		Article.find({
-  			'article_id': {$in: user.articles}
-  		}, function(err, articles) {
-  			if (!err) {
-  				console.log(articles);
-  				res.send({
-  					'userId': user.userId,
-  					'displayName': user.displayName,
-  					'articles': articles
-  				});
-  			}
-  		});
+  		console.log(user.savedArticles);
+      res.send({
+        'userId': user.userId,
+        'displayName': user.displayName,
+        'articles': user.savedArticles
+      });
   	} else {
   		console.log(err);
   		res.send(err);
@@ -47,5 +40,26 @@ router.post('/', function(req, res, next) {
 		}
 	})
 });
+
+/*
+POST new article into user's list of article
+*/
+router.post('/newarticle/:id', function(req,res, next) {
+  User.findOne({
+    '_id': new ObjectId(req.params.id)
+  }, function(err, user) { 
+    user.savedArticles.push(req.body);
+    //save edited user with new article
+    user.save(function(err) {
+      if (err) {
+        res.sendStatus(500);
+        return;
+      }
+      res.sendStatus(200);
+      return;
+    })
+  })
+});
+
 
 module.exports = router;

@@ -2,7 +2,7 @@ var Ease = require('ease-functions');
 var Layout = require('./layout');
 var Util = require('./util');
 
-module.exports = function depot(initialState, initialProps,callback) {
+module.exports = function depot(initialState, initialProps, callback) {
     var res = {};
     var state = initialState;
     var props = initialProps;
@@ -11,6 +11,8 @@ module.exports = function depot(initialState, initialProps,callback) {
     res.onNextProps = function onNextProps(nextProps) {
         if(props.layout != nextProps.layout || props.all_info != nextProps.all_info) {
             props = nextProps;
+
+            console.log("props",props.all_info);
             var to = Layout[props.layout].figures(props.width, props.all_info, state.rotationY);
             var bounds = transitionFigures(state.figures, to,Ease[props.ease], props.duration);
             var stepper = transit(bounds, to, props.duration);

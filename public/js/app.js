@@ -20657,17 +20657,29 @@ var DisplayEnum = Object.freeze({
 
 var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 	getInitialState: function() {
-    return {
-    	display: DisplayEnum.DISPLAY_DASHBOARD,
-    };
+	    return {
+	    	display: DisplayEnum.DISPLAY_DASHBOARD,
+	    	userArticles: [],
+	    };
 	},
 
 	componentDidMount: function() {
-    return null;
+    	this.loadUserArticlesFromServer();
 	},
 
-	handleArticlesGet: function() {
-		// Get all articles from NYTimes and update this.state.display
+	loadUserArticlesFromServer: function () {
+		$.ajax({
+			url: "api/user/56e086a827d1cafe246f7bc0",
+			dataType: 'json',
+			type: 'GET',
+			success: function(data) {
+				console.log(data.articles);
+			  	this.setState( {userArticles: data.articles});
+			}.bind(this),
+			error: function(xhr, status, err) {
+				console.error(this.props.url, status, err.toString());
+			}.bind(this)
+		});
 	},
 
 	loadUserData: function() {
@@ -20689,9 +20701,10 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 
 		switch (this.state.display) {
 			case DisplayEnum.DISPLAY_DASHBOARD:
+				console.log('userarticles', this.state.userArticles);
 				page = (
 					React.createElement("div", null, 
-						React.createElement(TimeTinderBox, null)
+						React.createElement(TimeTinderBox, {articles: this.state.userArticles})
 					)
 				);
 				break;
@@ -20757,18 +20770,15 @@ var Article = React.createClass({displayName: "Article",
 			)
 		);
 
-		var h = 4.3;
-		var styleHeight = {'height': '4.3vw', 'marginTop': '28vw'};
-		if (this.props.article.headline.main.length > 63) {
-			h = 6.5;
-			styleHeight.height = '6.5vw';
-		}
-
 		var paragraph = this.props.article.abstract || this.props.article.snippet;
+		var h = this.props.article.headline.main.length > 63 ? 6.5 : 4.3; 
+		var marginTop = 28;
+
+		styleHeight = {'height': h+'vw', 'marginTop': marginTop+'vw'};
+
 		var lines = Math.ceil(paragraph.length / 110);
-		h += lines + 2.5;
 		if (lines >= 4) h += 0.6;
-		console.log(h+'vw');
+		h += lines + 2.5;
 		var m = 27 - lines;
 
 		if (this.props.hovering) {
@@ -20808,7 +20818,11 @@ var Carousel = React.createClass({displayName: "Carousel",
         };
     },
     openimage: function (imagehref) {
+        console.log("here", imagehref);
         window.open(imagehref);
+    },
+    deletearticle: function (url) {
+        console.log("deleting", url);
     },
     onhover: function (url) {
         document.getElementById(url).style.display = 'block';
@@ -20829,32 +20843,48 @@ var Carousel = React.createClass({displayName: "Carousel",
             this.state.figures.length);
         var parentThis = this;
         var figures = this.state.figures.map(function (d, i) {
-            var font_size = "3.7vw";
-            if ((d.headline).length > 70) {
-                font_size = "2vw";
+            var font_size = "3.5vw";
+            if ((d.headline).length > 55) {
+                font_size = "2.5vw";
             };
-            console.log(font_size);
             return (React.createElement("figure", {key: i, style: Util.figureStyle(d)}, 
-                React.createElement("div", {className: "imagedashdiv", onMouseLeave: parentThis.onmouseout.bind(null,d.url), onMouseEnter: parentThis.onhover.bind(null,d.url)}, 
+                React.createElement("div", {className: "imagedashdiv", onClick: parentThis.openimage.bind(null,d.url), onMouseLeave: parentThis.onmouseout.bind(null,d.url), onMouseEnter: parentThis.onhover.bind(null,d.url)}, 
                     React.createElement("div", {className: "imagedash"}, 
-                        React.createElement("img", {className: true, src: d.image, onClick: parentThis.openimage.bind(null,d.url), alt: i, height: "100%", width: "100%"})
+                        React.createElement("img", {className: true, src: d.image, alt: i, height: "100%", width: "100%"})
                     ), 
-                    React.createElement("div", {className: "imagetextdash"}, 
-                        React.createElement("p", {id: d.url, style: {fontSize:font_size,display:"none"}}, "\"", d.headline, "\"")
+                    React.createElement("div", {className: "imagetextdash", id: d.url, style: {display:"none"}}, 
+                        React.createElement("p", {style: {fontSize:font_size}}, "\"", d.headline, "\""), 
+                        React.createElement("div", {className: "deletebutton", onClick: parentThis.deletearticle.bind(null,d.url)}, 
+                            React.createElement("button", null, 
+                              React.createElement("span", null, "X")
+                            )
+                        )
                     )
                 )
             ));
         });
-        return (
-            React.createElement("section", {className: "react-3d-carousel"}, 
-                React.createElement("div", {className: "carousel", 
-                     style: {transform: "translateZ("+translateZ+"px)"}}, 
-                    figures
-                ), 
-                React.createElement("div", {className: "prev", onClick: Util.partial(this.onRotate,+angle)}), 
-                React.createElement("div", {className: "next", onClick: Util.partial(this.onRotate,-angle)})
-            )
-        );
+        
+        if ((figures).length > 1) {
+            return (
+                React.createElement("section", {className: "react-3d-carousel"}, 
+                    React.createElement("div", {className: "carousel", 
+                         style: {transform: "translateZ("+translateZ+"px)"}}, 
+                        figures
+                    ), 
+                    React.createElement("div", {className: "prev", onClick: Util.partial(this.onRotate,+angle)}), 
+                    React.createElement("div", {className: "next", onClick: Util.partial(this.onRotate,-angle)})
+                )
+            );
+        } else {
+            return (
+                React.createElement("section", {className: "react-3d-carousel"}, 
+                    React.createElement("div", {className: "carousel", 
+                         style: {transform: "translateZ("+translateZ+"px)"}}, 
+                        figures
+                    )
+                )
+            );
+        }
     }
 });
 module.exports = Carousel;
@@ -20863,7 +20893,7 @@ var Ease = require('ease-functions');
 var Layout = require('./layout');
 var Util = require('./util');
 
-module.exports = function depot(initialState, initialProps,callback) {
+module.exports = function depot(initialState, initialProps, callback) {
     var res = {};
     var state = initialState;
     var props = initialProps;
@@ -20872,6 +20902,8 @@ module.exports = function depot(initialState, initialProps,callback) {
     res.onNextProps = function onNextProps(nextProps) {
         if(props.layout != nextProps.layout || props.all_info != nextProps.all_info) {
             props = nextProps;
+
+            console.log("props",props.all_info);
             var to = Layout[props.layout].figures(props.width, props.all_info, state.rotationY);
             var bounds = transitionFigures(state.figures, to,Ease[props.ease], props.duration);
             var stepper = transit(bounds, to, props.duration);
@@ -21006,8 +21038,8 @@ exports.prism = {
     distance: function apothem(width, sides) {
         return Math.ceil(width / (2 * Math.tan(Math.PI / sides)));
     },
-    figures: function (width, images, urls, initial) {
-        var sides = images.length;
+    figures: function (width, all_info, initial) {
+        var sides = all_info.length;
         var angle = 2 * Math.PI / sides;
         var acceptable = Math.round(initial / angle) * angle;
         return Util.range(0, sides).map(function (d) {
@@ -21018,8 +21050,8 @@ exports.prism = {
                 opacity: 1,
                 present: true,
                 key: d,
-                image: all_info[d].image_url,
-                url: all_info[d].web_url,
+                image: all_info[d].img.url,
+                url: all_info[d].url,
                 headline: all_info[d].headline
             };
         });
@@ -21043,8 +21075,8 @@ exports.classic = {
                 opacity: 1,
                 present: true,
                 key: d,
-                image: all_info[d].image_url,
-                url: all_info[d].web_url,
+                image: all_info[d].img.url,
+                url: all_info[d].url,
                 headline: all_info[d].headline
             };
         });
@@ -21133,48 +21165,12 @@ exports.mapObj = function mapObj(fn,obj){
 },{}],179:[function(require,module,exports){
 var Carousel = require('./carouselstuff/carousel.jsx');
 var Ease = require('ease-functions');
-var testdata = require('./testdata').data;
 var images = require('./images');
-
-var get_image_url = testdata.map(function(obj){
-	try {
-		return "http://nytimes.com/"+ obj.multimedia[(obj.multimedia).length-1].url
-	} catch(err) {
-		return "https://www.petfinder.com/wp-content/uploads/2012/11/dog-how-to-select-your-new-best-friend-thinkstock99062463.jpg"
-	}
-});
-
-var get_urls = testdata.map(function(obj){
-	try {
-		return obj.web_url
-	} catch(err) {
-		return "https://www.nytimes.com/"
-	}
-});
-
-var get_all_necessary_info = testdata.map(function(obj){
-	var new_obj = {}
-
-	try {
-		new_obj["image_url"] = "http://nytimes.com/"+ obj.multimedia[(obj.multimedia).length-2].url;
-	} catch(err) {
-		new_obj["image_url"] = "https://www.petfinder.com/wp-content/uploads/2012/11/dog-how-to-select-your-new-best-friend-thinkstock99062463.jpg";		
-	}
-
-	var web_url = obj.web_url || "https://www.nytimes.com/";
-	var headline = obj.headline.main || "No headline";
-	new_obj["web_url"] = web_url;
-	new_obj["headline"] = headline;
-	return new_obj;
-});
-
-console.log(get_all_necessary_info);
-
 
 var DashboardHistory = React.createClass({displayName: "DashboardHistory",
     getInitialState: function () {
+        console.log('dashboard history', this.props.articles);
         return {
-        	all_info: get_all_necessary_info,
             width: 400,
             layout: 'classic',
             ease: 'linear',
@@ -21183,7 +21179,7 @@ var DashboardHistory = React.createClass({displayName: "DashboardHistory",
     },
     componentWillMount: function () {
         this.onSides = function (event) {
-            this.setState( {images: get_image_url.slice(0, event.target.value) });
+            this.setState( {images: this.state.all_info.slice(0, event.target.value) });
         }.bind(this);
         this.onLayout = function (event) {
             this.setState({layout: event.target.value});
@@ -21199,7 +21195,7 @@ var DashboardHistory = React.createClass({displayName: "DashboardHistory",
         return (
             React.createElement("div", {className: "carouselhistory"}, 
             	React.createElement("h1", null, "Saved Articles"), 
-                React.createElement(Carousel, {all_info: this.state.all_info, 
+                React.createElement(Carousel, {all_info: this.props.articles, 
                 		  width: this.state.width, 
                           ease: this.state.ease, 
                           duration: this.state.duration, 
@@ -21210,7 +21206,7 @@ var DashboardHistory = React.createClass({displayName: "DashboardHistory",
 });
 
 module.exports = DashboardHistory; 
-},{"./carouselstuff/carousel.jsx":175,"./images":180,"./testdata":182,"ease-functions":1}],180:[function(require,module,exports){
+},{"./carouselstuff/carousel.jsx":175,"./images":180,"ease-functions":1}],180:[function(require,module,exports){
 module.exports = [
     'http://s7.postimg.org/dbamgegu3/zen8.jpg',
     'http://s21.postimg.org/er8b066p3/zen2.jpg',
@@ -21296,987 +21292,244 @@ var loginPage = React.createClass({displayName: "loginPage",
 
 module.exports = loginPage;
 },{}],182:[function(require,module,exports){
-module.exports = {
-	"data": [
-      {
-        "web_url": "http://www.nytimes.com/2016/02/27/us/politics/scalia-led-court-in-taking-trips-funded-by-private-sponsors.html",
-        "snippet": "Some argue that the trips could create the appearance of a conflict of interest, particularly when the sponsors are known for their political views.",
-        "lead_paragraph": "Some argue that the trips could create the appearance of a conflict of interest, particularly when the sponsors are known for their political views.",
-        "abstract": "Supreme Court Justice Antonin Scalia's death while staying at West Texas hunting lodge has drawn attention to fact that court members accept trips paid for by private sponsors, although Scalia accepted such trips more frequently than other justices; court scholars say practice is harmless, but some have argued trips can create appearance of conflict of interest.",
-        "print_page": "14",
-        "blog": [],
-        "source": "The New York Times",
-        "multimedia": [
-          {
-            "width": 190,
-            "url": "images/2016/02/26/us/27trips/27trips-thumbWide-v2.jpg",
-            "height": 126,
-            "subtype": "wide",
-            "legacy": {
-              "wide": "images/2016/02/26/us/27trips/27trips-thumbWide-v2.jpg",
-              "wideheight": "126",
-              "widewidth": "190"
-            },
-            "type": "image"
-          },
-          {
-            "width": 600,
-            "url": "images/2016/02/26/us/27trips/27trips-articleLarge.jpg",
-            "height": 400,
-            "subtype": "xlarge",
-            "legacy": {
-              "xlargewidth": "600",
-              "xlarge": "images/2016/02/26/us/27trips/27trips-articleLarge.jpg",
-              "xlargeheight": "400"
-            },
-            "type": "image"
-          },
-          {
-            "width": 75,
-            "url": "images/2016/02/26/us/27trips/27trips-thumbStandard-v2.jpg",
-            "height": 75,
-            "subtype": "thumbnail",
-            "legacy": {
-              "thumbnailheight": "75",
-              "thumbnail": "images/2016/02/26/us/27trips/27trips-thumbStandard-v2.jpg",
-              "thumbnailwidth": "75"
-            },
-            "type": "image"
-          }
-        ],
-        "headline": {
-          "main": "Scalia Took Dozens of Trips Funded by Private Sponsors",
-          "print_headline": "Scalia Was No. 1 on Court in Paid Trips"
-        },
-        "keywords": [
-          {
-            "rank": "1",
-            "is_major": "Y",
-            "name": "organizations",
-            "value": "Supreme Court (US)"
-          },
-          {
-            "rank": "11",
-            "is_major": "N",
-            "name": "subject",
-            "value": "Ethics and Official Misconduct"
-          },
-          {
-            "rank": "12",
-            "is_major": "N",
-            "name": "organizations",
-            "value": "Center for Responsive Politics"
-          },
-          {
-            "rank": "13",
-            "is_major": "N",
-            "name": "organizations",
-            "value": "Judicial Watch"
-          },
-          {
-            "rank": "2",
-            "is_major": "Y",
-            "name": "persons",
-            "value": "Scalia, Antonin"
-          },
-          {
-            "rank": "3",
-            "is_major": "Y",
-            "name": "subject",
-            "value": "Conflicts of Interest"
-          },
-          {
-            "rank": "4",
-            "is_major": "N",
-            "name": "subject",
-            "value": "Courts and the Judiciary"
-          },
-          {
-            "rank": "5",
-            "is_major": "N",
-            "name": "glocations",
-            "value": "Texas"
-          },
-          {
-            "rank": "6",
-            "is_major": "N",
-            "name": "subject",
-            "value": "Suits and Litigation (Civil)"
-          },
-          {
-            "rank": "7",
-            "is_major": "N",
-            "name": "subject",
-            "value": "Appointments and Executive Changes"
-          },
-          {
-            "rank": "8",
-            "is_major": "N",
-            "name": "subject",
-            "value": "Travel and Vacations"
-          },
-          {
-            "rank": "9",
-            "is_major": "N",
-            "name": "persons",
-            "value": "Poindexter, John M"
-          },
-          {
-            "rank": "10",
-            "is_major": "N",
-            "name": "subject",
-            "value": "Gifts to Public Officials"
-          }
-        ],
-        "pub_date": "2016-02-27T00:00:00Z",
-        "document_type": "article",
-        "news_desk": "National",
-        "section_name": "U.S.",
-        "subsection_name": "Politics",
-        "byline": {
-          "contributor": "Manny Fernandez contributed reporting from Houston, and Alain Delaquérière contributed research.",
-          "person": [
-            {
-              "organization": "",
-              "role": "reported",
-              "firstname": "Eric",
-              "rank": 1,
-              "lastname": "LIPTON"
-            }
-          ],
-          "original": "By ERIC LIPTON"
-        },
-        "type_of_material": "News",
-        "_id": "56d02238798810653329f675",
-        "word_count": "1228",
-        "slideshow_credits": null
-      },
-      {
-        "web_url": "http://www.nytimes.com/2016/03/06/books/review/the-fever-of-1721-by-stephen-coss.html",
-        "snippet": "A pivotal year in colonial Boston, when an outbreak put faith, science and leadership to the test.",
-        "lead_paragraph": "A pivotal year in colonial Boston, when an outbreak put faith, science and leadership to the test.",
-        "abstract": null,
-        "print_page": "13",
-        "blog": [],
-        "source": "The New York Times",
-        "multimedia": [
-          {
-            "width": 190,
-            "url": "images/2016/03/06/books/review/06CHAPLIN/06CHAPLIN-thumbWide.jpg",
-            "height": 126,
-            "subtype": "wide",
-            "legacy": {
-              "wide": "images/2016/03/06/books/review/06CHAPLIN/06CHAPLIN-thumbWide.jpg",
-              "wideheight": "126",
-              "widewidth": "190"
-            },
-            "type": "image"
-          },
-          {
-            "width": 600,
-            "url": "images/2016/03/06/books/review/06CHAPLIN/06CHAPLIN-articleLarge.jpg",
-            "height": 329,
-            "subtype": "xlarge",
-            "legacy": {
-              "xlargewidth": "600",
-              "xlarge": "images/2016/03/06/books/review/06CHAPLIN/06CHAPLIN-articleLarge.jpg",
-              "xlargeheight": "329"
-            },
-            "type": "image"
-          },
-          {
-            "width": 75,
-            "url": "images/2016/03/06/books/review/06CHAPLIN/06CHAPLIN-thumbStandard.jpg",
-            "height": 75,
-            "subtype": "thumbnail",
-            "legacy": {
-              "thumbnailheight": "75",
-              "thumbnail": "images/2016/03/06/books/review/06CHAPLIN/06CHAPLIN-thumbStandard.jpg",
-              "thumbnailwidth": "75"
-            },
-            "type": "image"
-          }
-        ],
-        "headline": {
-          "main": "‘The Fever of 1721,’ by Stephen Coss",
-          "print_headline": "Pox on Their Houses "
-        },
-        "keywords": [
-          {
-            "rank": "1",
-            "is_major": "N",
-            "name": "subject",
-            "value": "Books and Literature"
-          },
-          {
-            "rank": "2",
-            "is_major": "N",
-            "name": "subject",
-            "value": "Smallpox"
-          },
-          {
-            "rank": "3",
-            "is_major": "N",
-            "name": "persons",
-            "value": "Coss, Stephen F (1957- )"
-          },
-          {
-            "rank": "4",
-            "is_major": "N",
-            "name": "creative_works",
-            "value": "The Fever of 1721: The Epidemic That Revolutionized Medicine and American Politics (Book)"
-          }
-        ],
-        "pub_date": "2016-03-06T00:00:00Z",
-        "document_type": "article",
-        "news_desk": "BookReview",
-        "section_name": "Books",
-        "subsection_name": "Book Review",
-        "byline": {
-          "person": [
-            {
-              "firstname": "Joyce",
-              "middlename": "E.",
-              "lastname": "CHAPLIN",
-              "rank": 1,
-              "role": "reported",
-              "organization": ""
-            }
-          ],
-          "original": "By JOYCE E. CHAPLIN"
-        },
-        "type_of_material": "Review",
-        "_id": "56d92ad27988105f9e733520",
-        "word_count": "601",
-        "slideshow_credits": null
-      },
-      {
-        "web_url": "http://www.nytimes.com/2016/03/02/opinion/beware-exploding-politics.html",
-        "snippet": "We have a system that incentivizes polarization and prevents hybrid solutions.",
-        "lead_paragraph": "We have a system that incentivizes polarization and prevents hybrid solutions.",
-        "abstract": "Thomas L Friedman Op-Ed column argues rapid acceleration of technology, globalization and climate change obviates traditional left-right political divide and demands hybrid approach to meeting challenges; cites efforts by several American communities and Pres Obama as examples new strategy.",
-        "print_page": "29",
-        "blog": [],
-        "source": "The New York Times",
-        "multimedia": [
-          {
-            "width": 190,
-            "url": "images/2014/11/01/opinion/friedman-circular/friedman-circular-thumbWide-v2.png",
-            "height": 126,
-            "subtype": "wide",
-            "legacy": {
-              "wide": "images/2014/11/01/opinion/friedman-circular/friedman-circular-thumbWide-v2.png",
-              "wideheight": "126",
-              "widewidth": "190"
-            },
-            "type": "image"
-          },
-          {
-            "width": 75,
-            "url": "images/2014/11/01/opinion/friedman-circular/friedman-circular-thumbStandard-v2.png",
-            "height": 75,
-            "subtype": "thumbnail",
-            "legacy": {
-              "thumbnailheight": "75",
-              "thumbnail": "images/2014/11/01/opinion/friedman-circular/friedman-circular-thumbStandard-v2.png",
-              "thumbnailwidth": "75"
-            },
-            "type": "image"
-          }
-        ],
-        "headline": {
-          "main": "Beware: Exploding Politics",
-          "content_kicker": "Op-Ed Columnist",
-          "kicker": "Op-Ed Columnist",
-          "print_headline": "Beware: Exploding Politics"
-        },
-        "keywords": [
-          {
-            "rank": "1",
-            "is_major": "Y",
-            "name": "subject",
-            "value": "United States Politics and Government"
-          },
-          {
-            "rank": "2",
-            "is_major": "N",
-            "name": "organizations",
-            "value": "Republican Party"
-          },
-          {
-            "rank": "3",
-            "is_major": "N",
-            "name": "subject",
-            "value": "Presidential Election of 2016"
-          },
-          {
-            "rank": "4",
-            "is_major": "N",
-            "name": "persons",
-            "value": "Trump, Donald J"
-          },
-          {
-            "rank": "5",
-            "is_major": "N",
-            "name": "persons",
-            "value": "Obama, Barack"
-          }
-        ],
-        "pub_date": "2016-03-02T00:00:00Z",
-        "document_type": "article",
-        "news_desk": "OpEd",
-        "section_name": "Opinion",
-        "subsection_name": null,
-        "byline": {
-          "person": [
-            {
-              "firstname": "Thomas",
-              "middlename": "L.",
-              "lastname": "FRIEDMAN",
-              "rank": 1,
-              "role": "reported",
-              "organization": ""
-            }
-          ],
-          "original": "By THOMAS L. FRIEDMAN"
-        },
-        "type_of_material": "Op-Ed",
-        "_id": "56d6a277798810671ed77ba7",
-        "word_count": "891",
-        "slideshow_credits": null
-      },
-      {
-        "web_url": "http://www.nytimes.com/2016/02/07/books/review/the-black-presidency-barack-obama-and-the-politics-of-race-in-america-by-michael-eric-dyson.html",
-        "snippet": "The president has not been able to pursue an agenda of racial justice.",
-        "lead_paragraph": "The president has not been able to pursue an agenda of racial justice.",
-        "abstract": "N B D Connolly reviews book The Black Presidency: Barack Obama and the Politics of Race in America by Michael Eric Dyson. ",
-        "print_page": "20",
-        "blog": [],
-        "source": "The New York Times",
-        "multimedia": [
-          {
-            "width": 190,
-            "url": "images/2016/02/07/books/review/7CONNOLLY/7CONNOLLY-thumbWide-v2.jpg",
-            "height": 126,
-            "subtype": "wide",
-            "legacy": {
-              "wide": "images/2016/02/07/books/review/7CONNOLLY/7CONNOLLY-thumbWide-v2.jpg",
-              "wideheight": "126",
-              "widewidth": "190"
-            },
-            "type": "image"
-          },
-          {
-            "width": 600,
-            "url": "images/2016/02/07/books/review/7CONNOLLY/7CONNOLLY-articleLarge-v2.jpg",
-            "height": 399,
-            "subtype": "xlarge",
-            "legacy": {
-              "xlargewidth": "600",
-              "xlarge": "images/2016/02/07/books/review/7CONNOLLY/7CONNOLLY-articleLarge-v2.jpg",
-              "xlargeheight": "399"
-            },
-            "type": "image"
-          },
-          {
-            "width": 75,
-            "url": "images/2016/02/07/books/review/7CONNOLLY/7CONNOLLY-thumbStandard-v2.jpg",
-            "height": 75,
-            "subtype": "thumbnail",
-            "legacy": {
-              "thumbnailheight": "75",
-              "thumbnail": "images/2016/02/07/books/review/7CONNOLLY/7CONNOLLY-thumbStandard-v2.jpg",
-              "thumbnailwidth": "75"
-            },
-            "type": "image"
-          }
-        ],
-        "headline": {
-          "main": "‘The Black Presidency: Barack Obama and the Politics of Race in America,’ by Michael Eric Dyson",
-          "print_headline": "What Obama Can’t Say"
-        },
-        "keywords": [
-          {
-            "rank": "1",
-            "is_major": "Y",
-            "name": "subject",
-            "value": "Books and Literature"
-          },
-          {
-            "rank": "2",
-            "is_major": "Y",
-            "name": "persons",
-            "value": "Dyson, Michael Eric"
-          },
-          {
-            "rank": "3",
-            "is_major": "Y",
-            "name": "persons",
-            "value": "Obama, Barack"
-          },
-          {
-            "rank": "4",
-            "is_major": "N",
-            "name": "subject",
-            "value": "Blacks"
-          },
-          {
-            "rank": "5",
-            "is_major": "N",
-            "name": "creative_works",
-            "value": "The Black Presidency: Barack Obama and the Politics of Race in America (Book)"
-          }
-        ],
-        "pub_date": "2016-02-07T00:00:00Z",
-        "document_type": "article",
-        "news_desk": "BookReview",
-        "section_name": "Books",
-        "subsection_name": "Sunday Book Review",
-        "byline": {
-          "person": [
-            {
-              "organization": "",
-              "role": "reported",
-              "firstname": "N.",
-              "rank": 1
-            }
-          ],
-          "original": "By N. D. B. CONNOLLY"
-        },
-        "type_of_material": "Review",
-        "_id": "56b085317988105fa9a9c4bf",
-        "word_count": "1286",
-        "slideshow_credits": null
-      },
-      {
-        "web_url": "http://www.nytimes.com/2016/03/03/opinion/donald-trump-and-reconstruction-era-politics.html",
-        "snippet": "The leading Republican candidate is taking advantage of a backlash to racial progress, echoing events of the late 19th century.",
-        "lead_paragraph": "The leading Republican candidate is taking advantage of a backlash to racial progress, echoing events of the late 19th century.",
-        "abstract": "Brent Staples Editorial Observer argues Donald J Trump's ambiguous stance towards Ku Klux Klan is predictable for candidate who has nourished Republicans' rightward drift and helped usher racist discourse back into mainstream; compares current backlash against racial progress reflected in election of Pres Obama to Reconstruction era assault on black achievements.",
-        "print_page": "22",
-        "blog": [],
-        "source": "The New York Times",
-        "multimedia": [
-          {
-            "width": 190,
-            "url": "images/2016/03/03/opinion/03thu3web/03thu3web-thumbWide.jpg",
-            "height": 126,
-            "subtype": "wide",
-            "legacy": {
-              "wide": "images/2016/03/03/opinion/03thu3web/03thu3web-thumbWide.jpg",
-              "wideheight": "126",
-              "widewidth": "190"
-            },
-            "type": "image"
-          },
-          {
-            "width": 600,
-            "url": "images/2016/03/03/opinion/03thu3web/03thu3web-articleLarge.jpg",
-            "height": 400,
-            "subtype": "xlarge",
-            "legacy": {
-              "xlargewidth": "600",
-              "xlarge": "images/2016/03/03/opinion/03thu3web/03thu3web-articleLarge.jpg",
-              "xlargeheight": "400"
-            },
-            "type": "image"
-          },
-          {
-            "width": 75,
-            "url": "images/2016/03/03/opinion/03thu3web/03thu3web-thumbStandard.jpg",
-            "height": 75,
-            "subtype": "thumbnail",
-            "legacy": {
-              "thumbnailheight": "75",
-              "thumbnail": "images/2016/03/03/opinion/03thu3web/03thu3web-thumbStandard.jpg",
-              "thumbnailwidth": "75"
-            },
-            "type": "image"
-          }
-        ],
-        "headline": {
-          "main": "Donald Trump and Reconstruction-Era Politics",
-          "content_kicker": "Editorial Observer",
-          "kicker": "Editorial Observer",
-          "print_headline": "Donald Trump and Reconstruction-Era Politics"
-        },
-        "keywords": [
-          {
-            "rank": "1",
-            "is_major": "Y",
-            "name": "subject",
-            "value": "Editorials"
-          },
-          {
-            "rank": "11",
-            "is_major": "N",
-            "name": "subject",
-            "value": "Civil Rights Movement (1954-68)"
-          },
-          {
-            "rank": "12",
-            "is_major": "N",
-            "name": "persons",
-            "value": "Duke, David E"
-          },
-          {
-            "rank": "13",
-            "is_major": "Y",
-            "name": "subject",
-            "value": "Editorial Observer"
-          },
-          {
-            "rank": "2",
-            "is_major": "Y",
-            "name": "persons",
-            "value": "Trump, Donald J"
-          },
-          {
-            "rank": "3",
-            "is_major": "Y",
-            "name": "subject",
-            "value": "Blacks"
-          },
-          {
-            "rank": "4",
-            "is_major": "Y",
-            "name": "organizations",
-            "value": "Ku Klux Klan"
-          },
-          {
-            "rank": "5",
-            "is_major": "Y",
-            "name": "persons",
-            "value": "Obama, Barack"
-          },
-          {
-            "rank": "6",
-            "is_major": "Y",
-            "name": "subject",
-            "value": "Presidential Election of 2016"
-          },
-          {
-            "rank": "7",
-            "is_major": "N",
-            "name": "subject",
-            "value": "Reconstruction Era"
-          },
-          {
-            "rank": "8",
-            "is_major": "N",
-            "name": "organizations",
-            "value": "Republican Party"
-          },
-          {
-            "rank": "9",
-            "is_major": "N",
-            "name": "subject",
-            "value": "Slavery (Historical)"
-          },
-          {
-            "rank": "10",
-            "is_major": "N",
-            "name": "subject",
-            "value": "Discrimination"
-          }
-        ],
-        "pub_date": "2016-03-03T00:00:00Z",
-        "document_type": "article",
-        "news_desk": "Editorial",
-        "section_name": "Opinion",
-        "subsection_name": null,
-        "byline": {
-          "person": [
-            {
-              "organization": "",
-              "role": "reported",
-              "firstname": "Brent",
-              "rank": 1,
-              "lastname": "STAPLES"
-            }
-          ],
-          "original": "By BRENT STAPLES"
-        },
-        "type_of_material": "Editorial",
-        "_id": "56d7f3f779881024d52bcf8f",
-        "word_count": "550",
-        "slideshow_credits": null
-      },
-      {
-        "web_url": "http://www.nytimes.com/2016/02/25/opinion/religion-and-politics.html",
-        "snippet": "Readers who are atheists explain their views.",
-        "lead_paragraph": "Readers who are atheists explain their views.",
-        "abstract": null,
-        "print_page": null,
-        "blog": [],
-        "source": "The New York Times",
-        "multimedia": [],
-        "headline": {
-          "main": "Religion and Politics",
-          "content_kicker": "Letters",
-          "kicker": "Letters",
-          "print_headline": "Religion and Politics"
-        },
-        "keywords": [
-          {
-            "rank": "1",
-            "is_major": "N",
-            "name": "subject",
-            "value": "Atheism"
-          },
-          {
-            "rank": "2",
-            "is_major": "N",
-            "name": "subject",
-            "value": "Religion and Belief"
-          }
-        ],
-        "pub_date": "2016-02-25T00:00:00Z",
-        "document_type": "article",
-        "news_desk": "Letters",
-        "section_name": "Opinion",
-        "subsection_name": null,
-        "byline": [],
-        "type_of_material": "Letter",
-        "_id": "56ce109e7988102d966fbee0",
-        "word_count": "249",
-        "slideshow_credits": null
-      },
-      {
-        "web_url": "http://www.nytimes.com/2016/03/06/magazine/the-politics-of-the-hoodie.html",
-        "snippet": "It has become a ubiquitous piece of American sportswear — but the question of who can wear one without challenge persists.",
-        "lead_paragraph": "It has become a ubiquitous piece of American sportswear — but the question of who can wear one without challenge persists.",
-        "abstract": null,
-        "print_page": "16",
-        "blog": [],
-        "source": "The New York Times",
-        "multimedia": [
-          {
-            "width": 190,
-            "url": "images/2016/03/06/magazine/06onclothing1/06mag-06onclothing-t_CA4-thumbWide.jpg",
-            "height": 126,
-            "subtype": "wide",
-            "legacy": {
-              "wide": "images/2016/03/06/magazine/06onclothing1/06mag-06onclothing-t_CA4-thumbWide.jpg",
-              "wideheight": "126",
-              "widewidth": "190"
-            },
-            "type": "image"
-          },
-          {
-            "width": 600,
-            "url": "images/2016/03/06/magazine/06onclothing1/06onclothing1-articleLarge-v2.jpg",
-            "height": 528,
-            "subtype": "xlarge",
-            "legacy": {
-              "xlargewidth": "600",
-              "xlarge": "images/2016/03/06/magazine/06onclothing1/06onclothing1-articleLarge-v2.jpg",
-              "xlargeheight": "528"
-            },
-            "type": "image"
-          },
-          {
-            "width": 75,
-            "url": "images/2016/03/06/magazine/06onclothing1/06mag-06onclothing-t_CA4-thumbStandard.jpg",
-            "height": 75,
-            "subtype": "thumbnail",
-            "legacy": {
-              "thumbnailheight": "75",
-              "thumbnail": "images/2016/03/06/magazine/06onclothing1/06mag-06onclothing-t_CA4-thumbStandard.jpg",
-              "thumbnailwidth": "75"
-            },
-            "type": "image"
-          }
-        ],
-        "headline": {
-          "main": "The Politics of the Hoodie",
-          "content_kicker": "On Clothing",
-          "kicker": "On Clothing",
-          "print_headline": "The Politics of the Hoodie"
-        },
-        "keywords": [
-          {
-            "rank": "2",
-            "is_major": "N",
-            "name": "subject",
-            "value": "Sporting Goods and Equipment"
-          },
-          {
-            "rank": "3",
-            "is_major": "N",
-            "name": "persons",
-            "value": "Martin, Trayvon"
-          },
-          {
-            "rank": "4",
-            "is_major": "N",
-            "name": "glocations",
-            "value": "Silicon Valley (Calif)"
-          },
-          {
-            "rank": "5",
-            "is_major": "N",
-            "name": "subject",
-            "value": "Race and Ethnicity"
-          },
-          {
-            "rank": "6",
-            "is_major": "N",
-            "name": "subject",
-            "value": "Fashion and Apparel"
-          }
-        ],
-        "pub_date": "2016-03-06T00:00:00Z",
-        "document_type": "article",
-        "news_desk": "Magazine",
-        "section_name": "Magazine",
-        "subsection_name": null,
-        "byline": {
-          "person": [
-            {
-              "organization": "",
-              "role": "reported",
-              "firstname": "Troy",
-              "rank": 1,
-              "lastname": "PATTERSON"
-            }
-          ],
-          "original": "By TROY PATTERSON"
-        },
-        "type_of_material": "News",
-        "_id": "56d6d5df798810671ed77c43",
-        "word_count": "1419",
-        "slideshow_credits": null
-      },
-      {
-        "web_url": "http://www.nytimes.com/2016/02/15/opinion/civility-in-politics.html",
-        "snippet": "A former press secretary to Vice President Hubert H. Humphrey recalls a civil bipartisan exchange.",
-        "lead_paragraph": "A former press secretary to Vice President Hubert H. Humphrey recalls a civil bipartisan exchange.",
-        "abstract": null,
-        "print_page": "18",
-        "blog": [],
-        "source": "The New York Times",
-        "multimedia": [],
-        "headline": {
-          "main": "Civility in Politics",
-          "content_kicker": "Letter",
-          "kicker": "Letter",
-          "print_headline": "Civility in Politics"
-        },
-        "keywords": [
-          {
-            "rank": "1",
-            "is_major": "N",
-            "name": "persons",
-            "value": "Humphrey, Hubert H Jr"
-          },
-          {
-            "rank": "2",
-            "is_major": "N",
-            "name": "persons",
-            "value": "Nixon, Richard Milhous"
-          },
-          {
-            "rank": "4",
-            "is_major": "N",
-            "name": "subject",
-            "value": "United States Politics and Government"
-          }
-        ],
-        "pub_date": "2016-02-15T00:00:00Z",
-        "document_type": "article",
-        "news_desk": "Letters",
-        "section_name": "Opinion",
-        "subsection_name": null,
-        "byline": [],
-        "type_of_material": "Letter",
-        "_id": "56c18a377988101c89b0ff7d",
-        "word_count": "227",
-        "slideshow_credits": null
-      },
-      {
-        "web_url": "http://www.nytimes.com/2016/02/07/opinion/sunday/irrationality-in-politics.html",
-        "snippet": "Readers discuss a letter writer’s call to “reclaim the place of reason in our political life.”",
-        "lead_paragraph": "Readers discuss a letter writer’s call to “reclaim the place of reason in our political life.”",
-        "abstract": null,
-        "print_page": "10",
-        "blog": [],
-        "source": "The New York Times",
-        "multimedia": [
-          {
-            "width": 190,
-            "url": "images/2016/02/07/opinion/07LdialogueWeb/07LdialogueWeb-thumbWide.jpg",
-            "height": 126,
-            "subtype": "wide",
-            "legacy": {
-              "wide": "images/2016/02/07/opinion/07LdialogueWeb/07LdialogueWeb-thumbWide.jpg",
-              "wideheight": "126",
-              "widewidth": "190"
-            },
-            "type": "image"
-          },
-          {
-            "width": 600,
-            "url": "images/2016/02/07/opinion/07LdialogueWeb/07LdialogueWeb-articleLarge.jpg",
-            "height": 400,
-            "subtype": "xlarge",
-            "legacy": {
-              "xlargewidth": "600",
-              "xlarge": "images/2016/02/07/opinion/07LdialogueWeb/07LdialogueWeb-articleLarge.jpg",
-              "xlargeheight": "400"
-            },
-            "type": "image"
-          },
-          {
-            "width": 75,
-            "url": "images/2016/02/07/opinion/07LdialogueWeb/07LdialogueWeb-thumbStandard.jpg",
-            "height": 75,
-            "subtype": "thumbnail",
-            "legacy": {
-              "thumbnailheight": "75",
-              "thumbnail": "images/2016/02/07/opinion/07LdialogueWeb/07LdialogueWeb-thumbStandard.jpg",
-              "thumbnailwidth": "75"
-            },
-            "type": "image"
-          }
-        ],
-        "headline": {
-          "main": "Irrationality in Politics",
-          "content_kicker": "Sunday Dialogue",
-          "kicker": "Sunday Dialogue",
-          "print_headline": "Irrationality in Politics"
-        },
-        "keywords": [
-          {
-            "rank": "1",
-            "is_major": "N",
-            "name": "subject",
-            "value": "United States Politics and Government"
-          }
-        ],
-        "pub_date": "2016-02-07T00:00:00Z",
-        "document_type": "article",
-        "news_desk": "Letters",
-        "section_name": "Opinion",
-        "subsection_name": "Sunday Review",
-        "byline": [],
-        "type_of_material": "Letter",
-        "_id": "56b64e5079881030baa251ca",
-        "word_count": "1710",
-        "slideshow_credits": null
-      },
-      {
-        "web_url": "http://www.nytimes.com/2016/02/23/opinion/smartphone-era-politics.html",
-        "snippet": "People are outpaced by forces they can't grasp. In political discourse, reasonableness dies, provocation works.",
-        "lead_paragraph": "People are outpaced by forces they can't grasp. In political discourse, reasonableness dies, provocation works.",
-        "abstract": "Roger Cohen Op-Ed column confesses to feeling left behind by rapid advance of smartphone technology and way it has transformed both news media and human interaction.",
-        "print_page": "27",
-        "blog": [],
-        "source": "The New York Times",
-        "multimedia": [
-          {
-            "width": 190,
-            "url": "images/2014/11/01/opinion/cohen-circular/cohen-circular-thumbWide-v2.png",
-            "height": 126,
-            "subtype": "wide",
-            "legacy": {
-              "wide": "images/2014/11/01/opinion/cohen-circular/cohen-circular-thumbWide-v2.png",
-              "wideheight": "126",
-              "widewidth": "190"
-            },
-            "type": "image"
-          },
-          {
-            "width": 75,
-            "url": "images/2014/11/01/opinion/cohen-circular/cohen-circular-thumbStandard-v2.png",
-            "height": 75,
-            "subtype": "thumbnail",
-            "legacy": {
-              "thumbnailheight": "75",
-              "thumbnail": "images/2014/11/01/opinion/cohen-circular/cohen-circular-thumbStandard-v2.png",
-              "thumbnailwidth": "75"
-            },
-            "type": "image"
-          }
-        ],
-        "headline": {
-          "main": "Smartphone Era Politics",
-          "content_kicker": "Op-Ed Columnist",
-          "kicker": "Op-Ed Columnist",
-          "print_headline": "Smartphone  Era  Politics"
-        },
-        "keywords": [
-          {
-            "rank": "1",
-            "is_major": "Y",
-            "name": "subject",
-            "value": "Smartphones"
-          },
-          {
-            "rank": "2",
-            "is_major": "Y",
-            "name": "subject",
-            "value": "News and News Media"
-          },
-          {
-            "rank": "3",
-            "is_major": "Y",
-            "name": "glocations",
-            "value": "United States"
-          },
-          {
-            "rank": "4",
-            "is_major": "N",
-            "name": "subject",
-            "value": "Computers and the Internet"
-          },
-          {
-            "rank": "5",
-            "is_major": "N",
-            "name": "subject",
-            "value": "Social Media"
-          },
-          {
-            "rank": "6",
-            "is_major": "Y",
-            "name": "subject",
-            "value": "Social Conditions and Trends"
-          }
-        ],
-        "pub_date": "2016-02-23T11:30:00Z",
-        "document_type": "article",
-        "news_desk": "OpEd",
-        "section_name": "Opinion",
-        "subsection_name": null,
-        "byline": {
-          "person": [
-            {
-              "organization": "",
-              "role": "reported",
-              "firstname": "Roger",
-              "rank": 1,
-              "lastname": "COHEN"
-            }
-          ],
-          "original": "By ROGER COHEN"
-        },
-        "type_of_material": "Op-Ed",
-        "_id": "56cae7167988100e95e44140",
-        "word_count": "821",
-        "slideshow_credits": null
-      }
-    ]
-};
-
+module.exports = {'data': [ 
+  { url: 'http://www.nytimes.com/interactive/2016/us/elections/primary-calendar-and-results.html',
+    byline: 'By WILSON ANDREWS, KITTY BENNETT and ALICIA PARLAPIANO',
+    abstract: 'The 2016 primaries and caucuses have begun. See results and upcoming primary dates.',
+    headline: '2016 Primary Results and Calendar',
+    date: '2016-03-08',
+    articleId: 100000003627564,
+    img: 
+     { url: 'http://static01.nyt.com/images/2015/04/14/us/elections/primary-calendar-and-results-1429026715315/primary-calendar-and-results-1429026715315-superJumbo-v8.png',
+       format: 'superJumbo',
+       height: 704,
+       width: 940 } },
+  { url: 'http://www.nytimes.com/2016/03/08/us/politics/michael-bloomberg-not-running-for-president.html',
+    byline: 'By MAGGIE HABERMAN and ALEXANDER BURNS',
+    abstract: 'In bowing out, Mr. Bloomberg cited his fear that a three-way race could lead to the election of Donald J. Trump.',
+    headline: 'Michael Bloomberg Says He Won’t Run for President',
+    date: '2016-03-08',
+    articleId: 100000004257123,
+    img: 
+     { url: 'http://static01.nyt.com/images/2016/03/08/us/08BLOOMBERG/08BLOOMBERG-superJumbo.jpg',
+       format: 'superJumbo',
+       height: 1366,
+       width: 2048 } },
+  { url: 'http://www.nytimes.com/2016/03/08/opinion/its-not-too-late.html',
+    byline: 'By DAVID BROOKS',
+    abstract: 'Republicans still have time to reject Donald Trump, avoid Ted Cruz and pick a nominee who allows them to maintain their standards.',
+    headline: 'It’s Not Too Late!',
+    date: '2016-03-08',
+    articleId: 100000004257168,
+    img: 
+     { url: 'http://static01.nyt.com/images/2014/11/01/opinion/brooks-circular/brooks-circular-superJumbo-v2.png',
+       format: 'superJumbo',
+       height: 228,
+       width: 228 } },
+  { url: 'http://www.nytimes.com/2016/03/08/sports/tennis/maria-sharapova-failed-drug-test.html',
+    byline: 'By CHRISTOPHER CLAREY and MIKE TIERNEY',
+    abstract: 'Sharapova, who has battled injuries in recent years, said that at the Australian Open, she tested positive for the drug meldonium, which aids oxygen flow.',
+    headline: 'Maria Sharapova Admits Taking Meldonium, Drug Newly Banned by Tennis',
+    date: '2016-03-08',
+    articleId: 100000004256561,
+    img: 
+     { url: 'http://static01.nyt.com/images/2016/03/08/sports/08SHARAPOVAvideo/08SHARAPOVAvideo-superJumbo.jpg',
+       format: 'superJumbo',
+       height: 1449,
+       width: 2048 } },
+  { url: 'http://www.nytimes.com/2016/03/09/us/politics/primary-elections-preview.html',
+    byline: 'By NATE COHN and JONATHAN MARTIN',
+    abstract: 'Is Donald J. Trump fading? Will Senator Marco Rubio continue his recent slide? These and other questions will be answered as voters in Hawaii, Idaho, Michigan and Mississippi have their say.',
+    headline: 'What We’re Watching as 4 States Vote and Both Parties Court Michigan',
+    date: '2016-03-09',
+    articleId: 100000004257860,
+    img: 
+     { url: 'http://static01.nyt.com/images/2016/03/09/us/elections/09elect1_hp/09elect1_hp-superJumbo.jpg',
+       format: 'superJumbo',
+       height: 1365,
+       width: 2048 } },
+  { url: 'http://well.blogs.nytimes.com/2016/03/07/intermittent-fasting-diets-are-gaining-acceptance/',
+    byline: 'By ANAHAD O\'CONNOR',
+    abstract: 'The health benefits of skipping meals are growing more apparent, though critics argue that the idea is still impractical for most people.',
+    headline: 'Fasting Diets Are Gaining Acceptance',
+    date: '2016-03-07',
+    articleId: 24,
+    img: 
+     { url: 'http://static01.nyt.com/images/2016/03/08/science/08FASTINGCOVER/08FASTINGCOVER-superJumbo.jpg',
+       format: 'superJumbo',
+       height: 2048,
+       width: 1465 } },
+  { url: 'http://www.nytimes.com/2016/03/08/us/trumps-rise-spurs-latino-immigrants-to-naturalize-to-vote-against-him.html',
+    byline: 'By JULIA PRESTON',
+    abstract: 'Mr. Trump’s harsh language against Mexican immigrants has compelled legal residents to seek citizenship in time to vote against him in November.',
+    headline: 'More Latinos Seek Citizenship to Vote Against Trump',
+    date: '2016-03-08',
+    articleId: 100000004249632,
+    img: 
+     { url: 'http://static01.nyt.com/images/2016/03/04/us/00naturalize-web01/00naturalize-web01-superJumbo.jpg',
+       format: 'superJumbo',
+       height: 1363,
+       width: 2048 } },
+  { url: 'http://www.nytimes.com/2016/03/08/opinion/an-anti-semitism-of-the-left.html',
+    byline: 'By ROGER COHEN',
+    abstract: 'Overheard at Oberlin: The Holocaust was mere "white on white crime."',
+    headline: 'An Anti-Semitism of the Left',
+    date: '2016-03-08',
+    articleId: 100000004255919,
+    img: 
+     { url: 'http://static01.nyt.com/images/2014/11/01/opinion/cohen-circular/cohen-circular-superJumbo-v2.png',
+       format: 'superJumbo',
+       height: 228,
+       width: 228 } },
+  { url: 'http://www.nytimes.com/2016/03/08/opinion/campaign-stops/the-presidential-plot-thickens.html',
+    byline: 'By ARTHUR C. BROOKS and GAIL COLLINS',
+    abstract: 'Arthur C. Brooks and Gail Collins on the rise of Cruz, the fall of Rubio, the persistence of Trump and the triumph of Don Rickles.',
+    headline: 'The Presidential Plot Thickens',
+    date: '2016-03-08',
+    articleId: 100000004257973,
+    img: 
+     { url: 'http://static01.nyt.com/images/2016/03/08/opinion/08conversationWeb/08conversationWeb-superJumbo.jpg',
+       format: 'superJumbo',
+       height: 1410,
+       width: 2048 } },
+  { url: 'http://www.nytimes.com/2016/03/08/world/asia/china-woman-elevator-death.html',
+    byline: 'By CHRIS BUCKLEY',
+    abstract: 'People expressed anger that lax building management could turn trivial acts, like riding an elevator, into fatal traps, news reports and Internet accounts said.',
+    headline: 'Death of Chinese Woman Trapped in Elevator for Month Stokes Uproar',
+    date: '2016-03-08',
+    articleId: 100000004255789,
+    img: 
+     { url: 'http://www.trbimg.com/img-56b0e859/turbine/la-na-inside-iowa-caucus-precinct-20160202',
+       width: 2048,
+       height: 1162 } },
+  { url: 'http://www.nytimes.com/2016/03/09/us/politics/fox-news-democratic-candidates.html',
+    byline: 'By NICK CORASANITI',
+    abstract: 'Hillary Clinton and Bernie Sanders appeared together on the channel, which has not hosted a presidential campaign event with all the Democratic candidates since 2004.',
+    headline: 'Fox News Forum May Signal Thaw Between Democrats and Network',
+    date: '2016-03-09',
+    articleId: 100000004258124,
+    img: 
+     { url: 'http://static01.nyt.com/images/2016/03/09/us/09foxdems/09foxdems-superJumbo.jpg',
+       format: 'superJumbo',
+       height: 1365,
+       width: 2048 } },
+  { url: 'http://www.nytimes.com/2016/03/08/arts/television/downton-abbey-season-6-finale-review.html',
+    byline: 'By MIKE HALE',
+    abstract: 'This show, with its six seasons and immense popularity, has taught us about our television viewing habits.',
+    headline: '‘Downton Abbey’: Lessons Learned After Six Seasons',
+    date: '2016-03-08',
+    articleId: 100000004253932,
+    img: 
+     { url: 'http://static01.nyt.com/images/2016/03/04/arts/04DOWNTON3/04DOWNTON3-superJumbo.jpg',
+       format: 'superJumbo',
+       height: 1271,
+       width: 2048 } },
+  { url: 'http://www.nytimes.com/2016/03/08/business/media/erin-andrews-awarded-55-million-in-lawsuit-over-nude-video-at-hotel.html',
+    byline: 'By DANIEL VICTOR',
+    abstract: 'The Fox sportscaster had sued for $75 million for negligence after a stalker secretly filmed her naked through a peephole at the Nashville Marriott.',
+    headline: 'Erin Andrews Awarded $55 Million in Lawsuit Over Nude Video at Hotel',
+    date: '2016-03-08',
+    articleId: 100000004257706,
+    img: 
+     { url: 'http://static01.nyt.com/images/2016/03/08/us/08xp-andrews-1/08xp-andrews-1-superJumbo.jpg',
+       format: 'superJumbo',
+       height: 1571,
+       width: 2048 } },
+  { url: 'http://www.nytimes.com/2016/03/08/nyregion/elizabeth-garrett-first-female-president-of-cornell-dies-at-52.html',
+    byline: 'By DANIEL E. SLOTNIK',
+    abstract: 'Ms. Garrett, who started the position last summer, announced a month ago that she had learned she had colon cancer.',
+    headline: 'Elizabeth Garrett, First Female President of Cornell, Dies at 52',
+    date: '2016-03-08',
+    articleId: 100000004256769,
+    img: 
+     { url: 'http://static01.nyt.com/images/2016/03/08/nyregion/08-Garrett-Obit-WEB/08-Garrett-Obit-WEB-superJumbo-v2.jpg',
+       format: 'superJumbo',
+       height: 750,
+       width: 1125 } },
+  { url: 'http://www.nytimes.com/2016/03/08/business/international/unease-after-trump-depicts-tokyo-as-an-economic-rival.html',
+    byline: 'By JONATHAN SOBLE and KEITH BRADSHER',
+    abstract: 'In an attack reminiscent of another era, Mr. Trump has chastised Japan as a country where “we are getting absolutely crushed on trade.”',
+    headline: 'Donald Trump Laces Into Japan With a Trade Tirade From the ’80s',
+    date: '2016-03-08',
+    articleId: 100000004252603,
+    img: 
+     { url: 'http://static01.nyt.com/images/2016/03/08/business/08TRUMPJAPAN1/08TRUMPJAPAN1-superJumbo.jpg',
+       format: 'superJumbo',
+       height: 2008,
+       width: 1709 } },
+  { url: 'http://www.nytimes.com/2016/03/08/us/politics/netanyahu-calls-off-washington-visit-and-fingers-point.html',
+    byline: 'By JULIE HIRSCHFELD DAVIS',
+    abstract: 'The Israeli prime minister abruptly canceled a trip to Washington that was to include a visit with President Obama, prompting speculation that a rift between two leaders lingers.',
+    headline: 'Netanyahu Calls Off Obama Visit, and Fingers Point',
+    date: '2016-03-08',
+    articleId: 100000004257807,
+    img: 
+     { url: 'http://www.trbimg.com/img-56b0e859/turbine/la-na-inside-iowa-caucus-precinct-20160202',
+       width: 2048,
+       height: 1162 } },
+  { url: 'http://www.nytimes.com/2016/03/08/world/africa/us-airstrikes-somalia.html',
+    byline: 'By HELENE COOPER',
+    abstract: 'The strikes hit a camp where officials said fighters with the Shabab militant group were preparing an attack against American troops and their allies.',
+    headline: 'U.S. Strikes in Somalia Kill 150 Shabab Fighters',
+    date: '2016-03-08',
+    articleId: 100000004256605,
+    img: 
+     { url: 'http://static01.nyt.com/images/2016/03/07/world/africa/attack-map-1457382251994/attack-map-1457382251994-superJumbo.png',
+       format: 'superJumbo',
+       height: 2048,
+       width: 1844 } },
+  { url: 'http://www.nytimes.com/interactive/2016/03/07/us/politics/document-Bloomberg.html',
+    byline: '',
+    abstract: 'The maps that Michael R. Bloomberg\'s aides used internally to guide their thinking about how he would affect the presidential race.',
+    headline: 'Maps Show Where Bloomberg Aides Thought He Would Be Competitive',
+    date: '2016-03-07',
+    articleId: 100000004257488,
+    img: 
+     { url: 'http://static01.nyt.com/images/2016/03/08/us/politics/08bloomberg-doc/08bloomberg-doc-superJumbo.png',
+       format: 'superJumbo',
+       height: 446,
+       width: 657 } },
+  { url: 'http://www.nytimes.com/2016/03/09/technology/in-san-francisco-and-rooting-for-a-tech-slowdown.html',
+    byline: 'By DAVID STREITFELD',
+    abstract: 'The city is bulging, the rents soaring, and residents are growing more vocal about wishing Silicon Valley would cool off, or at least pay up.',
+    headline: 'In San Francisco and Rooting for a Tech Comeuppance',
+    date: '2016-03-09',
+    articleId: 100000004218458,
+    img: 
+     { url: 'http://static01.nyt.com/images/2016/03/05/business/07fallout1/06fallout1-superJumbo.jpg',
+       format: 'superJumbo',
+       height: 1365,
+       width: 2048 } },
+  { url: 'http://www.nytimes.com/2016/03/08/us/prayer-dispute-between-somalis-and-plant-reshapes-a-colorado-town-again.html',
+    byline: 'By JULIE TURKEWITZ',
+    abstract: 'The conflict offers a case study on what happens when matters of religious accommodation knock heads with the demands of the American assembly line.',
+    headline: 'Prayer Dispute Between Somalis and Plant Reshapes a Colorado Town, Again',
+    date: '2016-03-08',
+    articleId: 100000004251445,
+    img: 
+     { url: 'http://static01.nyt.com/images/2016/03/06/us/00fortmorgan-web04/00fortmorgan-web04-superJumbo.jpg',
+       format: 'superJumbo',
+       height: 1357,
+       width: 2048 } } 
+]}
 },{}],183:[function(require,module,exports){
 var DashboardHistory = require('./dashboardhistory.jsx')
 
 var TimeTinderBox = React.createClass({displayName: "TimeTinderBox",
+  propTypes: {
+    articles: React.PropTypes.array.isRequired,
+  },
+
+  getInitialState: function () {
+    return null;
+  },
+
   render: function(){
+    console.log('Tinderbox rendering', this.props.articles);
     return (
       React.createElement("div", {className: "timetinder-box"}, 
         React.createElement(Navbar, null), 
-        React.createElement(DashboardHistory, null)
+        React.createElement(DashboardHistory, {articles: this.props.articles})
       )
     );
   }

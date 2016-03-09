@@ -1,11 +1,20 @@
 var DashboardHistory = require('./dashboardhistory.jsx')
 
 var TimeTinderBox = React.createClass({
+  propTypes: {
+    articles: React.PropTypes.array.isRequired,
+  },
+
+  getInitialState: function () {
+    return null;
+  },
+
   render: function(){
+    console.log('Tinderbox rendering', this.props.articles);
     return (
       <div className="timetinder-box">
         <Navbar/>
-        <DashboardHistory/>
+        <DashboardHistory articles={this.props.articles}/>
       </div>
     );
   }

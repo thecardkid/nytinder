@@ -11,7 +11,11 @@ var Carousel = React.createClass({
         };
     },
     openimage: function (imagehref) {
+        console.log("here", imagehref);
         window.open(imagehref);
+    },
+    deletearticle: function (url) {
+        console.log("deleting", url);
     },
     onhover: function (url) {
         document.getElementById(url).style.display = 'block';
@@ -32,32 +36,48 @@ var Carousel = React.createClass({
             this.state.figures.length);
         var parentThis = this;
         var figures = this.state.figures.map(function (d, i) {
-            var font_size = "3.7vw";
-            if ((d.headline).length > 70) {
-                font_size = "2vw";
+            var font_size = "3.5vw";
+            if ((d.headline).length > 55) {
+                font_size = "2.5vw";
             };
-            console.log(font_size);
             return (<figure key={i} style={Util.figureStyle(d)}>
-                <div className="imagedashdiv" onMouseLeave={parentThis.onmouseout.bind(null,d.url)} onMouseEnter={parentThis.onhover.bind(null,d.url)}>
+                <div className="imagedashdiv" onClick={parentThis.openimage.bind(null,d.url)} onMouseLeave={parentThis.onmouseout.bind(null,d.url)} onMouseEnter={parentThis.onhover.bind(null,d.url)}>
                     <div className="imagedash">
-                        <img className src={d.image} onClick={parentThis.openimage.bind(null,d.url)} alt={i} height={"100%"} width={"100%"}/>
+                        <img className src={d.image} alt={i} height={"100%"} width={"100%"}/>
                     </div>
-                    <div className="imagetextdash">
-                        <p id={d.url} style={{fontSize:font_size,display:"none"}}>"{d.headline}"</p>
+                    <div className="imagetextdash" id={d.url} style={{display:"none"}}>
+                        <p style={{fontSize:font_size}}>"{d.headline}"</p>
+                        <div className="deletebutton" onClick={parentThis.deletearticle.bind(null,d.url)}>
+                            <button>
+                              <span>X</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </figure>);
         });
-        return (
-            <section className='react-3d-carousel'>
-                <div className='carousel'
-                     style={{transform: "translateZ("+translateZ+"px)"}}>
-                    {figures}
-                </div>
-                <div className='prev' onClick={Util.partial(this.onRotate,+angle)}></div>
-                <div className='next' onClick={Util.partial(this.onRotate,-angle)}></div>
-            </section>
-        );
+        
+        if ((figures).length > 1) {
+            return (
+                <section className='react-3d-carousel'>
+                    <div className='carousel'
+                         style={{transform: "translateZ("+translateZ+"px)"}}>
+                        {figures}
+                    </div>
+                    <div className='prev' onClick={Util.partial(this.onRotate,+angle)}></div>
+                    <div className='next' onClick={Util.partial(this.onRotate,-angle)}></div>
+                </section>
+            );
+        } else {
+            return (
+                <section className='react-3d-carousel'>
+                    <div className='carousel'
+                         style={{transform: "translateZ("+translateZ+"px)"}}>
+                        {figures}
+                    </div>
+                </section>
+            );
+        }
     }
 });
 module.exports = Carousel;

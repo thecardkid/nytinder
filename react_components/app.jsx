@@ -16,17 +16,29 @@ var DisplayEnum = Object.freeze({
 
 var TinderTimesApp = React.createClass({
 	getInitialState: function() {
-    return {
-    	display: DisplayEnum.DISPLAY_DASHBOARD,
-    };
+	    return {
+	    	display: DisplayEnum.DISPLAY_DASHBOARD,
+	    	userArticles: [],
+	    };
 	},
 
 	componentDidMount: function() {
-    return null;
+    	this.loadUserArticlesFromServer();
 	},
 
-	handleArticlesGet: function() {
-		// Get all articles from NYTimes and update this.state.display
+	loadUserArticlesFromServer: function () {
+		$.ajax({
+			url: "api/user/56e086a827d1cafe246f7bc0",
+			dataType: 'json',
+			type: 'GET',
+			success: function(data) {
+				console.log(data.articles);
+			  	this.setState( {userArticles: data.articles});
+			}.bind(this),
+			error: function(xhr, status, err) {
+				console.error(this.props.url, status, err.toString());
+			}.bind(this)
+		});
 	},
 
 	loadUserData: function() {
@@ -48,9 +60,10 @@ var TinderTimesApp = React.createClass({
 
 		switch (this.state.display) {
 			case DisplayEnum.DISPLAY_DASHBOARD:
+				console.log('userarticles', this.state.userArticles);
 				page = (
 					<div>
-						<TimeTinderBox/>
+						<TimeTinderBox articles={this.state.userArticles}/>
 					</div>
 				);
 				break;
