@@ -20655,7 +20655,8 @@ var DisplayEnum = Object.freeze({
 var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 	getInitialState: function() {
     return {
-    	display: DisplayEnum.DISPLAY_TINDERNEWS,
+    	userId: '',
+    	display: DisplayEnum.DISPLAY_LOGIN,
     	articles: [{ 
     		url: '#',
 		    byline: '',
@@ -21275,7 +21276,21 @@ var loginPage = React.createClass({displayName: "loginPage",
 
 	handleFacebookLogin: function() {
 		console.log('Logging in with facebook.');
+		$.ajax({
+			crossDomain: true,
+			url: '/auth/facebook',
+			dataType: 'jsonp',
+			cache: false,
+			type: 'GET',
+			success: function(data) {
+				console.log(data);
+			}.bind(this),
+			error: function(xhr, status, err) {
+				console.log('error', status, err.toString());
+			}.bind(this)
+		});
 		// handles facebook login
+		// href='/auth/facebook
 	},
 
 	handleUserInfoChange: function(ev) {
@@ -21302,7 +21317,7 @@ var loginPage = React.createClass({displayName: "loginPage",
 					React.createElement("br", null), 
 					React.createElement("div", null, 
 						React.createElement("div", {className: "login-button"}, 
-							React.createElement("a", {id: "login-facebook", href: "/auth/facebook"}, "Login with Facebook")
+							React.createElement("a", {id: "login-facebook", onClick: this.handleFacebookLogin}, "Login with Facebook")
 						), 
 						React.createElement("div", {className: "login-button"}, 
 							React.createElement("button", {id: "login-create-user", onClick: this.handleUserLogin}, "Log In")

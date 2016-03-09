@@ -19,7 +19,21 @@ var loginPage = React.createClass({
 
 	handleFacebookLogin: function() {
 		console.log('Logging in with facebook.');
+		// $.ajax({
+		// 	crossDomain: true,
+		// 	url: '/auth/facebook',
+		// 	dataType: 'jsonp',
+		// 	cache: false,
+		// 	type: 'GET',
+		// 	success: function(data) {
+		// 		console.log(data);
+		// 	}.bind(this),
+		// 	error: function(xhr, status, err) {
+		// 		console.log('error', status, err.toString());
+		// 	}.bind(this)
+		// });
 		// handles facebook login
+		// href='/auth/facebook
 	},
 
 	handleUserInfoChange: function(ev) {
@@ -39,14 +53,14 @@ var loginPage = React.createClass({
 					</div>
 					<br/>
 					<input className='login-username'
-								type='text' 
+								type='text'
 								onChange={this.handleUserInfoChange} 
 								value={this.userId} 
 								placeholder='Your username'/>
 					<br/>
 					<div>
 						<div className='login-button'>
-							<a id='login-facebook' href='/auth/facebook'>Login with Facebook</a>
+							<a id='login-facebook' onClick={this.handleFacebookLogin}>Login with Facebook</a>
 						</div>
 						<div className='login-button'>
 							<button id='login-create-user' onClick={this.handleUserLogin}>Log In</button>

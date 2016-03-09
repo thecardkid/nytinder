@@ -15,7 +15,8 @@ var DisplayEnum = Object.freeze({
 var TinderTimesApp = React.createClass({
 	getInitialState: function() {
     return {
-    	display: DisplayEnum.DISPLAY_TINDERNEWS,
+    	userId: '',
+    	display: DisplayEnum.DISPLAY_LOGIN,
     	articles: [{ 
     		url: '#',
 		    byline: '',
@@ -36,6 +37,13 @@ var TinderTimesApp = React.createClass({
 		this.loadArticlesFromServer();
     return null;
 	},
+
+	handleUserLogin: function() {
+		$.ajax({
+			url: '/api/user',
+			
+		})
+	}
 
 	updateUserSeenArticles: function() {
 		$.ajax({
