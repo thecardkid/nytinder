@@ -22,18 +22,15 @@ var Article = React.createClass({
 			</div>
 		);
 
-		var h = 4.3;
-		var styleHeight = {'height': '4.3vw', 'marginTop': '28vw'};
-		if (this.props.article.headline.main.length > 63) {
-			h = 6.5;
-			styleHeight.height = '6.5vw';
-		}
-
 		var paragraph = this.props.article.abstract || this.props.article.snippet;
+		var h = this.props.article.headline.main.length > 63 ? 6.5 : 4.3; 
+		var marginTop = 28;
+
+		styleHeight = {'height': h+'vw', 'marginTop': marginTop+'vw'};
+
 		var lines = Math.ceil(paragraph.length / 110);
-		h += lines + 2.5;
 		if (lines >= 4) h += 0.6;
-		console.log(h+'vw');
+		h += lines + 2.5;
 		var m = 27 - lines;
 
 		if (this.props.hovering) {
