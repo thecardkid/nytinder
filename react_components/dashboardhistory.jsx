@@ -34,7 +34,8 @@ var DashboardHistory = React.createClass({
                 		  width={this.state.width}
                           ease={this.state.ease}
                           duration={this.state.duration}
-                          layout={this.state.layout}/>
+                          layout={this.state.layout}
+                          id={this.props.id}/>
             </div>
         );
     }

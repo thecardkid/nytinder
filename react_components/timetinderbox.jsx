@@ -13,24 +13,7 @@ var TimeTinderBox = React.createClass({
     console.log('Tinderbox rendering', this.props.articles);
     return (
       <div className="timetinder-box">
-        <Navbar/>
-        <DashboardHistory articles={this.props.articles}/>
-      </div>
-    );
-  }
-});
-
-// Navigation/header bar on the top of the page. Holds login and search bar
-var Navbar = React.createClass({
-  render: function(){
-    return (
-      <div className="Navbar">
-          <ul className="navbar">
-            <li className="linav"><a className="navbar-brand"> TimesTinder </a></li>
-            <ul className="navbar" style={{float:"right"}}>
-              <li className="linav"><a href="/logout"><i className="fa fa-facebook">Logout</i></a></li>
-            </ul>
-          </ul>
+        <DashboardHistory id={this.props.id} articles={this.props.articles}/>
       </div>
     );
   }

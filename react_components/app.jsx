@@ -6,6 +6,9 @@ var TimeTinderBox = require('./timetinderbox.jsx');
 var TinderNews = require('./tinderNews.jsx');
 var LoginPage = require('./loginPage.jsx');
 
+//Navbar
+var Navbar = require('./navbar.jsx')
+
 console.log(process.env);
 
 var DisplayEnum = Object.freeze({
@@ -19,30 +22,28 @@ var TinderTimesApp = React.createClass({
 	    return {
 	    	display: DisplayEnum.DISPLAY_DASHBOARD,
 	    	userArticles: [],
+	    	displayName: '',
+	    	id: ''
 	    };
 	},
 
 	componentDidMount: function() {
-    	this.loadUserArticlesFromServer();
+    	this.loadUserData();
 	},
 
-	loadUserArticlesFromServer: function () {
+	loadUserData: function () {
 		$.ajax({
 			url: "api/user/56e086a827d1cafe246f7bc0",
 			dataType: 'json',
 			type: 'GET',
 			success: function(data) {
-				console.log(data.articles);
-			  	this.setState( {userArticles: data.articles});
+				console.log(data);
+			  	this.setState( {userArticles: data.articles, displayName: data.displayName, id: data._id});
 			}.bind(this),
 			error: function(xhr, status, err) {
 				console.error(this.props.url, status, err.toString());
 			}.bind(this)
 		});
-	},
-
-	loadUserData: function() {
-		// Get user's history and info from DB
 	},
 
 	handleArticlePost: function() {
@@ -60,10 +61,10 @@ var TinderTimesApp = React.createClass({
 
 		switch (this.state.display) {
 			case DisplayEnum.DISPLAY_DASHBOARD:
-				console.log('userarticles', this.state.userArticles);
+				console.log('userarticles', this.state);
 				page = (
 					<div>
-						<TimeTinderBox articles={this.state.userArticles}/>
+						<TimeTinderBox id={this.state.id} displayName={this.state.displayName} articles={this.state.userArticles}/>
 					</div>
 				);
 				break;
@@ -93,6 +94,7 @@ var TinderTimesApp = React.createClass({
           max={2}
           value={this.state.display}
           onChange={this.handlePageChange} />
+          <Navbar displayName={this.state.displayName} />
         {page}
 			</div>
 		);

@@ -20647,6 +20647,9 @@ var TimeTinderBox = require('./timetinderbox.jsx');
 var TinderNews = require('./tinderNews.jsx');
 var LoginPage = require('./loginPage.jsx');
 
+//Navbar
+var Navbar = require('./navbar.jsx')
+
 console.log(process.env);
 
 var DisplayEnum = Object.freeze({
@@ -20660,30 +20663,28 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 	    return {
 	    	display: DisplayEnum.DISPLAY_DASHBOARD,
 	    	userArticles: [],
+	    	displayName: '',
+	    	id: ''
 	    };
 	},
 
 	componentDidMount: function() {
-    	this.loadUserArticlesFromServer();
+    	this.loadUserData();
 	},
 
-	loadUserArticlesFromServer: function () {
+	loadUserData: function () {
 		$.ajax({
 			url: "api/user/56e086a827d1cafe246f7bc0",
 			dataType: 'json',
 			type: 'GET',
 			success: function(data) {
-				console.log(data.articles);
-			  	this.setState( {userArticles: data.articles});
+				console.log(data);
+			  	this.setState( {userArticles: data.articles, displayName: data.displayName, id: data._id});
 			}.bind(this),
 			error: function(xhr, status, err) {
 				console.error(this.props.url, status, err.toString());
 			}.bind(this)
 		});
-	},
-
-	loadUserData: function() {
-		// Get user's history and info from DB
 	},
 
 	handleArticlePost: function() {
@@ -20701,10 +20702,10 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 
 		switch (this.state.display) {
 			case DisplayEnum.DISPLAY_DASHBOARD:
-				console.log('userarticles', this.state.userArticles);
+				console.log('userarticles', this.state);
 				page = (
 					React.createElement("div", null, 
-						React.createElement(TimeTinderBox, {articles: this.state.userArticles})
+						React.createElement(TimeTinderBox, {id: this.state.id, displayName: this.state.displayName, articles: this.state.userArticles})
 					)
 				);
 				break;
@@ -20734,6 +20735,7 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
           max: 2, 
           value: this.state.display, 
           onChange: this.handlePageChange}), 
+          React.createElement(Navbar, {displayName: this.state.displayName}), 
         page
 			)
 		);
@@ -20745,7 +20747,7 @@ ReactDOM.render(
   document.getElementById('content')
 );
 }).call(this,require('_process'))
-},{"./loginPage.jsx":181,"./timetinderbox.jsx":183,"./tinderNews.jsx":184,"_process":30}],174:[function(require,module,exports){
+},{"./loginPage.jsx":181,"./navbar.jsx":182,"./timetinderbox.jsx":184,"./tinderNews.jsx":185,"_process":30}],174:[function(require,module,exports){
 var spring = require('react-motion').spring;
 
 var Article = React.createClass({displayName: "Article",
@@ -20822,7 +20824,9 @@ var Carousel = React.createClass({displayName: "Carousel",
         window.open(imagehref);
     },
     deletearticle: function (url) {
-        console.log("deleting", url);
+
+        console.log("deleting", this.props.id);
+        console.log("deletingurl", url);
     },
     onhover: function (url) {
         document.getElementById(url).style.display = 'block';
@@ -20848,12 +20852,17 @@ var Carousel = React.createClass({displayName: "Carousel",
                 font_size = "2.5vw";
             };
             return (React.createElement("figure", {key: i, style: Util.figureStyle(d)}, 
-                React.createElement("div", {className: "imagedashdiv", onClick: parentThis.openimage.bind(null,d.url), onMouseLeave: parentThis.onmouseout.bind(null,d.url), onMouseEnter: parentThis.onhover.bind(null,d.url)}, 
+                React.createElement("div", {className: "imagedashdiv", onMouseLeave: parentThis.onmouseout.bind(null,d.url), onMouseEnter: parentThis.onhover.bind(null,d.url)}, 
                     React.createElement("div", {className: "imagedash"}, 
                         React.createElement("img", {className: true, src: d.image, alt: i, height: "100%", width: "100%"})
                     ), 
                     React.createElement("div", {className: "imagetextdash", id: d.url, style: {display:"none"}}, 
                         React.createElement("p", {style: {fontSize:font_size}}, "\"", d.headline, "\""), 
+                        React.createElement("div", {className: "openbutton", onClick: parentThis.openimage.bind(null,d.url)}, 
+                            React.createElement("button", null, 
+                              React.createElement("span", null, "Open")
+                            )
+                        ), 
                         React.createElement("div", {className: "deletebutton", onClick: parentThis.deletearticle.bind(null,d.url)}, 
                             React.createElement("button", null, 
                               React.createElement("span", null, "X")
@@ -21199,7 +21208,8 @@ var DashboardHistory = React.createClass({displayName: "DashboardHistory",
                 		  width: this.state.width, 
                           ease: this.state.ease, 
                           duration: this.state.duration, 
-                          layout: this.state.layout})
+                          layout: this.state.layout, 
+                          id: this.props.id})
             )
         );
     }
@@ -21292,6 +21302,25 @@ var loginPage = React.createClass({displayName: "loginPage",
 
 module.exports = loginPage;
 },{}],182:[function(require,module,exports){
+// Navigation/header bar on the top of the page. Holds login and search bar
+var Navbar = React.createClass({displayName: "Navbar",
+  render: function(){
+    return (
+      React.createElement("div", {className: "Navbar"}, 
+          React.createElement("ul", {className: "navbar"}, 
+            React.createElement("li", {className: "linav"}, React.createElement("a", {className: "navbar-brand"}, " TimesTinder ")), 
+            React.createElement("ul", {className: "navbar", style: {float:"right"}}, 
+              React.createElement("li", {className: "linav"}, React.createElement("a", null, this.props.displayName)), 
+              React.createElement("li", {className: "linav"}, React.createElement("a", {href: "/logout"}, React.createElement("i", {className: "fa fa-facebook"}, "Logout")))
+            )
+          )
+      )
+    );
+  }
+});
+
+module.exports = Navbar;
+},{}],183:[function(require,module,exports){
 module.exports = {'data': [ 
   { url: 'http://www.nytimes.com/interactive/2016/us/elections/primary-calendar-and-results.html',
     byline: 'By WILSON ANDREWS, KITTY BENNETT and ALICIA PARLAPIANO',
@@ -21512,7 +21541,7 @@ module.exports = {'data': [
        height: 1357,
        width: 2048 } } 
 ]}
-},{}],183:[function(require,module,exports){
+},{}],184:[function(require,module,exports){
 var DashboardHistory = require('./dashboardhistory.jsx')
 
 var TimeTinderBox = React.createClass({displayName: "TimeTinderBox",
@@ -21528,31 +21557,14 @@ var TimeTinderBox = React.createClass({displayName: "TimeTinderBox",
     console.log('Tinderbox rendering', this.props.articles);
     return (
       React.createElement("div", {className: "timetinder-box"}, 
-        React.createElement(Navbar, null), 
-        React.createElement(DashboardHistory, {articles: this.props.articles})
-      )
-    );
-  }
-});
-
-// Navigation/header bar on the top of the page. Holds login and search bar
-var Navbar = React.createClass({displayName: "Navbar",
-  render: function(){
-    return (
-      React.createElement("div", {className: "Navbar"}, 
-          React.createElement("ul", {className: "navbar"}, 
-            React.createElement("li", {className: "linav"}, React.createElement("a", {className: "navbar-brand"}, " TimesTinder ")), 
-            React.createElement("ul", {className: "navbar", style: {float:"right"}}, 
-              React.createElement("li", {className: "linav"}, React.createElement("a", {href: "/logout"}, React.createElement("i", {className: "fa fa-facebook"}, "Logout")))
-            )
-          )
+        React.createElement(DashboardHistory, {id: this.props.id, articles: this.props.articles})
       )
     );
   }
 });
 
 module.exports = TimeTinderBox;
-},{"./dashboardhistory.jsx":179}],184:[function(require,module,exports){
+},{"./dashboardhistory.jsx":179}],185:[function(require,module,exports){
 var Article = require('./article.jsx');
 var testdata = require('./testdata').data;
 
@@ -21688,4 +21700,4 @@ module.exports = TinderNews;
 
 
 
-},{"./article.jsx":174,"./testdata":182,"react-motion":38}]},{},[173]);
+},{"./article.jsx":174,"./testdata":183,"react-motion":38}]},{},[173]);

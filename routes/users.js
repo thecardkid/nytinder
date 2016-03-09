@@ -17,6 +17,7 @@ router.get('/:id', function(req, res, next) {
   		console.log(user.savedArticles);
       res.send({
         'userId': user.userId,
+        '_id': user._id,
         'displayName': user.displayName,
         'articles': user.savedArticles
       });
@@ -61,5 +62,24 @@ router.post('/newarticle/:id', function(req,res, next) {
   })
 });
 
+/*
+POST deleting an article from user's list of article
+*/
+router.post('/deletearticle/:id/:articleid', function(req,res, next) {
+  User.findOne({
+    '_id': new ObjectId(req.params.id)
+  }, function(err, user) { 
+    user.savedArticles.pull({'_id': req.params.articleid});
+    //save edited user with new article
+    user.save(function(err) {
+      if (err) {
+        res.sendStatus(500);
+        return;
+      }
+      res.sendStatus(200);
+      return;
+    })
+  })
+});
 
 module.exports = router;

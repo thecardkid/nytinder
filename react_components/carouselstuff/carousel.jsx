@@ -15,7 +15,9 @@ var Carousel = React.createClass({
         window.open(imagehref);
     },
     deletearticle: function (url) {
-        console.log("deleting", url);
+
+        console.log("deleting", this.props.id);
+        console.log("deletingurl", url);
     },
     onhover: function (url) {
         document.getElementById(url).style.display = 'block';
@@ -41,12 +43,17 @@ var Carousel = React.createClass({
                 font_size = "2.5vw";
             };
             return (<figure key={i} style={Util.figureStyle(d)}>
-                <div className="imagedashdiv" onClick={parentThis.openimage.bind(null,d.url)} onMouseLeave={parentThis.onmouseout.bind(null,d.url)} onMouseEnter={parentThis.onhover.bind(null,d.url)}>
+                <div className="imagedashdiv" onMouseLeave={parentThis.onmouseout.bind(null,d.url)} onMouseEnter={parentThis.onhover.bind(null,d.url)}>
                     <div className="imagedash">
                         <img className src={d.image} alt={i} height={"100%"} width={"100%"}/>
                     </div>
                     <div className="imagetextdash" id={d.url} style={{display:"none"}}>
                         <p style={{fontSize:font_size}}>"{d.headline}"</p>
+                        <div className="openbutton" onClick={parentThis.openimage.bind(null,d.url)}>
+                            <button>
+                              <span>Open</span>
+                            </button>
+                        </div>
                         <div className="deletebutton" onClick={parentThis.deletearticle.bind(null,d.url)}>
                             <button>
                               <span>X</span>
