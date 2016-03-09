@@ -218,6 +218,3 @@ module.exports = {'data': [
        height: 1357,
        width: 2048 } } 
 ]}
-
-
-

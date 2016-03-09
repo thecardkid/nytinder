@@ -20646,6 +20646,9 @@ var TimeTinderBox = require('./timetinderbox.jsx');
 var TinderNews = require('./tinderNews.jsx');
 var LoginPage = require('./loginPage.jsx');
 
+//Navbar
+var Navbar = require('./navbar.jsx')
+
 var DisplayEnum = Object.freeze({
 	DISPLAY_DASHBOARD: 0,
 	DISPLAY_TINDERNEWS: 1,
@@ -20655,7 +20658,7 @@ var DisplayEnum = Object.freeze({
 var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 	getInitialState: function() {
     return {
-    	userId: '',
+    	user: {},
     	display: DisplayEnum.DISPLAY_LOGIN,
     	articles: [{ 
     		url: '#',
@@ -20675,7 +20678,15 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 
 	componentDidMount: function() {
 		this.loadArticlesFromServer();
+		this.loadUserData();
     return null;
+	},
+
+	handleUserLogin: function() {
+		// $.ajax({
+		// 	url: '/api/user',
+			
+		// })
 	},
 
 	updateUserSeenArticles: function() {
@@ -20717,8 +20728,22 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 		});
 	},
 
-	loadUserData: function() {
-		// Get user's history and info from DB
+	loadUserData: function () {
+		console.log('Getting user');
+		$.ajax({
+			url: "api/user/56e055c93edfa81f66a5a1e9",
+			dataType: 'json',
+			type: 'GET',
+			cache: false,
+			success: function(user) {
+				console.log('user from server', user);
+		  	this.setState({user: user});
+		  	console.log('state', this.state);
+			}.bind(this),
+			error: function(xhr, status, err) {
+				console.error(this.props.url, status, err.toString());
+			}.bind(this)
+		});
 	},
 
 	handleArticlePost: function() {
@@ -20736,9 +20761,11 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 
 		switch (this.state.display) {
 			case DisplayEnum.DISPLAY_DASHBOARD:
+				console.log('userarticles', this.state);
 				page = (
 					React.createElement("div", null, 
-						React.createElement(TimeTinderBox, null)
+						React.createElement(TimeTinderBox, {articles: this.state.user.savedArticles}
+						)
 					)
 				);
 				break;
@@ -20770,6 +20797,7 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
           max: 2, 
           value: this.state.display, 
           onChange: this.handlePageChange}), 
+          React.createElement(Navbar, {displayName: this.state.user.displayName}), 
         page
 			)
 		);
@@ -20780,7 +20808,7 @@ ReactDOM.render(
 	React.createElement(TinderTimesApp, null),
   document.getElementById('content')
 );
-},{"./loginPage.jsx":181,"./timetinderbox.jsx":183,"./tinderNews.jsx":184}],174:[function(require,module,exports){
+},{"./loginPage.jsx":181,"./navbar.jsx":182,"./timetinderbox.jsx":184,"./tinderNews.jsx":185}],174:[function(require,module,exports){
 var spring = require('react-motion').spring;
 
 var Article = React.createClass({displayName: "Article",
@@ -20840,7 +20868,19 @@ var Carousel = React.createClass({displayName: "Carousel",
         };
     },
     openimage: function (imagehref) {
+        console.log("here", imagehref);
         window.open(imagehref);
+    },
+    deletearticle: function (url) {
+
+        console.log("deleting", this.props.id);
+        console.log("deletingurl", url);
+    },
+    onhover: function (url) {
+        document.getElementById(url).style.display = 'block';
+    },
+    onmouseout: function (url) {
+        document.getElementById(url).style.display = 'none';
     },
     componentWillMount: function () {
         this.depot = Depot(this.getInitialState(), this.props, this.setState.bind(this));
@@ -20855,27 +20895,53 @@ var Carousel = React.createClass({displayName: "Carousel",
             this.state.figures.length);
         var parentThis = this;
         var figures = this.state.figures.map(function (d, i) {
+            var font_size = "3.5vw";
+            if ((d.headline).length > 55) {
+                font_size = "2.5vw";
+            };
             return (React.createElement("figure", {key: i, style: Util.figureStyle(d)}, 
-                React.createElement("div", {className: "imagedashdiv"}, 
+                React.createElement("div", {className: "imagedashdiv", onMouseLeave: parentThis.onmouseout.bind(null,d.url), onMouseEnter: parentThis.onhover.bind(null,d.url)}, 
                     React.createElement("div", {className: "imagedash"}, 
-                        React.createElement("img", {className: true, src: d.image, onClick: parentThis.openimage.bind(null,d.url), alt: i, height: "100%", width: "100%"})
+                        React.createElement("img", {className: true, src: d.image, alt: i, height: "100%", width: "100%"})
                     ), 
-                    React.createElement("div", {className: "imagetextdash"}, 
-                        React.createElement("p", {style: {fontSize:"3.7vw"}}, "\"", d.headline, "\"")
+                    React.createElement("div", {className: "imagetextdash", id: d.url, style: {display:"none"}}, 
+                        React.createElement("p", {style: {fontSize:font_size}}, "\"", d.headline, "\""), 
+                        React.createElement("div", {className: "openbutton", onClick: parentThis.openimage.bind(null,d.url)}, 
+                            React.createElement("button", null, 
+                              React.createElement("span", null, "Open")
+                            )
+                        ), 
+                        React.createElement("div", {className: "deletebutton", onClick: parentThis.deletearticle.bind(null,d.url)}, 
+                            React.createElement("button", null, 
+                              React.createElement("span", null, "X")
+                            )
+                        )
                     )
                 )
             ));
         });
-        return (
-            React.createElement("section", {className: "react-3d-carousel"}, 
-                React.createElement("div", {className: "carousel", 
-                     style: {transform: "translateZ("+translateZ+"px)"}}, 
-                    figures
-                ), 
-                React.createElement("div", {className: "prev", onClick: Util.partial(this.onRotate,+angle)}), 
-                React.createElement("div", {className: "next", onClick: Util.partial(this.onRotate,-angle)})
-            )
-        );
+        
+        if ((figures).length > 1) {
+            return (
+                React.createElement("section", {className: "react-3d-carousel"}, 
+                    React.createElement("div", {className: "carousel", 
+                         style: {transform: "translateZ("+translateZ+"px)"}}, 
+                        figures
+                    ), 
+                    React.createElement("div", {className: "prev", onClick: Util.partial(this.onRotate,+angle)}), 
+                    React.createElement("div", {className: "next", onClick: Util.partial(this.onRotate,-angle)})
+                )
+            );
+        } else {
+            return (
+                React.createElement("section", {className: "react-3d-carousel"}, 
+                    React.createElement("div", {className: "carousel", 
+                         style: {transform: "translateZ("+translateZ+"px)"}}, 
+                        figures
+                    )
+                )
+            );
+        }
     }
 });
 module.exports = Carousel;
@@ -20884,7 +20950,7 @@ var Ease = require('ease-functions');
 var Layout = require('./layout');
 var Util = require('./util');
 
-module.exports = function depot(initialState, initialProps,callback) {
+module.exports = function depot(initialState, initialProps, callback) {
     var res = {};
     var state = initialState;
     var props = initialProps;
@@ -20893,6 +20959,8 @@ module.exports = function depot(initialState, initialProps,callback) {
     res.onNextProps = function onNextProps(nextProps) {
         if(props.layout != nextProps.layout || props.all_info != nextProps.all_info) {
             props = nextProps;
+
+            console.log("props",props.all_info);
             var to = Layout[props.layout].figures(props.width, props.all_info, state.rotationY);
             var bounds = transitionFigures(state.figures, to,Ease[props.ease], props.duration);
             var stepper = transit(bounds, to, props.duration);
@@ -21027,8 +21095,8 @@ exports.prism = {
     distance: function apothem(width, sides) {
         return Math.ceil(width / (2 * Math.tan(Math.PI / sides)));
     },
-    figures: function (width, images, urls, initial) {
-        var sides = images.length;
+    figures: function (width, all_info, initial) {
+        var sides = all_info.length;
         var angle = 2 * Math.PI / sides;
         var acceptable = Math.round(initial / angle) * angle;
         return Util.range(0, sides).map(function (d) {
@@ -21039,8 +21107,8 @@ exports.prism = {
                 opacity: 1,
                 present: true,
                 key: d,
-                image: all_info[d].image_url,
-                url: all_info[d].web_url,
+                image: all_info[d].img.url,
+                url: all_info[d].url,
                 headline: all_info[d].headline
             };
         });
@@ -21064,8 +21132,8 @@ exports.classic = {
                 opacity: 1,
                 present: true,
                 key: d,
-                image: all_info[d].image_url,
-                url: all_info[d].web_url,
+                image: all_info[d].img.url,
+                url: all_info[d].url,
                 headline: all_info[d].headline
             };
         });
@@ -21154,48 +21222,12 @@ exports.mapObj = function mapObj(fn,obj){
 },{}],179:[function(require,module,exports){
 var Carousel = require('./carouselstuff/carousel.jsx');
 var Ease = require('ease-functions');
-var testdata = require('./testdata').data;
 var images = require('./images');
-
-var get_image_url = testdata.map(function(obj){
-	try {
-		return "http://nytimes.com/"+ obj.multimedia[(obj.multimedia).length-1].url
-	} catch(err) {
-		return "https://www.petfinder.com/wp-content/uploads/2012/11/dog-how-to-select-your-new-best-friend-thinkstock99062463.jpg"
-	}
-});
-
-var get_urls = testdata.map(function(obj){
-	try {
-		return obj.web_url
-	} catch(err) {
-		return "https://www.nytimes.com/"
-	}
-});
-
-var get_all_necessary_info = testdata.map(function(obj){
-	var new_obj = {}
-
-	try {
-		new_obj["image_url"] = "http://nytimes.com/"+ obj.multimedia[(obj.multimedia).length-2].url;
-	} catch(err) {
-		new_obj["image_url"] = "https://www.petfinder.com/wp-content/uploads/2012/11/dog-how-to-select-your-new-best-friend-thinkstock99062463.jpg";		
-	}
-
-	var web_url = obj.web_url || "https://www.nytimes.com/";
-	var headline = obj.headline.main || "No headline";
-	new_obj["web_url"] = web_url;
-	new_obj["headline"] = headline;
-	return new_obj;
-});
-
-console.log(get_all_necessary_info);
-
 
 var DashboardHistory = React.createClass({displayName: "DashboardHistory",
     getInitialState: function () {
+        console.log('dashboard history', this.props.articles);
         return {
-        	all_info: get_all_necessary_info,
             width: 400,
             layout: 'classic',
             ease: 'linear',
@@ -21204,7 +21236,7 @@ var DashboardHistory = React.createClass({displayName: "DashboardHistory",
     },
     componentWillMount: function () {
         this.onSides = function (event) {
-            this.setState( {images: get_image_url.slice(0, event.target.value) });
+            this.setState( {images: this.state.all_info.slice(0, event.target.value) });
         }.bind(this);
         this.onLayout = function (event) {
             this.setState({layout: event.target.value});
@@ -21220,18 +21252,19 @@ var DashboardHistory = React.createClass({displayName: "DashboardHistory",
         return (
             React.createElement("div", {className: "carouselhistory"}, 
             	React.createElement("h1", null, "Saved Articles"), 
-                React.createElement(Carousel, {all_info: this.state.all_info, 
+                React.createElement(Carousel, {all_info: this.props.articles, 
                 		  width: this.state.width, 
                           ease: this.state.ease, 
                           duration: this.state.duration, 
-                          layout: this.state.layout})
+                          layout: this.state.layout, 
+                          id: this.props.id})
             )
         );
     }
 });
 
 module.exports = DashboardHistory; 
-},{"./carouselstuff/carousel.jsx":175,"./images":180,"./testdata":182,"ease-functions":1}],180:[function(require,module,exports){
+},{"./carouselstuff/carousel.jsx":175,"./images":180,"ease-functions":1}],180:[function(require,module,exports){
 module.exports = [
     'http://s7.postimg.org/dbamgegu3/zen8.jpg',
     'http://s21.postimg.org/er8b066p3/zen2.jpg',
@@ -21276,19 +21309,19 @@ var loginPage = React.createClass({displayName: "loginPage",
 
 	handleFacebookLogin: function() {
 		console.log('Logging in with facebook.');
-		$.ajax({
-			crossDomain: true,
-			url: '/auth/facebook',
-			dataType: 'jsonp',
-			cache: false,
-			type: 'GET',
-			success: function(data) {
-				console.log(data);
-			}.bind(this),
-			error: function(xhr, status, err) {
-				console.log('error', status, err.toString());
-			}.bind(this)
-		});
+		// $.ajax({
+		// 	crossDomain: true,
+		// 	url: '/auth/facebook',
+		// 	dataType: 'jsonp',
+		// 	cache: false,
+		// 	type: 'GET',
+		// 	success: function(data) {
+		// 		console.log(data);
+		// 	}.bind(this),
+		// 	error: function(xhr, status, err) {
+		// 		console.log('error', status, err.toString());
+		// 	}.bind(this)
+		// });
 		// handles facebook login
 		// href='/auth/facebook
 	},
@@ -21331,6 +21364,25 @@ var loginPage = React.createClass({displayName: "loginPage",
 
 module.exports = loginPage;
 },{}],182:[function(require,module,exports){
+// Navigation/header bar on the top of the page. Holds login and search bar
+var Navbar = React.createClass({displayName: "Navbar",
+  render: function(){
+    return (
+      React.createElement("div", {className: "Navbar"}, 
+          React.createElement("ul", {className: "navbar"}, 
+            React.createElement("li", {className: "linav"}, React.createElement("a", {className: "navbar-brand"}, " TimesTinder ")), 
+            React.createElement("ul", {className: "navbar", style: {float:"right"}}, 
+              React.createElement("li", {className: "linav"}, React.createElement("a", null, this.props.displayName)), 
+              React.createElement("li", {className: "linav"}, React.createElement("a", {href: "/logout"}, React.createElement("i", {className: "fa fa-facebook"}, "Logout")))
+            )
+          )
+      )
+    );
+  }
+});
+
+module.exports = Navbar;
+},{}],183:[function(require,module,exports){
 module.exports = {'data': [ 
   { url: 'http://www.nytimes.com/interactive/2016/us/elections/primary-calendar-and-results.html',
     byline: 'By WILSON ANDREWS, KITTY BENNETT and ALICIA PARLAPIANO',
@@ -21551,42 +21603,30 @@ module.exports = {'data': [
        height: 1357,
        width: 2048 } } 
 ]}
-
-
-
-
-},{}],183:[function(require,module,exports){
+},{}],184:[function(require,module,exports){
 var DashboardHistory = require('./dashboardhistory.jsx')
 
 var TimeTinderBox = React.createClass({displayName: "TimeTinderBox",
+  propTypes: {
+    articles: React.PropTypes.array.isRequired,
+  },
+
+  getInitialState: function () {
+    return null;
+  },
+
   render: function(){
+    console.log('Tinderbox rendering', this.props.articles);
     return (
       React.createElement("div", {className: "timetinder-box"}, 
-        React.createElement(Navbar, null), 
-        React.createElement(DashboardHistory, null)
-      )
-    );
-  }
-});
-
-// Navigation/header bar on the top of the page. Holds login and search bar
-var Navbar = React.createClass({displayName: "Navbar",
-  render: function(){
-    return (
-      React.createElement("div", {className: "Navbar"}, 
-          React.createElement("ul", {className: "navbar"}, 
-            React.createElement("li", {className: "linav"}, React.createElement("a", {className: "navbar-brand"}, " TimesTinder ")), 
-            React.createElement("ul", {className: "navbar", style: {float:"right"}}, 
-              React.createElement("li", {className: "linav"}, React.createElement("a", {href: "/logout"}, React.createElement("i", {className: "fa fa-facebook"}, "Logout")))
-            )
-          )
+        React.createElement(DashboardHistory, {articles: this.props.articles})
       )
     );
   }
 });
 
 module.exports = TimeTinderBox;
-},{"./dashboardhistory.jsx":179}],184:[function(require,module,exports){
+},{"./dashboardhistory.jsx":179}],185:[function(require,module,exports){
 var Article = require('./article.jsx');
 var testdata = require('./testdata').data;
 
@@ -21603,7 +21643,6 @@ var TinderNews = React.createClass({displayName: "TinderNews",
 	propTypes: {
 		updateSeen: React.PropTypes.func.isRequired,
 		articles: React.PropTypes.array.isRequired,
-		onArticle: 0,
 	},
 
 	getInitialState: function() {
@@ -21676,7 +21715,6 @@ var TinderNews = React.createClass({displayName: "TinderNews",
 
 		// React variable to host all articles we have
 		var articleComponents = configs.map(function(style, i) {
-			console.log('gonna pass', root.props.articles[i]);
       return (
       	React.createElement(Motion, {key: i, style: style}, 
       		function (style) {
@@ -21717,4 +21755,4 @@ module.exports = TinderNews;
 
 
 
-},{"./article.jsx":174,"./testdata":182,"react-motion":38}]},{},[173]);
+},{"./article.jsx":174,"./testdata":183,"react-motion":38}]},{},[173]);

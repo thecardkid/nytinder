@@ -6,6 +6,10 @@ var TimeTinderBox = require('./timetinderbox.jsx');
 var TinderNews = require('./tinderNews.jsx');
 var LoginPage = require('./loginPage.jsx');
 
+//Navbar
+var Navbar = require('./navbar.jsx')
+var userId = '56e055c93edfa81f66a5a1e9';
+
 var DisplayEnum = Object.freeze({
 	DISPLAY_DASHBOARD: 0,
 	DISPLAY_TINDERNEWS: 1,
@@ -15,7 +19,7 @@ var DisplayEnum = Object.freeze({
 var TinderTimesApp = React.createClass({
 	getInitialState: function() {
     return {
-    	userId: '',
+    	user: {},
     	display: DisplayEnum.DISPLAY_LOGIN,
     	articles: [{ 
     		url: '#',
@@ -35,15 +39,16 @@ var TinderTimesApp = React.createClass({
 
 	componentDidMount: function() {
 		this.loadArticlesFromServer();
+		this.loadUserData();
     return null;
 	},
 
 	handleUserLogin: function() {
-		$.ajax({
-			url: '/api/user',
+		// $.ajax({
+		// 	url: '/api/user',
 			
-		})
-	}
+		// })
+	},
 
 	updateUserSeenArticles: function() {
 		$.ajax({
@@ -52,7 +57,7 @@ var TinderTimesApp = React.createClass({
 			cache: false,
 			type: 'PUT',
 			data: {
-				'userId': '56e055c93edfa81f66a5a1e9',
+				'userId': userId,
 				'seen': 1
 			},
 			success: function(status) {
@@ -72,7 +77,7 @@ var TinderTimesApp = React.createClass({
 			cache: false,
 			type: 'POST',
 			data: {
-				'userId': '56e055c93edfa81f66a5a1e9',
+				'userId': userId,
 			},
 			success: function(serverArticles) {
 				console.log('received', serverArticles.data);
@@ -84,8 +89,22 @@ var TinderTimesApp = React.createClass({
 		});
 	},
 
-	loadUserData: function() {
-		// Get user's history and info from DB
+	loadUserData: function () {
+		console.log('Getting user');
+		$.ajax({
+			url: "api/user/"+userId,
+			dataType: 'json',
+			type: 'GET',
+			cache: false,
+			success: function(user) {
+				console.log('user from server', user);
+		  	this.setState({user: user});
+		  	console.log('state', this.state);
+			}.bind(this),
+			error: function(xhr, status, err) {
+				console.error(this.props.url, status, err.toString());
+			}.bind(this)
+		});
 	},
 
 	handleArticlePost: function() {
@@ -103,9 +122,11 @@ var TinderTimesApp = React.createClass({
 
 		switch (this.state.display) {
 			case DisplayEnum.DISPLAY_DASHBOARD:
+				console.log('userarticles', this.state);
 				page = (
 					<div>
-						<TimeTinderBox/>
+						<TimeTinderBox articles={this.state.user.savedArticles}
+						/>
 					</div>
 				);
 				break;
@@ -137,6 +158,7 @@ var TinderTimesApp = React.createClass({
           max={2}
           value={this.state.display}
           onChange={this.handlePageChange} />
+          <Navbar displayName={this.state.user.displayName} />
         {page}
 			</div>
 		);

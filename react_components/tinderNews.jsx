@@ -14,7 +14,6 @@ var TinderNews = React.createClass({
 	propTypes: {
 		updateSeen: React.PropTypes.func.isRequired,
 		articles: React.PropTypes.array.isRequired,
-		onArticle: 0,
 	},
 
 	getInitialState: function() {
@@ -87,7 +86,6 @@ var TinderNews = React.createClass({
 
 		// React variable to host all articles we have
 		var articleComponents = configs.map(function(style, i) {
-			console.log('gonna pass', root.props.articles[i]);
       return (
       	<Motion key={i} style={style}>
       		{function (style) {

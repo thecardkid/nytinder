@@ -14,6 +14,7 @@ router.get('/:id', function(req, res, next) {
   	'_id': new ObjectId(req.params.id)
   }, function(err, user) {
   	if (!err) {
+      console.log(user);
 			res.send(user);
   	} else {
   		console.log('error', err);
@@ -45,6 +46,46 @@ router.post('/', function(req, res, next) {
 			res.send(err);
 		}
 	})
+});
+
+/*
+POST new article into user's list of article
+*/
+router.post('/newarticle/:id', function(req,res, next) {
+  User.findOne({
+    '_id': new ObjectId(req.params.id)
+  }, function(err, user) { 
+    user.savedArticles.push(req.body);
+    //save edited user with new article
+    user.save(function(err) {
+      if (err) {
+        res.sendStatus(500);
+        return;
+      }
+      res.sendStatus(200);
+      return;
+    })
+  })
+});
+
+/*
+POST deleting an article from user's list of article
+*/
+router.post('/deletearticle/:id/:articleid', function(req,res, next) {
+  User.findOne({
+    '_id': new ObjectId(req.params.id)
+  }, function(err, user) { 
+    user.savedArticles.pull({'_id': req.params.articleid});
+    //save edited user with new article
+    user.save(function(err) {
+      if (err) {
+        res.sendStatus(500);
+        return;
+      }
+      res.sendStatus(200);
+      return;
+    })
+  })
 });
 
 module.exports = router;
