@@ -17,7 +17,7 @@ var DisplayEnum = Object.freeze({
 var TinderTimesApp = React.createClass({
 	getInitialState: function() {
     return {
-    	display: DisplayEnum.DISPLAY_TINDERNEWS,
+    	display: DisplayEnum.DISPLAY_DASHBOARD,
     };
 	},
 

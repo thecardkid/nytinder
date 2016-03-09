@@ -20658,7 +20658,7 @@ var DisplayEnum = Object.freeze({
 var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 	getInitialState: function() {
     return {
-    	display: DisplayEnum.DISPLAY_TINDERNEWS,
+    	display: DisplayEnum.DISPLAY_DASHBOARD,
     };
 	},
 
@@ -20810,6 +20810,12 @@ var Carousel = React.createClass({displayName: "Carousel",
     openimage: function (imagehref) {
         window.open(imagehref);
     },
+    onhover: function (url) {
+        document.getElementById(url).style.display = 'block';
+    },
+    onmouseout: function (url) {
+        document.getElementById(url).style.display = 'none';
+    },
     componentWillMount: function () {
         this.depot = Depot(this.getInitialState(), this.props, this.setState.bind(this));
         this.onRotate = this.depot.onRotate.bind(this);
@@ -20823,13 +20829,18 @@ var Carousel = React.createClass({displayName: "Carousel",
             this.state.figures.length);
         var parentThis = this;
         var figures = this.state.figures.map(function (d, i) {
+            var font_size = "3.7vw";
+            if ((d.headline).length > 70) {
+                font_size = "2vw";
+            };
+            console.log(font_size);
             return (React.createElement("figure", {key: i, style: Util.figureStyle(d)}, 
-                React.createElement("div", {className: "imagedashdiv"}, 
+                React.createElement("div", {className: "imagedashdiv", onMouseLeave: parentThis.onmouseout.bind(null,d.url), onMouseEnter: parentThis.onhover.bind(null,d.url)}, 
                     React.createElement("div", {className: "imagedash"}, 
                         React.createElement("img", {className: true, src: d.image, onClick: parentThis.openimage.bind(null,d.url), alt: i, height: "100%", width: "100%"})
                     ), 
                     React.createElement("div", {className: "imagetextdash"}, 
-                        React.createElement("p", {style: {fontSize:"3.7vw"}}, "\"", d.headline, "\"")
+                        React.createElement("p", {id: d.url, style: {fontSize:font_size,display:"none"}}, "\"", d.headline, "\"")
                     )
                 )
             ));

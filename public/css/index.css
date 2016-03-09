@@ -1,5 +1,6 @@
 body {
 	font-family: 'Old Standard TT', serif;
+  overflow-x:hidden;
 }
 
 .slider {
@@ -133,10 +134,10 @@ li.linav a:hover:not(.active) {
 
 /*Dashboard History Carousel*/
 .carouselhistory {
-            width: 35vw;
-            margin-left: auto;
-            margin-right: auto;
-            margin-top: 50px;
+  width: 40vw;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
 }
 
 .carouselhistory h1 {
@@ -144,7 +145,7 @@ li.linav a:hover:not(.active) {
 }
 
 .carouselhistory figure {
-    margin: 0
+    margin: 0;
 }
 
 .react-3d-carousel {
@@ -165,7 +166,7 @@ li.linav a:hover:not(.active) {
     display: block;
     position: absolute;
     width: 100%;
-    height: 25vw;
+    height: 30vw;
     left: 10px;
     top: 10px;
     line-height: 116px;
@@ -177,6 +178,7 @@ li.linav a:hover:not(.active) {
 
 .react-3d-carousel .carousel figure {
     background: black;
+    width: 100%;
 }
 
 .react-3d-carousel   .prev {
