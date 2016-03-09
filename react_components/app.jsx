@@ -50,6 +50,10 @@ var TinderTimesApp = React.createClass({
 		// })
 	},
 
+	handleFacebookLogin: function() {
+		console.log('facebook');
+	},
+
 	updateUserSeenArticles: function() {
 		$.ajax({
 			url: '/api/user',
@@ -144,7 +148,7 @@ var TinderTimesApp = React.createClass({
 			case DisplayEnum.DISPLAY_LOGIN:
 				page = (
 					<div>
-						<LoginPage />
+						<LoginPage onFacebookLogin={this.handleFacebookLogin}/>
 					</div>
 				);
 				break;

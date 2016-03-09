@@ -51,39 +51,45 @@ router.post('/', function(req, res, next) {
 /*
 POST new article into user's list of article
 */
-router.post('/newarticle/:id', function(req,res, next) {
+router.post('/newArticle/', function(req,res, next) {
   User.findOne({
-    '_id': new ObjectId(req.params.id)
+    '_id': new ObjectId(req.body._id)
   }, function(err, user) { 
-    user.savedArticles.push(req.body);
+    user.savedArticles.push(req.body.newArticle);
     //save edited user with new article
     user.save(function(err) {
       if (err) {
-        res.sendStatus(500);
+        res.status(500).json(err);
         return;
       }
-      res.sendStatus(200);
-      return;
-    })
-  })
+      res.status(200).send('Added');
+    });
+  });
 });
 
 /*
 POST deleting an article from user's list of article
 */
-router.post('/deletearticle/:id/:articleid', function(req,res, next) {
+router.delete('/readArticle/', function(req,res, next) {
   User.findOne({
-    '_id': new ObjectId(req.params.id)
+    '_id': new ObjectId(req.body.userId)
   }, function(err, user) { 
-    user.savedArticles.pull({'_id': req.params.articleid});
+    console.log(req.body.articleId);
+
+    var data = user.savedArticles.filter(function(article) {
+      console.log(article.articleId, req.body.articleId);
+      return article.articleId != req.body.articleId;
+    });
+
+    console.log(data);
+    user.savedArticles = data;
     //save edited user with new article
     user.save(function(err) {
       if (err) {
-        res.sendStatus(500);
+        res.status(500);
         return;
       }
-      res.sendStatus(200);
-      return;
+      res.status(200).send('Removed');
     })
   })
 });

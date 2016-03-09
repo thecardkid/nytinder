@@ -1,4 +1,8 @@
 var loginPage = React.createClass({
+	propTypes: {
+		onFacebookLogin: React.PropTypes.func.isRequired
+	},
+
 	getInitialState: function() {
     return {
      	userId: '',
@@ -19,21 +23,7 @@ var loginPage = React.createClass({
 
 	handleFacebookLogin: function() {
 		console.log('Logging in with facebook.');
-		// $.ajax({
-		// 	crossDomain: true,
-		// 	url: '/auth/facebook',
-		// 	dataType: 'jsonp',
-		// 	cache: false,
-		// 	type: 'GET',
-		// 	success: function(data) {
-		// 		console.log(data);
-		// 	}.bind(this),
-		// 	error: function(xhr, status, err) {
-		// 		console.log('error', status, err.toString());
-		// 	}.bind(this)
-		// });
-		// handles facebook login
-		// href='/auth/facebook
+		this.props.onFacebookLogin();
 	},
 
 	handleUserInfoChange: function(ev) {

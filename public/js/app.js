@@ -20648,6 +20648,7 @@ var LoginPage = require('./loginPage.jsx');
 
 //Navbar
 var Navbar = require('./navbar.jsx')
+var userId = '56e055c93edfa81f66a5a1e9';
 
 var DisplayEnum = Object.freeze({
 	DISPLAY_DASHBOARD: 0,
@@ -20689,6 +20690,10 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 		// })
 	},
 
+	handleFacebookLogin: function() {
+		console.log('facebook');
+	},
+
 	updateUserSeenArticles: function() {
 		$.ajax({
 			url: '/api/user',
@@ -20696,7 +20701,7 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 			cache: false,
 			type: 'PUT',
 			data: {
-				'userId': '56e055c93edfa81f66a5a1e9',
+				'userId': userId,
 				'seen': 1
 			},
 			success: function(status) {
@@ -20716,7 +20721,7 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 			cache: false,
 			type: 'POST',
 			data: {
-				'userId': '56e055c93edfa81f66a5a1e9',
+				'userId': userId,
 			},
 			success: function(serverArticles) {
 				console.log('received', serverArticles.data);
@@ -20731,7 +20736,7 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 	loadUserData: function () {
 		console.log('Getting user');
 		$.ajax({
-			url: "api/user/56e055c93edfa81f66a5a1e9",
+			url: "api/user/"+userId,
 			dataType: 'json',
 			type: 'GET',
 			cache: false,
@@ -20783,7 +20788,7 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 			case DisplayEnum.DISPLAY_LOGIN:
 				page = (
 					React.createElement("div", null, 
-						React.createElement(LoginPage, null)
+						React.createElement(LoginPage, {onFacebookLogin: this.handleFacebookLogin})
 					)
 				);
 				break;
@@ -21289,6 +21294,10 @@ module.exports = [
 ];
 },{}],181:[function(require,module,exports){
 var loginPage = React.createClass({displayName: "loginPage",
+	propTypes: {
+		onFacebookLogin: React.PropTypes.func.isRequired
+	},
+
 	getInitialState: function() {
     return {
      	userId: '',
@@ -21309,21 +21318,7 @@ var loginPage = React.createClass({displayName: "loginPage",
 
 	handleFacebookLogin: function() {
 		console.log('Logging in with facebook.');
-		// $.ajax({
-		// 	crossDomain: true,
-		// 	url: '/auth/facebook',
-		// 	dataType: 'jsonp',
-		// 	cache: false,
-		// 	type: 'GET',
-		// 	success: function(data) {
-		// 		console.log(data);
-		// 	}.bind(this),
-		// 	error: function(xhr, status, err) {
-		// 		console.log('error', status, err.toString());
-		// 	}.bind(this)
-		// });
-		// handles facebook login
-		// href='/auth/facebook
+		this.props.onFacebookLogin();
 	},
 
 	handleUserInfoChange: function(ev) {
