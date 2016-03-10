@@ -38,14 +38,28 @@ var TinderTimesApp = React.createClass({
 
 	componentDidMount: function() {
 		this.loginFacebook();
-    return null;
+    	return null;
 	},
 
-	handleUserLogin: function() {
-		// $.ajax({
-		// 	url: '/api/user',
-			
-		// })
+	handleUserLogin: function(username) {
+		$.ajax({
+			url: '/api/user',
+			dataType: 'json',
+			cache: false,
+			type: 'POST',
+			data: {
+				'username': username
+			},
+			success: function(user) {
+				this.setState({
+					user: user,
+					display: DisplayEnum.DISPLAY_DASHBOARD,
+				});
+			}.bind(this),
+			failure: function(xhr, status, err) {
+				console.error('POST /api/user', status, err.toString());
+			}.bind(this)
+		});
 	},
 
 	loginFacebook: function(){
@@ -124,7 +138,7 @@ var TinderTimesApp = React.createClass({
 				console.log('userarticles', this.state);
 				page = (
 					<div>
-						<TimeTinderBox articles={this.state.user.savedArticles}/>
+						<TimeTinderBox articles={this.state.user.savedArticles || []}/>
 					</div>
 				);
 				break;
@@ -132,7 +146,7 @@ var TinderTimesApp = React.createClass({
 			case DisplayEnum.DISPLAY_TINDERNEWS:
 				page = (
 					<div>
-					  <TinderNews articles={this.state.articles}
+					  <TinderNews articles={this.state.articles || []}
 					  	updateSeen={this.updateUserSeenArticles}/>
 				  </div>
 				);
@@ -141,7 +155,7 @@ var TinderTimesApp = React.createClass({
 			case DisplayEnum.DISPLAY_LOGIN:
 				page = (
 					<div>
-						<LoginPage/>
+						<LoginPage onUserLogin={this.handleUserLogin}/>
 					</div>
 				);
 				break;

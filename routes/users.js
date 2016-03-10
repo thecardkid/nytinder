@@ -9,20 +9,6 @@ GET particular user. First it looks for the id in the User
 collection, then finds (in the Article collection) all the 
 articles whose ids are present in the user.articles array
 */
-router.get('/:id', function(req, res, next) {
-  User.findOne({
-  	'_id': new ObjectId(req.params.id)
-  }, function(err, user) {
-  	if (!err) {
-      console.log(user);
-			res.send(user);
-  	} else {
-  		console.log('error', err);
-  		res.send(err);
-  	}
-  })
-});
-
 router.put('/', function(req, res, next) {
   console.log(req.body);
   User.update({
@@ -38,14 +24,19 @@ router.put('/', function(req, res, next) {
 POST a new user.
 */
 router.post('/', function(req, res, next) {
-	(new User(req.body)).save(function(err, user) {
-		if (!err) {
-			res.send(user)
-		} else {
-			console.log(err);
-			res.send(err);
-		}
-	})
+  User.findOrCreate({
+    'userId': req.body.username,
+    'displayName': req.body.username
+  }, function(err, user, isNew) {
+    isNew ? console.log('new') : console.log('old');
+    if (err) {
+      res.json(err);
+      return;
+    }
+
+    req.session.userId = req.body.username;
+    res.json({'user': user});
+  });
 });
 
 /*

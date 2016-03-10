@@ -1,28 +1,30 @@
 var loginPage = React.createClass({
 
+	propTypes: {
+		onUserLogin: React.PropTypes.func.isRequired,
+	},
+
 	getInitialState: function() {
-    return {
-     	userId: '',
-     	displayName: '',
-     	errorMessage: '',
-    };
+	    return {
+	     	username: '',
+	     	errorMessage: '',
+	    };
 	},
 
 	handleUserLogin: function() {
-		console.log('Logging in as', this.state.userId)
-		if (this.state.userId.length < 5 || this.state.userId.length > 20) {
+		console.log('Logging in as', this.state.username)
+		if (this.state.username.length < 5 || this.state.username.length > 20) {
 			this.setState({
 				errorMessage: 'Username must be between 5 and 20 characters.'
 			});
 		}
+		this.props.onUserLogin(this.state.username);
 		// handles login with site account
 	},
 
 	handleUserInfoChange: function(ev) {
-		console.log(ev.target.value);
 		this.setState({
-			userId: ev.target.value,
-			displayName: ev.target.value 
+			username: ev.target.value,
 		});
 	},
 
