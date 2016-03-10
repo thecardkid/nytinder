@@ -20,7 +20,8 @@ exports.prism = {
                 key: d,
                 image: all_info[d].img.url,
                 url: all_info[d].url,
-                headline: all_info[d].headline
+                headline: all_info[d].headline,
+                articleId: all_info[d].articleId
             };
         });
     }
@@ -45,7 +46,8 @@ exports.classic = {
                 key: d,
                 image: all_info[d].img.url,
                 url: all_info[d].url,
-                headline: all_info[d].headline
+                headline: all_info[d].headline,
+                articleId: all_info[d].articleId
             };
         });
     }

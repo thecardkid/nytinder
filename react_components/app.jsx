@@ -125,6 +125,29 @@ var TinderTimesApp = React.createClass({
 		});
 	},
 
+	deleteUserArticle: function(userId, articleId) {
+		console.log(userId,articleId);
+		//Delete Article From List of User's Articles
+		$.ajax({
+			url: '/api/user/readArticle',
+			dataType: 'json',
+			cache: false,
+			type: 'DELETE',
+			data: {
+				'userId': userId,
+				'articleId': articleId
+			},
+			success: function(articleRemoved) {
+				var currentUser = this.state.user;
+				currentUser.savedArticles = articleRemoved;
+				console.log("currentuser",currentUser);
+				this.setState({user: currentUser});
+			}.bind(this),
+			error: function(xhr, status, err) {
+				console.error('/api/user/readArticle', status, err.toString());
+			}.bind(this)
+		});
+	},
 	handleArticlePost: function() {
 		// Add new article to user's info
 	},
@@ -137,13 +160,15 @@ var TinderTimesApp = React.createClass({
 
 	render: function() {
 		var page;
-		console.log('userarticles', this.state.user.displayName);
+		console.log('userarticles', this.state.user);
 
 		switch (this.state.display) {
 			case DisplayEnum.DISPLAY_DASHBOARD:
 				page = (
 					<div>
-						<TimeTinderBox articles={this.state.user.savedArticles || []}/>
+						<TimeTinderBox id={this.state.user._id || ''} 
+							articles={this.state.user.savedArticles || []}
+							deleteUserArticle={this.deleteUserArticle}/>
 					</div>
 				);
 				break;

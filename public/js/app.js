@@ -20765,6 +20765,29 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 		});
 	},
 
+	deleteUserArticle: function(userId, articleId) {
+		console.log(userId,articleId);
+		//Delete Article From List of User's Articles
+		$.ajax({
+			url: '/api/user/readArticle',
+			dataType: 'json',
+			cache: false,
+			type: 'DELETE',
+			data: {
+				'userId': userId,
+				'articleId': articleId
+			},
+			success: function(articleRemoved) {
+				var currentUser = this.state.user;
+				currentUser.savedArticles = articleRemoved;
+				console.log("currentuser",currentUser);
+				this.setState({user: currentUser});
+			}.bind(this),
+			error: function(xhr, status, err) {
+				console.error('/api/user/readArticle', status, err.toString());
+			}.bind(this)
+		});
+	},
 	handleArticlePost: function() {
 		// Add new article to user's info
 	},
@@ -20777,13 +20800,15 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 
 	render: function() {
 		var page;
-		console.log('userarticles', this.state.user.displayName);
+		console.log('userarticles', this.state.user);
 
 		switch (this.state.display) {
 			case DisplayEnum.DISPLAY_DASHBOARD:
 				page = (
 					React.createElement("div", null, 
-						React.createElement(TimeTinderBox, {articles: this.state.user.savedArticles || []})
+						React.createElement(TimeTinderBox, {id: this.state.user._id || '', 
+							articles: this.state.user.savedArticles || [], 
+							deleteUserArticle: this.deleteUserArticle})
 					)
 				);
 				break;
@@ -20889,15 +20914,13 @@ var Carousel = React.createClass({displayName: "Carousel",
         window.open(imagehref);
     },
     deletearticle: function (url) {
-
-        console.log("deleting", this.props.id);
-        console.log("deletingurl", url);
+        this.props.deleteUserArticle(this.props.id,url);
     },
-    onhover: function (url) {
-        document.getElementById(url).style.display = 'block';
+    onhover: function (articleId) {
+        document.getElementById(articleId).style.display = 'block';
     },
-    onmouseout: function (url) {
-        document.getElementById(url).style.display = 'none';
+    onmouseout: function (articleId) {
+        document.getElementById(articleId).style.display = 'none';
     },
     componentWillMount: function () {
         this.depot = Depot(this.getInitialState(), this.props, this.setState.bind(this));
@@ -20917,18 +20940,18 @@ var Carousel = React.createClass({displayName: "Carousel",
                 font_size = "2.5vw";
             };
             return (React.createElement("figure", {key: i, style: Util.figureStyle(d)}, 
-                React.createElement("div", {className: "imagedashdiv", onMouseLeave: parentThis.onmouseout.bind(null,d.url), onMouseEnter: parentThis.onhover.bind(null,d.url)}, 
+                React.createElement("div", {className: "imagedashdiv", onMouseLeave: parentThis.onmouseout.bind(null,d.articleId), onMouseEnter: parentThis.onhover.bind(null,d.articleId)}, 
                     React.createElement("div", {className: "imagedash"}, 
                         React.createElement("img", {className: true, src: d.image, alt: i, height: "100%", width: "100%"})
                     ), 
-                    React.createElement("div", {className: "imagetextdash", id: d.url, style: {display:"none"}}, 
+                    React.createElement("div", {className: "imagetextdash", id: d.articleId}, 
                         React.createElement("p", {style: {fontSize:font_size}}, "\"", d.headline, "\""), 
                         React.createElement("div", {className: "openbutton", onClick: parentThis.openimage.bind(null,d.url)}, 
                             React.createElement("button", null, 
                               React.createElement("span", null, "Open")
                             )
                         ), 
-                        React.createElement("div", {className: "deletebutton", onClick: parentThis.deletearticle.bind(null,d.url)}, 
+                        React.createElement("div", {className: "deletebutton", onClick: parentThis.deletearticle.bind(null,d.articleId)}, 
                             React.createElement("button", null, 
                               React.createElement("span", null, "X")
                             )
@@ -20950,6 +20973,7 @@ var Carousel = React.createClass({displayName: "Carousel",
                 )
             );
         } else {
+
             return (
                 React.createElement("section", {className: "react-3d-carousel"}, 
                     React.createElement("div", {className: "carousel", 
@@ -21126,7 +21150,8 @@ exports.prism = {
                 key: d,
                 image: all_info[d].img.url,
                 url: all_info[d].url,
-                headline: all_info[d].headline
+                headline: all_info[d].headline,
+                articleId: all_info[d].articleId
             };
         });
     }
@@ -21151,7 +21176,8 @@ exports.classic = {
                 key: d,
                 image: all_info[d].img.url,
                 url: all_info[d].url,
-                headline: all_info[d].headline
+                headline: all_info[d].headline,
+                articleId: all_info[d].articleId
             };
         });
     }
@@ -21274,7 +21300,8 @@ var DashboardHistory = React.createClass({displayName: "DashboardHistory",
                           ease: this.state.ease, 
                           duration: this.state.duration, 
                           layout: this.state.layout, 
-                          id: this.props.id})
+                          id: this.props.id, 
+                          deleteUserArticle: this.props.deleteUserArticle})
             )
         );
     }
@@ -21625,7 +21652,7 @@ var TimeTinderBox = React.createClass({displayName: "TimeTinderBox",
     console.log('Tinderbox rendering', this.props.articles);
     return (
       React.createElement("div", {className: "timetinder-box"}, 
-        React.createElement(DashboardHistory, {articles: this.props.articles})
+        React.createElement(DashboardHistory, {id: this.props.id, articles: this.props.articles, deleteUserArticle: this.props.deleteUserArticle})
       )
     );
   }
