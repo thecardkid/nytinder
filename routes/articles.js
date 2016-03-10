@@ -45,6 +45,7 @@ function processJSON(response) {
 router.post('/', function(req, res, next) {
 	Article.find().exec(function(findErr, articleModel) {
 		User.findOne({'_id': new ObjectId(req.body.userId)}).exec(function(userFindErr, userModel) {
+			console.log(userModel);
 			if (findErr || userFindErr) {
 				res.send(findErr || userFindErr);
 				return;
@@ -54,6 +55,7 @@ router.post('/', function(req, res, next) {
 			if (articleModel.length > 0) {
 				var lastPolled = articleModel[0]['_id'].getTimestamp();
 				var today = new Date();
+				console.log(lastPolled.toJSON().slice(0,10), today.toJSON().slice(0,10));
 				var differentDay = lastPolled.toJSON().slice(0,10) !== today.toJSON().slice(0,10);
 			}
 

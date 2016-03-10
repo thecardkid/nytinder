@@ -12,7 +12,6 @@ var loginPage = React.createClass({
 	},
 
 	handleUserLogin: function() {
-		console.log('Logging in as', this.state.username)
 		if (this.state.username.length < 5 || this.state.username.length > 20) {
 			this.setState({
 				errorMessage: 'Username must be between 5 and 20 characters.'
@@ -37,8 +36,6 @@ var loginPage = React.createClass({
 		var rows = Array.apply(null, {length: 6}).map(function(elem, i) {
 			return <tr key={'tr'+i}>{images.slice(7*(i), 7*(i+1))}</tr>
 		})
-
-		console.log(rows.length);
 
 		return (
 			<div>

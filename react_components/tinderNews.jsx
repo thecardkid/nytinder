@@ -15,12 +15,11 @@ var TinderNews = React.createClass({
 	propTypes: {
 		articles: React.PropTypes.array.isRequired,
 		currArticle: React.PropTypes.number.isRequired,
-		showNextArticle: React.PropTypes.func.isRequired,
 		addSavedArticle: React.PropTypes.func.isRequired,
+		pageChange: React.PropTypes.func.isRequired,
 	},
 
 	getInitialState: function() {
-		console.log('received:', this.props.articles);
     return {
     	vw: size*document.documentElement.clientWidth/100,
     	hover: false,
@@ -45,7 +44,6 @@ var TinderNews = React.createClass({
 		var save;
 		if (this.props.currArticle+1 < this.props.articles.length)
 			save = this.props.currArticle;
-		console.log(this.props.articles[save]);
 		this.handleNext();
 		if (save) {
 			this.props.addSavedArticle(this.props.articles[save]);
@@ -116,13 +114,12 @@ var TinderNews = React.createClass({
 		return (
       <div>
         <div id='tinder-buttons'>
-        	<TinderButton lines={lines} text={'Next'} handleClick={this.handleNext}/>
-					<TinderButton lines={lines} text={'Save'} handleClick={this.handleSave}/>
+        	<button id='next' onClick={this.handleNext}>Next</button>
+					<button id='save' onClick={this.handleSave}>Save</button>
       	</div>
         <div className="slider">
           <Motion style={{height: spring(currHeight), width: spring(currWidth)}}>
             {function(container) {
-            	console.log(root.props.currArticle);
               return (
               	<div className="slider-inner" 
               			style={container}
@@ -133,6 +130,9 @@ var TinderNews = React.createClass({
               );
             }}
           </Motion>
+        </div>
+        <div className='centering-div'>
+          <button onClick={this.props.pageChange}>To Dashboard</button>
         </div>
       </div>
     );

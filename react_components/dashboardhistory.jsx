@@ -4,7 +4,6 @@ var images = require('./images');
 
 var DashboardHistory = React.createClass({
     getInitialState: function () {
-        console.log('dashboard history', this.props.articles);
         return {
             width: 400,
             layout: 'classic',
@@ -29,7 +28,10 @@ var DashboardHistory = React.createClass({
     render: function () {
         return (
             <div className="carouselhistory">
-            	<h1>Saved Articles</h1>
+                <div className='centering-div'>
+            	   <h1>Your dashboard</h1>
+                </div>
+                <div>
                 <Carousel all_info={this.props.articles}
                 		  width={this.state.width}
                           ease={this.state.ease}
@@ -37,6 +39,7 @@ var DashboardHistory = React.createClass({
                           layout={this.state.layout}
                           id={this.props.id}
                           deleteUserArticle={this.props.deleteUserArticle}/>
+                </div>
             </div>
         );
     }

@@ -61,7 +61,7 @@ var TinderTimesApp = React.createClass({
 		this.setState({
 			currArticle: Math.min(this.state.currArticle+1, this.state.articles.length-1)
 		});
-		// this.updateSeen();
+		this.updateUserSeenArticles();
 	},
 
 	handleUserLogin: function(username) {
@@ -117,10 +117,6 @@ var TinderTimesApp = React.createClass({
 				'seen': 1
 			},
 			success: function(status) {
-				// var copy = this.state.articles.slice(1);
-				// this.setState({
-				// 	articles: copy
-				// });
 				console.log(status);
 			}.bind(this),
 			error: function(xhr, status, err) {
@@ -187,13 +183,10 @@ var TinderTimesApp = React.createClass({
 				'userId': userId,
 				'articleId': articleId
 			},
-			success: function(articleRemoved) {
-				var copy = this.state.user.savedArticles.filter(function(elem) {
-					return elem.articleId !== articleId;
-				});
-				console.log('copy', copy);
+			success: function(returnedArticles) {
+				this.state.user.savedArticles = returnedArticles;
 				this.setState({
-					user: copy.length === 0 ? [noArticle] : copy
+					user: this.state.user
 				});
 			}.bind(this),
 			error: function(xhr, status, err) {
@@ -202,15 +195,15 @@ var TinderTimesApp = React.createClass({
 		});
 	},
 
-	handlePageChange: function(ev) {
+	showTinderNews: function() {
 		this.setState({
-			display: Number(ev.target.value)
+			display: DisplayEnum.DISPLAY_TINDERNEWS,
 		});
 	},
 
-	handlePageChangeClick: function(ev) {
+	showDashboard: function() {
 		this.setState({
-			display: ev,
+			display: DisplayEnum.DISPLAY_DASHBOARD,
 		});
 	},
 
@@ -221,14 +214,9 @@ var TinderTimesApp = React.createClass({
 			case DisplayEnum.DISPLAY_DASHBOARD:
 				page = (
 					<div>
-						<input type="range"
-		          min={0}
-		          max={2}
-		          value={this.state.display}
-		          onChange={this.handlePageChange} />
 						<Navbar displayName={this.state.user.displayName || ''} />
 						<div>
-							<TimeTinderBox pageChange={this.handlePageChangeClick} 
+							<TimeTinderBox pageChange={this.showTinderNews} 
 								id={this.state.user._id || ''} 
 								articles={this.state.user.savedArticles || []}
 								deleteUserArticle={this.deleteUserArticle}/>
@@ -240,17 +228,13 @@ var TinderTimesApp = React.createClass({
 			case DisplayEnum.DISPLAY_TINDERNEWS:
 				page = (
 					<div>
-						<input type="range"
-		          min={0}
-		          max={2}
-		          value={this.state.display}
-		          onChange={this.handlePageChange} />
 						<Navbar displayName={this.state.user.displayName || ''} />
 						<div>
 						  <TinderNews articles={this.state.articles || []}
 						  	addSavedArticle={this.addArticleToUser}
 						  	currArticle={this.state.currArticle}
-						  	onNext={this.showNextArticle}/>
+						  	onNext={this.showNextArticle}
+						  	pageChange={this.showDashboard} />
 					  </div>
 				  </div>
 				);

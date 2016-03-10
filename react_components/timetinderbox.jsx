@@ -3,18 +3,16 @@ var DashboardHistory = require('./dashboardhistory.jsx')
 var TimeTinderBox = React.createClass({
   propTypes: {
     articles: React.PropTypes.array.isRequired,
-  },
-
-  getInitialState: function () {
-    return null;
+    pageChange: React.PropTypes.func.isRequired,
   },
 
   render: function(){
-    console.log('Tinderbox rendering', this.props.articles);
     return (
       <div className="timetinder-box">
         <DashboardHistory id={this.props.id} articles={this.props.articles} deleteUserArticle={this.props.deleteUserArticle}/>
-        <button onClick={this.props.pageChange.bind(null,1)}>Choose Articles</button>
+        <div className='centering-div'>
+          <button onClick={this.props.pageChange}>Browse TinderNews</button>
+        </div>
       </div>
     );
   }

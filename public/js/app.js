@@ -20701,7 +20701,7 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 		this.setState({
 			currArticle: Math.min(this.state.currArticle+1, this.state.articles.length-1)
 		});
-		// this.updateSeen();
+		this.updateUserSeenArticles();
 	},
 
 	handleUserLogin: function(username) {
@@ -20757,10 +20757,6 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 				'seen': 1
 			},
 			success: function(status) {
-				// var copy = this.state.articles.slice(1);
-				// this.setState({
-				// 	articles: copy
-				// });
 				console.log(status);
 			}.bind(this),
 			error: function(xhr, status, err) {
@@ -20827,13 +20823,10 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 				'userId': userId,
 				'articleId': articleId
 			},
-			success: function(articleRemoved) {
-				var copy = this.state.user.savedArticles.filter(function(elem) {
-					return elem.articleId !== articleId;
-				});
-				console.log('copy', copy);
+			success: function(returnedArticles) {
+				this.state.user.savedArticles = returnedArticles;
 				this.setState({
-					user: copy.length === 0 ? [noArticle] : copy
+					user: this.state.user
 				});
 			}.bind(this),
 			error: function(xhr, status, err) {
@@ -20842,15 +20835,15 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 		});
 	},
 
-	handlePageChange: function(ev) {
+	showTinderNews: function() {
 		this.setState({
-			display: Number(ev.target.value)
+			display: DisplayEnum.DISPLAY_TINDERNEWS,
 		});
 	},
 
-	handlePageChangeClick: function(ev) {
+	showDashboard: function() {
 		this.setState({
-			display: ev,
+			display: DisplayEnum.DISPLAY_DASHBOARD,
 		});
 	},
 
@@ -20861,14 +20854,9 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 			case DisplayEnum.DISPLAY_DASHBOARD:
 				page = (
 					React.createElement("div", null, 
-						React.createElement("input", {type: "range", 
-		          min: 0, 
-		          max: 2, 
-		          value: this.state.display, 
-		          onChange: this.handlePageChange}), 
 						React.createElement(Navbar, {displayName: this.state.user.displayName || ''}), 
 						React.createElement("div", null, 
-							React.createElement(TimeTinderBox, {pageChange: this.handlePageChangeClick, 
+							React.createElement(TimeTinderBox, {pageChange: this.showTinderNews, 
 								id: this.state.user._id || '', 
 								articles: this.state.user.savedArticles || [], 
 								deleteUserArticle: this.deleteUserArticle})
@@ -20880,17 +20868,13 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 			case DisplayEnum.DISPLAY_TINDERNEWS:
 				page = (
 					React.createElement("div", null, 
-						React.createElement("input", {type: "range", 
-		          min: 0, 
-		          max: 2, 
-		          value: this.state.display, 
-		          onChange: this.handlePageChange}), 
 						React.createElement(Navbar, {displayName: this.state.user.displayName || ''}), 
 						React.createElement("div", null, 
 						  React.createElement(TinderNews, {articles: this.state.articles || [], 
 						  	addSavedArticle: this.addArticleToUser, 
 						  	currArticle: this.state.currArticle, 
-						  	onNext: this.showNextArticle})
+						  	onNext: this.showNextArticle, 
+						  	pageChange: this.showDashboard})
 					  )
 				  )
 				);
@@ -20929,7 +20913,6 @@ var Article = React.createClass({displayName: "Article",
 	},
 
 	render: function() {
-		console.log('1vw', this.props.vw);
 		var h = this.props.article.headline.length > (this.props.style.width/this.props.vw) ? 6.5 : 4.3; 
 		var marginTop = 28;
 
@@ -20952,7 +20935,7 @@ var Article = React.createClass({displayName: "Article",
 				), 
 				React.createElement("div", {className: "article-words", style: styleHeight}, 
 					React.createElement("div", {className: "article-header"}, 
-						React.createElement("h1", null, this.props.article.headline.replace('&amp;', '&'))
+						React.createElement("h1", null, this.props.article.headline.replace('&amp;', '&').replace('&#8216;', "'").replace('&#8217;', "'"))
 					), 
 					React.createElement("div", {className: "article-content"}, 
 						this.props.article.abstract
@@ -21336,7 +21319,6 @@ var images = require('./images');
 
 var DashboardHistory = React.createClass({displayName: "DashboardHistory",
     getInitialState: function () {
-        console.log('dashboard history', this.props.articles);
         return {
             width: 400,
             layout: 'classic',
@@ -21361,7 +21343,10 @@ var DashboardHistory = React.createClass({displayName: "DashboardHistory",
     render: function () {
         return (
             React.createElement("div", {className: "carouselhistory"}, 
-            	React.createElement("h1", null, "Saved Articles"), 
+                React.createElement("div", {className: "centering-div"}, 
+            	   React.createElement("h1", null, "Your dashboard")
+                ), 
+                React.createElement("div", null, 
                 React.createElement(Carousel, {all_info: this.props.articles, 
                 		  width: this.state.width, 
                           ease: this.state.ease, 
@@ -21369,6 +21354,7 @@ var DashboardHistory = React.createClass({displayName: "DashboardHistory",
                           layout: this.state.layout, 
                           id: this.props.id, 
                           deleteUserArticle: this.props.deleteUserArticle})
+                )
             )
         );
     }
@@ -21413,7 +21399,6 @@ var loginPage = React.createClass({displayName: "loginPage",
 	},
 
 	handleUserLogin: function() {
-		console.log('Logging in as', this.state.username)
 		if (this.state.username.length < 5 || this.state.username.length > 20) {
 			this.setState({
 				errorMessage: 'Username must be between 5 and 20 characters.'
@@ -21438,8 +21423,6 @@ var loginPage = React.createClass({displayName: "loginPage",
 		var rows = Array.apply(null, {length: 6}).map(function(elem, i) {
 			return React.createElement("tr", {key: 'tr'+i}, images.slice(7*(i), 7*(i+1)))
 		})
-
-		console.log(rows.length);
 
 		return (
 			React.createElement("div", null, 
@@ -21733,18 +21716,16 @@ var DashboardHistory = require('./dashboardhistory.jsx')
 var TimeTinderBox = React.createClass({displayName: "TimeTinderBox",
   propTypes: {
     articles: React.PropTypes.array.isRequired,
-  },
-
-  getInitialState: function () {
-    return null;
+    pageChange: React.PropTypes.func.isRequired,
   },
 
   render: function(){
-    console.log('Tinderbox rendering', this.props.articles);
     return (
       React.createElement("div", {className: "timetinder-box"}, 
         React.createElement(DashboardHistory, {id: this.props.id, articles: this.props.articles, deleteUserArticle: this.props.deleteUserArticle}), 
-        React.createElement("button", {onClick: this.props.pageChange.bind(null,1)}, "Choose Articles")
+        React.createElement("div", {className: "centering-div"}, 
+          React.createElement("button", {onClick: this.props.pageChange}, "Browse TinderNews")
+        )
       )
     );
   }
@@ -21794,12 +21775,11 @@ var TinderNews = React.createClass({displayName: "TinderNews",
 	propTypes: {
 		articles: React.PropTypes.array.isRequired,
 		currArticle: React.PropTypes.number.isRequired,
-		showNextArticle: React.PropTypes.func.isRequired,
 		addSavedArticle: React.PropTypes.func.isRequired,
+		pageChange: React.PropTypes.func.isRequired,
 	},
 
 	getInitialState: function() {
-		console.log('received:', this.props.articles);
     return {
     	vw: size*document.documentElement.clientWidth/100,
     	hover: false,
@@ -21824,7 +21804,6 @@ var TinderNews = React.createClass({displayName: "TinderNews",
 		var save;
 		if (this.props.currArticle+1 < this.props.articles.length)
 			save = this.props.currArticle;
-		console.log(this.props.articles[save]);
 		this.handleNext();
 		if (save) {
 			this.props.addSavedArticle(this.props.articles[save]);
@@ -21895,13 +21874,12 @@ var TinderNews = React.createClass({displayName: "TinderNews",
 		return (
       React.createElement("div", null, 
         React.createElement("div", {id: "tinder-buttons"}, 
-        	React.createElement(TinderButton, {lines: lines, text: 'Next', handleClick: this.handleNext}), 
-					React.createElement(TinderButton, {lines: lines, text: 'Save', handleClick: this.handleSave})
+        	React.createElement("button", {id: "next", onClick: this.handleNext}, "Next"), 
+					React.createElement("button", {id: "save", onClick: this.handleSave}, "Save")
       	), 
         React.createElement("div", {className: "slider"}, 
           React.createElement(Motion, {style: {height: spring(currHeight), width: spring(currWidth)}}, 
             function(container) {
-            	console.log(root.props.currArticle);
               return (
               	React.createElement("div", {className: "slider-inner", 
               			style: container, 
@@ -21912,6 +21890,9 @@ var TinderNews = React.createClass({displayName: "TinderNews",
               );
             }
           )
+        ), 
+        React.createElement("div", {className: "centering-div"}, 
+          React.createElement("button", {onClick: this.props.pageChange}, "To Dashboard")
         )
       )
     );
