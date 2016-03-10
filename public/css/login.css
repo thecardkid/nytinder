@@ -6,10 +6,35 @@ button, input {
 	font-family: 'Old Standard TT', serif;
 }
 
+div#login-site-title {
+  height: 5vw;
+  margin-top: 15%;
+  margin-left: 28.5vw;
+  z-index: 1;
+  position: absolute;
+  text-align: center;
+  background: rgba(80,80,80,0.95);
+  display: inline-block;
+  padding: 0;
+}
+
+div#login-site-title h1 {
+  font-size: 5vw;
+  margin-top: -1vw;
+  margin-left: 1vw;
+  letter-spacing: 1vw;
+  color: white;
+}
+
 div#login-form {
 	width: 50%;
 	text-align: center;
-	margin: 10% 25% 0;
+	margin: 25% 25% 0;
+  position: absolute;
+  z-index: 1;
+  background: rgba(170,170,170,0.85);
+  padding: 1% 0 2%;
+  border-radius: 1%;
 }
 
 .login-username {
@@ -28,7 +53,7 @@ div#login-form {
 }
 
 div#login-error-message {
-	color: #FD8182;
+	color: #AE0202;
 	display: inline;
 	padding: 0 1vw;
 }

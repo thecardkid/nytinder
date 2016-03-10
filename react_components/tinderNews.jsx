@@ -1,5 +1,6 @@
 var Article = require('./article.jsx');
 var testdata = require('./testdata').data;
+var TinderButton = require('./tinderButton.jsx');
 
 // Animation modules
 var spring = require('react-motion').spring;
@@ -42,7 +43,7 @@ var TinderNews = React.createClass({
 		this.setState({
 			currArticle: next
 		});
-		// this.props.updateSeen();
+		this.props.updateSeen();
 	},
 
 	handleSave: function() {
@@ -109,28 +110,18 @@ var TinderNews = React.createClass({
         </Motion>
       )
     });
-		var w = 8, h = 3;
+		var w = 8, h = 3, unitvw = this.state.vw/40;
+		var lines = [
+			[0, 0, w*unitvw, 0],
+			[0, h*unitvw, 0, 0],
+			[w*unitvw, h*unitvw, 0, h*unitvw],
+			[w*unitvw, 0, w*unitvw, h*unitvw]
+		];
 		return (
       <div>
         <div id='tinder-buttons'>
-        	<div className='box' id='next' onClick={this.handleNext}>
-        		<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
-							<line className="top" x1="0" y1="0" x2={w*this.state.vw/40} y2="0"/>
-							<line className="left" x1="0" y1={h*this.state.vw/40} x2="0" y2="0"/>
-							<line className="bottom" x1={w*this.state.vw/40} y1={h*this.state.vw/40} x2="0" y2={h*this.state.vw/40}/>
-							<line className="right" x1={w*this.state.vw/40} y1="0" x2={w*this.state.vw/40} y2={h*this.state.vw/40}/>
-						</svg>
-						<span>Next</span>
-					</div>
-					<div className='box' id='save' onClick={this.handleSave}>
-        		<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
-							<line className="top" x1="0" y1="0" x2={w*this.state.vw/40} y2="0"/>
-							<line className="left" x1="0" y1={h*this.state.vw/40} x2="0" y2="0"/>
-							<line className="bottom" x1={w*this.state.vw/40} y1={h*this.state.vw/40} x2="0" y2={h*this.state.vw/40}/>
-							<line className="right" x1={w*this.state.vw/40} y1="0" x2={w*this.state.vw/40} y2={h*this.state.vw/40}/>
-						</svg>
-						<span>Save</span>
-					</div>
+        	<TinderButton lines={lines} text={'Next'} handleClick={this.handleNext}/>
+					<TinderButton lines={lines} text={'Save'} handleClick={this.handleSave}/>
       	</div>
         <div className="slider">
           <Motion style={{height: spring(currHeight), width: spring(currWidth)}}>

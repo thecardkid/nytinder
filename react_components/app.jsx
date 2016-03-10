@@ -33,7 +33,7 @@ var TinderTimesApp = React.createClass({
 	getInitialState: function() {
     return {
     	user: {},
-    	display: DisplayEnum.DISPLAY_TINDERNEWS,
+    	display: DisplayEnum.DISPLAY_LOGIN,
     	articles: [endArticle],
     };
 	},
@@ -160,6 +160,11 @@ var TinderTimesApp = React.createClass({
 			case DisplayEnum.DISPLAY_DASHBOARD:
 				page = (
 					<div>
+						<input type="range"
+		          min={0}
+		          max={2}
+		          value={this.state.display}
+		          onChange={this.handlePageChange} />
 						<Navbar displayName={this.state.user.displayName || ''} />
 						<div>
 							<TimeTinderBox articles={this.state.user.savedArticles || []}/>
@@ -171,6 +176,11 @@ var TinderTimesApp = React.createClass({
 			case DisplayEnum.DISPLAY_TINDERNEWS:
 				page = (
 					<div>
+						<input type="range"
+		          min={0}
+		          max={2}
+		          value={this.state.display}
+		          onChange={this.handlePageChange} />
 						<Navbar displayName={this.state.user.displayName || ''} />
 						<div>
 						  <TinderNews articles={this.state.articles || []}
@@ -192,12 +202,6 @@ var TinderTimesApp = React.createClass({
 
 		return (
 			<div>
-				<input
-          type="range"
-          min={0}
-          max={2}
-          value={this.state.display}
-          onChange={this.handlePageChange} />
         {page}
 			</div>
 		);

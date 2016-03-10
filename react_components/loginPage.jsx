@@ -17,6 +17,7 @@ var loginPage = React.createClass({
 			this.setState({
 				errorMessage: 'Username must be between 5 and 20 characters.'
 			});
+			return;
 		}
 		this.props.onUserLogin(this.state.username);
 		// handles login with site account
@@ -29,8 +30,28 @@ var loginPage = React.createClass({
 	},
 
 	render: function() {
+		var images = Array.apply(null, {length: 42}).map(function(elem, i) {
+			return <td><img key={'td'+i} src={'img/medium/'+(i+1)+'.jpg'}/></td>
+		});
+
+		var rows = Array.apply(null, {length: 6}).map(function(elem, i) {
+			return <tr key={'tr'+i}>{images.slice(7*(i), 7*(i+1))}</tr>
+		})
+
+		console.log(rows.length);
+
 		return (
 			<div>
+				<div id='login-background-grid'>
+					<table id='login-images'>
+						<tbody>
+							{rows}
+						</tbody>
+					</table>
+				</div>
+				<div id='login-site-title'>
+					<h1>Tinder Times</h1>
+				</div>
 				<div id='login-form'>
 					<div id='login-error-message'>
 						{this.state.errorMessage}

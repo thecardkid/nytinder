@@ -20673,7 +20673,7 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 	getInitialState: function() {
     return {
     	user: {},
-    	display: DisplayEnum.DISPLAY_TINDERNEWS,
+    	display: DisplayEnum.DISPLAY_LOGIN,
     	articles: [endArticle],
     };
 	},
@@ -20800,6 +20800,11 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 			case DisplayEnum.DISPLAY_DASHBOARD:
 				page = (
 					React.createElement("div", null, 
+						React.createElement("input", {type: "range", 
+		          min: 0, 
+		          max: 2, 
+		          value: this.state.display, 
+		          onChange: this.handlePageChange}), 
 						React.createElement(Navbar, {displayName: this.state.user.displayName || ''}), 
 						React.createElement("div", null, 
 							React.createElement(TimeTinderBox, {articles: this.state.user.savedArticles || []})
@@ -20811,6 +20816,11 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 			case DisplayEnum.DISPLAY_TINDERNEWS:
 				page = (
 					React.createElement("div", null, 
+						React.createElement("input", {type: "range", 
+		          min: 0, 
+		          max: 2, 
+		          value: this.state.display, 
+		          onChange: this.handlePageChange}), 
 						React.createElement(Navbar, {displayName: this.state.user.displayName || ''}), 
 						React.createElement("div", null, 
 						  React.createElement(TinderNews, {articles: this.state.articles || [], 
@@ -20832,12 +20842,6 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 
 		return (
 			React.createElement("div", null, 
-				React.createElement("input", {
-          type: "range", 
-          min: 0, 
-          max: 2, 
-          value: this.state.display, 
-          onChange: this.handlePageChange}), 
         page
 			)
 		);
@@ -20848,7 +20852,7 @@ ReactDOM.render(
 	React.createElement(TinderTimesApp, null),
   document.getElementById('content')
 );
-},{"./loginPage.jsx":181,"./navbar.jsx":182,"./timetinderbox.jsx":184,"./tinderNews.jsx":185}],174:[function(require,module,exports){
+},{"./loginPage.jsx":181,"./navbar.jsx":182,"./timetinderbox.jsx":184,"./tinderNews.jsx":186}],174:[function(require,module,exports){
 var spring = require('react-motion').spring;
 
 var Article = React.createClass({displayName: "Article",
@@ -21349,6 +21353,7 @@ var loginPage = React.createClass({displayName: "loginPage",
 			this.setState({
 				errorMessage: 'Username must be between 5 and 20 characters.'
 			});
+			return;
 		}
 		this.props.onUserLogin(this.state.username);
 		// handles login with site account
@@ -21361,8 +21366,28 @@ var loginPage = React.createClass({displayName: "loginPage",
 	},
 
 	render: function() {
+		var images = Array.apply(null, {length: 42}).map(function(elem, i) {
+			return React.createElement("td", null, React.createElement("img", {key: 'td'+i, src: 'img/medium/'+(i+1)+'.jpg'}))
+		});
+
+		var rows = Array.apply(null, {length: 6}).map(function(elem, i) {
+			return React.createElement("tr", {key: 'tr'+i}, images.slice(7*(i), 7*(i+1)))
+		})
+
+		console.log(rows.length);
+
 		return (
 			React.createElement("div", null, 
+				React.createElement("div", {id: "login-background-grid"}, 
+					React.createElement("table", {id: "login-images"}, 
+						React.createElement("tbody", null, 
+							rows
+						)
+					)
+				), 
+				React.createElement("div", {id: "login-site-title"}, 
+					React.createElement("h1", null, "Tinder Times")
+				), 
 				React.createElement("div", {id: "login-form"}, 
 					React.createElement("div", {id: "login-error-message"}, 
 						this.state.errorMessage
@@ -21661,8 +21686,34 @@ var TimeTinderBox = React.createClass({displayName: "TimeTinderBox",
 
 module.exports = TimeTinderBox;
 },{"./dashboardhistory.jsx":179}],185:[function(require,module,exports){
+var spring = require('react-motion').spring;
+
+module.exports = React.createClass({displayName: "exports",
+	propTypes: {
+		handleClick: React.PropTypes.func.isRequired,
+		lines: React.PropTypes.array.isRequired,
+		text: React.PropTypes.string.isRequired,
+	},
+
+	render: function() {
+		var ln = this.props.lines;
+		return (
+			React.createElement("div", {className: "box", id: this.props.text.toLowerCase(), onClick: this.props.handleClick}, 
+    		React.createElement("svg", {xmlns: "http://www.w3.org/2000/svg", width: "100%", height: "100%"}, 
+					React.createElement("line", {className: "top", x1: ln[0][0], y1: ln[0][1], x2: ln[0][2], y2: ln[0][3]}), 
+					React.createElement("line", {className: "left", x1: ln[1][0], y1: ln[1][1], x2: ln[1][2], y2: ln[1][3]}), 
+					React.createElement("line", {className: "bottom", x1: ln[2][0], y1: ln[2][1], x2: ln[2][2], y2: ln[2][3]}), 
+					React.createElement("line", {className: "right", x1: ln[3][0], y1: ln[3][1], x2: ln[3][2], y2: ln[3][3]})
+				), 
+				React.createElement("span", null, this.props.text)
+			)
+		)
+	}
+});
+},{"react-motion":38}],186:[function(require,module,exports){
 var Article = require('./article.jsx');
 var testdata = require('./testdata').data;
+var TinderButton = require('./tinderButton.jsx');
 
 // Animation modules
 var spring = require('react-motion').spring;
@@ -21705,7 +21756,7 @@ var TinderNews = React.createClass({displayName: "TinderNews",
 		this.setState({
 			currArticle: next
 		});
-		// this.props.updateSeen();
+		this.props.updateSeen();
 	},
 
 	handleSave: function() {
@@ -21772,28 +21823,18 @@ var TinderNews = React.createClass({displayName: "TinderNews",
         )
       )
     });
-		var w = 8, h = 3;
+		var w = 8, h = 3, unitvw = this.state.vw/40;
+		var lines = [
+			[0, 0, w*unitvw, 0],
+			[0, h*unitvw, 0, 0],
+			[w*unitvw, h*unitvw, 0, h*unitvw],
+			[w*unitvw, 0, w*unitvw, h*unitvw]
+		];
 		return (
       React.createElement("div", null, 
         React.createElement("div", {id: "tinder-buttons"}, 
-        	React.createElement("div", {className: "box", id: "next", onClick: this.handleNext}, 
-        		React.createElement("svg", {xmlns: "http://www.w3.org/2000/svg", width: "100%", height: "100%"}, 
-							React.createElement("line", {className: "top", x1: "0", y1: "0", x2: w*this.state.vw/40, y2: "0"}), 
-							React.createElement("line", {className: "left", x1: "0", y1: h*this.state.vw/40, x2: "0", y2: "0"}), 
-							React.createElement("line", {className: "bottom", x1: w*this.state.vw/40, y1: h*this.state.vw/40, x2: "0", y2: h*this.state.vw/40}), 
-							React.createElement("line", {className: "right", x1: w*this.state.vw/40, y1: "0", x2: w*this.state.vw/40, y2: h*this.state.vw/40})
-						), 
-						React.createElement("span", null, "Next")
-					), 
-					React.createElement("div", {className: "box", id: "save", onClick: this.handleSave}, 
-        		React.createElement("svg", {xmlns: "http://www.w3.org/2000/svg", width: "100%", height: "100%"}, 
-							React.createElement("line", {className: "top", x1: "0", y1: "0", x2: w*this.state.vw/40, y2: "0"}), 
-							React.createElement("line", {className: "left", x1: "0", y1: h*this.state.vw/40, x2: "0", y2: "0"}), 
-							React.createElement("line", {className: "bottom", x1: w*this.state.vw/40, y1: h*this.state.vw/40, x2: "0", y2: h*this.state.vw/40}), 
-							React.createElement("line", {className: "right", x1: w*this.state.vw/40, y1: "0", x2: w*this.state.vw/40, y2: h*this.state.vw/40})
-						), 
-						React.createElement("span", null, "Save")
-					)
+        	React.createElement(TinderButton, {lines: lines, text: 'Next', handleClick: this.handleNext}), 
+					React.createElement(TinderButton, {lines: lines, text: 'Save', handleClick: this.handleSave})
       	), 
         React.createElement("div", {className: "slider"}, 
           React.createElement(Motion, {style: {height: spring(currHeight), width: spring(currWidth)}}, 
@@ -21821,4 +21862,4 @@ module.exports = TinderNews;
 
 
 
-},{"./article.jsx":174,"./testdata":183,"react-motion":38}]},{},[173]);
+},{"./article.jsx":174,"./testdata":183,"./tinderButton.jsx":185,"react-motion":38}]},{},[173]);
