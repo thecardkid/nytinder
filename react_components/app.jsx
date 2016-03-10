@@ -15,24 +15,26 @@ var DisplayEnum = Object.freeze({
 	DISPLAY_LOGIN: 2,
 });
 
+var endArticle = { 
+	url: '#',
+  byline: '',
+  abstract: 'There are no more new articles',
+  headline: 'Check again tomorrow!',
+  date: '',
+  articleId: 0,
+  img: { 
+  	url: 'http://vignette1.wikia.nocookie.net/playstationallstarsfanfictionroyale/images/b/b3/Sad-Puppy-Face-Picture.jpg/revision/latest/scale-to-width-down/628?cb=20130529190645',
+		height: 480,
+		width: 628 
+	} 
+};
+
 var TinderTimesApp = React.createClass({
 	getInitialState: function() {
     return {
     	user: {},
     	display: DisplayEnum.DISPLAY_LOGIN,
-    	articles: [{ 
-    		url: '#',
-		    byline: '',
-		    abstract: 'There are no more new articles',
-		    headline: 'Check again tomorrow!',
-		    date: '',
-		    articleId: 0,
-		    img: 
-		     { url: 'http://vignette1.wikia.nocookie.net/playstationallstarsfanfictionroyale/images/b/b3/Sad-Puppy-Face-Picture.jpg/revision/latest/scale-to-width-down/628?cb=20130529190645',
-		       height: 480,
-		       width: 628 } 
-		     },
-	     ],
+    	articles: [endArticle],
     };
 	},
 
@@ -50,9 +52,9 @@ var TinderTimesApp = React.createClass({
 			data: {
 				'username': username
 			},
-			success: function(user) {
+			success: function(data) {
 				this.setState({
-					user: user,
+					user: data.user,
 					display: DisplayEnum.DISPLAY_DASHBOARD,
 				});
 			}.bind(this),
@@ -132,10 +134,10 @@ var TinderTimesApp = React.createClass({
 
 	render: function() {
 		var page;
+		console.log('userarticles', this.state.user.displayName);
 
 		switch (this.state.display) {
 			case DisplayEnum.DISPLAY_DASHBOARD:
-				console.log('userarticles', this.state);
 				page = (
 					<div>
 						<TimeTinderBox articles={this.state.user.savedArticles || []}/>
@@ -169,7 +171,7 @@ var TinderTimesApp = React.createClass({
           max={2}
           value={this.state.display}
           onChange={this.handlePageChange} />
-          <Navbar displayName={this.state.user.displayName} />
+          <Navbar displayName={this.state.user.displayName || ''} />
         {page}
 			</div>
 		);

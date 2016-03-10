@@ -20655,35 +20655,32 @@ var DisplayEnum = Object.freeze({
 	DISPLAY_LOGIN: 2,
 });
 
+var endArticle = { 
+	url: '#',
+  byline: '',
+  abstract: 'There are no more new articles',
+  headline: 'Check again tomorrow!',
+  date: '',
+  articleId: 0,
+  img: { 
+  	url: 'http://vignette1.wikia.nocookie.net/playstationallstarsfanfictionroyale/images/b/b3/Sad-Puppy-Face-Picture.jpg/revision/latest/scale-to-width-down/628?cb=20130529190645',
+		height: 480,
+		width: 628 
+	} 
+};
+
 var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 	getInitialState: function() {
     return {
     	user: {},
     	display: DisplayEnum.DISPLAY_LOGIN,
-    	articles: [{ 
-    		url: '#',
-		    byline: '',
-		    abstract: 'There are no more new articles',
-		    headline: 'Check again tomorrow!',
-		    date: '',
-		    articleId: 0,
-		    img: 
-		     { url: 'http://vignette1.wikia.nocookie.net/playstationallstarsfanfictionroyale/images/b/b3/Sad-Puppy-Face-Picture.jpg/revision/latest/scale-to-width-down/628?cb=20130529190645',
-		       height: 480,
-		       width: 628 } 
-		     },
-	     ],
+    	articles: [endArticle],
     };
 	},
 
 	componentDidMount: function() {
-<<<<<<< HEAD
 		this.loginFacebook();
-=======
-		this.loadArticlesFromServer();
-		// this.loadUserData();
->>>>>>> PollingAPI
-    return null;
+    	return null;
 	},
 
 	handleUserLogin: function(username) {
@@ -20695,9 +20692,9 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 			data: {
 				'username': username
 			},
-			success: function(user) {
+			success: function(data) {
 				this.setState({
-					user: user,
+					user: data.user,
 					display: DisplayEnum.DISPLAY_DASHBOARD,
 				});
 			}.bind(this),
@@ -20765,42 +20762,6 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 		});
 	},
 
-<<<<<<< HEAD
-	loadUserData: function (mongoid) {
-		$.ajax({
-			url: "/api/user/"+mongoid,
-			dataType: 'json',
-			type: 'GET',
-			cache: false,
-			success: function(user) {
-				console.log('loaded', user);
-		  		this.setState({user: user});
-			}.bind(this),
-			error: function(xhr, status, err) {
-				console.error(this.props.url, status, err.toString());
-			}.bind(this)
-		});
-	},
-=======
-	// loadUserData: function () {
-	// 	console.log('Getting user');
-	// 	$.ajax({
-	// 		url: "api/user/"+userId,
-	// 		dataType: 'json',
-	// 		type: 'GET',
-	// 		cache: false,
-	// 		success: function(user) {
-	// 			console.log('user from server', user);
-	// 	  	this.setState({user: user});
-	// 	  	console.log('state', this.state);
-	// 		}.bind(this),
-	// 		error: function(xhr, status, err) {
-	// 			console.error(this.props.url, status, err.toString());
-	// 		}.bind(this)
-	// 	});
-	// },
->>>>>>> PollingAPI
-
 	handleArticlePost: function() {
 		// Add new article to user's info
 	},
@@ -20813,18 +20774,13 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 
 	render: function() {
 		var page;
+		console.log('userarticles', this.state.user.displayName);
 
 		switch (this.state.display) {
 			case DisplayEnum.DISPLAY_DASHBOARD:
-				console.log('userarticles', this.state);
 				page = (
 					React.createElement("div", null, 
-<<<<<<< HEAD
-						React.createElement(TimeTinderBox, {articles: this.state.user.savedArticles})
-=======
-						React.createElement(TimeTinderBox, {articles: this.state.user.savedArticles || []}
-						)
->>>>>>> PollingAPI
+						React.createElement(TimeTinderBox, {articles: this.state.user.savedArticles || []})
 					)
 				);
 				break;
@@ -20832,14 +20788,8 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 			case DisplayEnum.DISPLAY_TINDERNEWS:
 				page = (
 					React.createElement("div", null, 
-<<<<<<< HEAD
-					  React.createElement(TinderNews, {articles: this.state.articles, 
-					  	updateSeen: this.updateUserSeenArticles})
-=======
 					  React.createElement(TinderNews, {articles: this.state.articles || [], 
-					  	updateSeen: this.updateUserSeenArticles}
-				  	)
->>>>>>> PollingAPI
+					  	updateSeen: this.updateUserSeenArticles})
 				  )
 				);
 				break;
@@ -20847,13 +20797,7 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 			case DisplayEnum.DISPLAY_LOGIN:
 				page = (
 					React.createElement("div", null, 
-<<<<<<< HEAD
-						React.createElement(LoginPage, null)
-=======
-						React.createElement(LoginPage, {onFacebookLogin: this.handleFacebookLogin, 
-							onUserLogin: this.handleUserLogin}
-						)
->>>>>>> PollingAPI
+						React.createElement(LoginPage, {onUserLogin: this.handleUserLogin})
 					)
 				);
 				break;
@@ -20867,7 +20811,7 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
           max: 2, 
           value: this.state.display, 
           onChange: this.handlePageChange}), 
-          React.createElement(Navbar, {displayName: this.state.user.displayName}), 
+          React.createElement(Navbar, {displayName: this.state.user.displayName || ''}), 
         page
 			)
 		);
@@ -21359,19 +21303,16 @@ module.exports = [
 ];
 },{}],181:[function(require,module,exports){
 var loginPage = React.createClass({displayName: "loginPage",
-<<<<<<< HEAD
-=======
+
 	propTypes: {
-		onFacebookLogin: React.PropTypes.func.isRequired,
 		onUserLogin: React.PropTypes.func.isRequired,
 	},
->>>>>>> PollingAPI
 
 	getInitialState: function() {
-    return {
-     	username: '',
-     	errorMessage: '',
-    };
+	    return {
+	     	username: '',
+	     	errorMessage: '',
+	    };
 	},
 
 	handleUserLogin: function() {
@@ -21423,7 +21364,12 @@ module.exports = loginPage;
 },{}],182:[function(require,module,exports){
 // Navigation/header bar on the top of the page. Holds login and search bar
 var Navbar = React.createClass({displayName: "Navbar",
+  propTypes: {
+    displayName: React.PropTypes.string.isRequired,
+  },
+  
   render: function(){
+    console.log('navbar', this.props.displayName);
     return (
       React.createElement("div", {className: "Navbar"}, 
           React.createElement("ul", {className: "navbar"}, 

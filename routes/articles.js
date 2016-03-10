@@ -57,7 +57,7 @@ router.post('/', function(req, res, next) {
 				var differentDay = lastPolled.toJSON().slice(0,10) !== today.toJSON().slice(0,10);
 			}
 
-			if (!differentDay && userModel.onArticle === 19) {
+			if (!differentDay && userModel.onArticle >= 19) {
 
 				res.send('Sorry, wait til tomorrow');
 
