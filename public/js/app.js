@@ -20798,6 +20798,12 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 		});
 	},
 
+	handlePageChangeClick: function(ev) {
+		this.setState({
+			display: ev
+		});
+	},
+
 	render: function() {
 		var page;
 		console.log('userarticles', this.state.user);
@@ -20806,7 +20812,7 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 			case DisplayEnum.DISPLAY_DASHBOARD:
 				page = (
 					React.createElement("div", null, 
-						React.createElement(TimeTinderBox, {id: this.state.user._id || '', 
+						React.createElement(TimeTinderBox, {pageChange: this.handlePageChangeClick, id: this.state.user._id || '', 
 							articles: this.state.user.savedArticles || [], 
 							deleteUserArticle: this.deleteUserArticle})
 					)
@@ -21650,7 +21656,8 @@ var TimeTinderBox = React.createClass({displayName: "TimeTinderBox",
     console.log('Tinderbox rendering', this.props.articles);
     return (
       React.createElement("div", {className: "timetinder-box"}, 
-        React.createElement(DashboardHistory, {id: this.props.id, articles: this.props.articles, deleteUserArticle: this.props.deleteUserArticle})
+        React.createElement(DashboardHistory, {id: this.props.id, articles: this.props.articles, deleteUserArticle: this.props.deleteUserArticle}), 
+        React.createElement("button", {onClick: this.props.pageChange.bind(null,1)}, "Choose Articles")
       )
     );
   }

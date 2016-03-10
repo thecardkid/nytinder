@@ -158,6 +158,12 @@ var TinderTimesApp = React.createClass({
 		});
 	},
 
+	handlePageChangeClick: function(ev) {
+		this.setState({
+			display: ev
+		});
+	},
+
 	render: function() {
 		var page;
 		console.log('userarticles', this.state.user);
@@ -166,7 +172,7 @@ var TinderTimesApp = React.createClass({
 			case DisplayEnum.DISPLAY_DASHBOARD:
 				page = (
 					<div>
-						<TimeTinderBox id={this.state.user._id || ''} 
+						<TimeTinderBox pageChange={this.handlePageChangeClick} id={this.state.user._id || ''} 
 							articles={this.state.user.savedArticles || []}
 							deleteUserArticle={this.deleteUserArticle}/>
 					</div>

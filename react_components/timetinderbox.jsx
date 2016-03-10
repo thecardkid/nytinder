@@ -14,6 +14,7 @@ var TimeTinderBox = React.createClass({
     return (
       <div className="timetinder-box">
         <DashboardHistory id={this.props.id} articles={this.props.articles} deleteUserArticle={this.props.deleteUserArticle}/>
+        <button onClick={this.props.pageChange.bind(null,1)}>Choose Articles</button>
       </div>
     );
   }
