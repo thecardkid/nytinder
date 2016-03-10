@@ -19,6 +19,7 @@
     "grunt-react": "^0.12.3",
     "hbs": "^4.0.0",
     "mongoose": "^4.4.5",
+    "mongoose-findorcreate": "^0.1.2",
     "morgan": "~1.6.1",
     "newyorktimes": "0.0.2",
     "node-sass-middleware": "0.8.0",

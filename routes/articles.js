@@ -50,15 +50,18 @@ router.post('/', function(req, res, next) {
 				return;
 			}
 
-			var lastPolled = articleModel[0]['_id'].getTimestamp();
-			var today = new Date();
-			var differentDay = lastPolled.toJSON().slice(0,10) !== today.toJSON().slice(0,10);
+			var differentDay = true;
+			if (articleModel.length > 0) {
+				var lastPolled = articleModel[0]['_id'].getTimestamp();
+				var today = new Date();
+				var differentDay = lastPolled.toJSON().slice(0,10) !== today.toJSON().slice(0,10);
+			}
 
 			if (!differentDay && userModel.onArticle === 19) {
 
 				res.send('Sorry, wait til tomorrow');
 
-			} else if (differentDay || articleModel[0]['data'].length === 0) {
+			} else if (differentDay || !articleModel) {
 
 				Article.remove({}, function(removeErr) {
 					if (removeErr) {

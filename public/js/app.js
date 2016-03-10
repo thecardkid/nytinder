@@ -20660,6 +20660,7 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
     return {
     	user: {},
     	display: DisplayEnum.DISPLAY_LOGIN,
+    	mongoid: '',
     	articles: [{ 
     		url: '#',
 		    byline: '',
@@ -20677,8 +20678,7 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 	},
 
 	componentDidMount: function() {
-		this.loadArticlesFromServer();
-		this.loadUserData();
+		this.loginFacebook();
     return null;
 	},
 
@@ -20689,6 +20689,26 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 		// })
 	},
 
+	loginFacebook: function(){
+		console.log("HERE IN LOGIN FACEBOOK LAND")
+		var parentThis = this;
+		$.ajax({
+		  	url: '/api/login',
+		  	dataType: 'json',
+		  	type: 'GET',
+		 	success: function(data) {
+		 		console.log(data)
+		    	this.setState({display: DisplayEnum.DISPLAY_DASHBOARD, mongoid: data.mongoid});
+		    	parentThis.loadArticlesFromServer();
+				parentThis.loadUserData();
+		  	}.bind(this),
+		  	error: function(xhr, status, err) {
+		  		console.log("error!")
+		    	this.setState({display: DisplayEnum.DISPLAY_LOGIN});
+		  	}.bind(this)
+		});
+	},
+
 	updateUserSeenArticles: function() {
 		$.ajax({
 			url: '/api/user',
@@ -20696,7 +20716,7 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 			cache: false,
 			type: 'PUT',
 			data: {
-				'userId': '56e055c93edfa81f66a5a1e9',
+				'userId': this.state.mongoid,
 				'seen': 1
 			},
 			success: function(status) {
@@ -20716,10 +20736,10 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 			cache: false,
 			type: 'POST',
 			data: {
-				'userId': '56e055c93edfa81f66a5a1e9',
+				'userId': this.state.mongoid,
 			},
 			success: function(serverArticles) {
-				console.log('received', serverArticles.data);
+				// console.log('received', serverArticles.data);
 				this.setState({articles: serverArticles.data.concat(this.state.articles)});
 			}.bind(this),
 			error: function(xhr, status, err) {
@@ -20729,16 +20749,13 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 	},
 
 	loadUserData: function () {
-		console.log('Getting user');
 		$.ajax({
-			url: "api/user/56e055c93edfa81f66a5a1e9",
+			url: "/api/user/"+this.state.mongoid,
 			dataType: 'json',
 			type: 'GET',
 			cache: false,
 			success: function(user) {
-				console.log('user from server', user);
 		  	this.setState({user: user});
-		  	console.log('state', this.state);
 			}.bind(this),
 			error: function(xhr, status, err) {
 				console.error(this.props.url, status, err.toString());
@@ -21307,24 +21324,6 @@ var loginPage = React.createClass({displayName: "loginPage",
 		// handles login with site account
 	},
 
-	handleFacebookLogin: function() {
-		console.log('Logging in with facebook.');
-		// $.ajax({
-		// 	crossDomain: true,
-		// 	url: '/auth/facebook',
-		// 	dataType: 'jsonp',
-		// 	cache: false,
-		// 	type: 'GET',
-		// 	success: function(data) {
-		// 		console.log(data);
-		// 	}.bind(this),
-		// 	error: function(xhr, status, err) {
-		// 		console.log('error', status, err.toString());
-		// 	}.bind(this)
-		// });
-		// handles facebook login
-		// href='/auth/facebook
-	},
 
 	handleUserInfoChange: function(ev) {
 		console.log(ev.target.value);
@@ -21350,7 +21349,7 @@ var loginPage = React.createClass({displayName: "loginPage",
 					React.createElement("br", null), 
 					React.createElement("div", null, 
 						React.createElement("div", {className: "login-button"}, 
-							React.createElement("a", {id: "login-facebook", onClick: this.handleFacebookLogin}, "Login with Facebook")
+							React.createElement("a", {id: "login-facebook", href: "/auth/facebook"}, "Login with Facebook")
 						), 
 						React.createElement("div", {className: "login-button"}, 
 							React.createElement("button", {id: "login-create-user", onClick: this.handleUserLogin}, "Log In")

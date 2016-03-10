@@ -5,6 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var login = require('./routes/login');
 var index = require('./routes/index');
 var users = require('./routes/users');
 var articles = require('./routes/articles');
@@ -54,6 +55,7 @@ app.get('/auth/facebook/callback',
                                       failureRedirect: '/' })
 );
 
+
 // Logout of Facebook
 app.get("/logout", function(req, res) {
     req.logout();
@@ -61,6 +63,7 @@ app.get("/logout", function(req, res) {
 });
 
 app.use('/', index);
+app.use("/api/login", login);
 app.use('/api/user', users);
 app.use('/api/article', articles);
 
