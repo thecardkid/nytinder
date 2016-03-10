@@ -20679,15 +20679,29 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 
 	componentDidMount: function() {
 		this.loadArticlesFromServer();
-		this.loadUserData();
+		// this.loadUserData();
     return null;
 	},
 
-	handleUserLogin: function() {
-		// $.ajax({
-		// 	url: '/api/user',
-			
-		// })
+	handleUserLogin: function(username) {
+		$.ajax({
+			url: '/api/user',
+			dataType: 'json',
+			cache: false,
+			type: 'POST',
+			data: {
+				'username': username
+			},
+			success: function(user) {
+				this.setState({
+					user: user,
+					display: DisplayEnum.DISPLAY_DASHBOARD,
+				});
+			}.bind(this),
+			failure: function(xhr, status, err) {
+				console.error('POST /api/user', status, err.toString());
+			}.bind(this)
+		});
 	},
 
 	handleFacebookLogin: function() {
@@ -20733,23 +20747,23 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 		});
 	},
 
-	loadUserData: function () {
-		console.log('Getting user');
-		$.ajax({
-			url: "api/user/"+userId,
-			dataType: 'json',
-			type: 'GET',
-			cache: false,
-			success: function(user) {
-				console.log('user from server', user);
-		  	this.setState({user: user});
-		  	console.log('state', this.state);
-			}.bind(this),
-			error: function(xhr, status, err) {
-				console.error(this.props.url, status, err.toString());
-			}.bind(this)
-		});
-	},
+	// loadUserData: function () {
+	// 	console.log('Getting user');
+	// 	$.ajax({
+	// 		url: "api/user/"+userId,
+	// 		dataType: 'json',
+	// 		type: 'GET',
+	// 		cache: false,
+	// 		success: function(user) {
+	// 			console.log('user from server', user);
+	// 	  	this.setState({user: user});
+	// 	  	console.log('state', this.state);
+	// 		}.bind(this),
+	// 		error: function(xhr, status, err) {
+	// 			console.error(this.props.url, status, err.toString());
+	// 		}.bind(this)
+	// 	});
+	// },
 
 	handleArticlePost: function() {
 		// Add new article to user's info
@@ -20769,7 +20783,7 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 				console.log('userarticles', this.state);
 				page = (
 					React.createElement("div", null, 
-						React.createElement(TimeTinderBox, {articles: this.state.user.savedArticles}
+						React.createElement(TimeTinderBox, {articles: this.state.user.savedArticles || []}
 						)
 					)
 				);
@@ -20778,7 +20792,7 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 			case DisplayEnum.DISPLAY_TINDERNEWS:
 				page = (
 					React.createElement("div", null, 
-					  React.createElement(TinderNews, {articles: this.state.articles, 
+					  React.createElement(TinderNews, {articles: this.state.articles || [], 
 					  	updateSeen: this.updateUserSeenArticles}
 				  	)
 				  )
@@ -20788,7 +20802,9 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 			case DisplayEnum.DISPLAY_LOGIN:
 				page = (
 					React.createElement("div", null, 
-						React.createElement(LoginPage, {onFacebookLogin: this.handleFacebookLogin})
+						React.createElement(LoginPage, {onFacebookLogin: this.handleFacebookLogin, 
+							onUserLogin: this.handleUserLogin}
+						)
 					)
 				);
 				break;
@@ -21295,24 +21311,25 @@ module.exports = [
 },{}],181:[function(require,module,exports){
 var loginPage = React.createClass({displayName: "loginPage",
 	propTypes: {
-		onFacebookLogin: React.PropTypes.func.isRequired
+		onFacebookLogin: React.PropTypes.func.isRequired,
+		onUserLogin: React.PropTypes.func.isRequired,
 	},
 
 	getInitialState: function() {
     return {
-     	userId: '',
-     	displayName: '',
+     	username: '',
      	errorMessage: '',
     };
 	},
 
 	handleUserLogin: function() {
-		console.log('Logging in as', this.state.userId)
-		if (this.state.userId.length < 5 || this.state.userId.length > 20) {
+		console.log('Logging in as', this.state.username)
+		if (this.state.username.length < 5 || this.state.username.length > 20) {
 			this.setState({
 				errorMessage: 'Username must be between 5 and 20 characters.'
 			});
 		}
+		this.props.onUserLogin(this.state.username);
 		// handles login with site account
 	},
 
@@ -21322,10 +21339,8 @@ var loginPage = React.createClass({displayName: "loginPage",
 	},
 
 	handleUserInfoChange: function(ev) {
-		console.log(ev.target.value);
 		this.setState({
-			userId: ev.target.value,
-			displayName: ev.target.value 
+			username: ev.target.value,
 		});
 	},
 
