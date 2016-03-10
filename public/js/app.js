@@ -20673,7 +20673,7 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 	getInitialState: function() {
     return {
     	user: {},
-    	display: DisplayEnum.DISPLAY_LOGIN,
+    	display: DisplayEnum.DISPLAY_TINDERNEWS,
     	articles: [endArticle],
     };
 	},
@@ -21709,11 +21709,14 @@ var TinderNews = React.createClass({displayName: "TinderNews",
 	},
 
 	handleSave: function() {
+		var save;
 		if (this.state.currArticle+1 < this.props.articles.length)
-			var save = this.state.currArticle;
+			save = this.state.currArticle;
 		console.log(this.props.articles[save]);
 		this.handleNext();
-		this.props.addSavedArticle(this.props.articles[save]);
+		if (save) {
+			this.props.addSavedArticle(this.props.articles[save]);
+		}
 	},
 
 	changeHover: function() {
@@ -21769,12 +21772,28 @@ var TinderNews = React.createClass({displayName: "TinderNews",
         )
       )
     });
-
+		var w = 8, h = 3;
 		return (
       React.createElement("div", null, 
         React.createElement("div", {id: "tinder-buttons"}, 
-        	React.createElement("button", {onClick: this.handleNext}, "Next"), 
-        	React.createElement("button", {onClick: this.handleSave}, "Save")
+        	React.createElement("div", {className: "box", id: "next", onClick: this.handleNext}, 
+        		React.createElement("svg", {xmlns: "http://www.w3.org/2000/svg", width: "100%", height: "100%"}, 
+							React.createElement("line", {className: "top", x1: "0", y1: "0", x2: w*this.state.vw/40, y2: "0"}), 
+							React.createElement("line", {className: "left", x1: "0", y1: h*this.state.vw/40, x2: "0", y2: "0"}), 
+							React.createElement("line", {className: "bottom", x1: w*this.state.vw/40, y1: h*this.state.vw/40, x2: "0", y2: h*this.state.vw/40}), 
+							React.createElement("line", {className: "right", x1: w*this.state.vw/40, y1: "0", x2: w*this.state.vw/40, y2: h*this.state.vw/40})
+						), 
+						React.createElement("span", null, "Next")
+					), 
+					React.createElement("div", {className: "box", id: "save", onClick: this.handleSave}, 
+        		React.createElement("svg", {xmlns: "http://www.w3.org/2000/svg", width: "100%", height: "100%"}, 
+							React.createElement("line", {className: "top", x1: "0", y1: "0", x2: w*this.state.vw/40, y2: "0"}), 
+							React.createElement("line", {className: "left", x1: "0", y1: h*this.state.vw/40, x2: "0", y2: "0"}), 
+							React.createElement("line", {className: "bottom", x1: w*this.state.vw/40, y1: h*this.state.vw/40, x2: "0", y2: h*this.state.vw/40}), 
+							React.createElement("line", {className: "right", x1: w*this.state.vw/40, y1: "0", x2: w*this.state.vw/40, y2: h*this.state.vw/40})
+						), 
+						React.createElement("span", null, "Save")
+					)
       	), 
         React.createElement("div", {className: "slider"}, 
           React.createElement(Motion, {style: {height: spring(currHeight), width: spring(currWidth)}}, 

@@ -1,0 +1,121 @@
+/* Box */
+.box {
+	width: 8vw;
+	height: 3vw;
+	position: relative;
+	display: inline-block;
+	margin: 0 10px;
+	cursor: pointer;
+	-webkit-transition: background 0.4s 0.5s;
+	transition: background 0.4s 0.5s;
+}
+
+.box:hover {
+	-webkit-transition-delay: 0s;
+	transition-delay: 0s;
+}
+
+.box span {
+	display: block;
+	font-weight: 400;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-size: 2vw;
+	margin-top: 2%;
+}
+
+.box span {
+	-webkit-transition: color 0.4s 0.5s;
+	transition: color 0.4s 0.5s;
+}
+
+.box:hover span {
+	-webkit-transition-delay: 0s;
+	transition-delay: 0s;
+}
+
+.box svg {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.box svg line {
+	stroke: black;
+	fill: none;
+	-webkit-transition: all .8s ease-in-out;
+	transition: all .8s ease-in-out;
+}
+
+/* Spin */
+div#tinder-buttons .box {
+	box-shadow: none;
+	-webkit-transition: none;
+	transition: none;
+}
+
+div#tinder-buttons .box span {
+	-webkit-transform: scale(0.9);
+	transform: scale(0.9);
+	-webkit-backface-visibility: hidden;
+	backface-visibility: hidden;
+	-webkit-transition: -webkit-transform 0.5s;
+	transition: transform 0.5s;
+}
+
+div#tinder-buttons .box:hover h3,
+div#tinder-buttons .box:hover span {
+	-webkit-transform: scale(1.3);
+	transform: scale(1.3);
+}
+
+div#tinder-buttons .box svg line {
+	stroke-width: 10;
+	-webkit-transition: all .8s;
+	transition: all .8s;
+}
+
+div#tinder-buttons .box:hover svg line {
+	-webkit-transition-delay: 0s;
+	transition-delay: 0s;
+}
+
+div#tinder-buttons .box:hover svg line {
+	stroke-width: 0;
+}
+
+div#tinder-buttons .box svg line.top,
+div#tinder-buttons .box svg line.bottom {
+	stroke-dasharray: 8vw; 
+}
+
+div#tinder-buttons .box svg line.left,
+div#tinder-buttons .box svg line.right {
+	stroke-dasharray: 3vw;
+}
+
+div#tinder-buttons .box:hover svg line.top {
+	-webkit-transform: translateX(-8vw);
+	transform: translateX(-8vw);
+}
+
+div#tinder-buttons .box:hover svg line.bottom {
+	-webkit-transform: translateX(8vw);
+	transform: translateX(8vw);
+}
+
+div#tinder-buttons .box:hover svg line.left {
+	-webkit-transform: translateY(3vw);
+	transform: translateY(3vw);
+}
+
+div#tinder-buttons .box:hover svg line.right {
+	-webkit-transform: translateY(-3vw);
+	transform: translateY(-3vw);
+}
+
+div#tinder-buttons {
+  text-align: center;
+  margin: 1.5vw;
+}
+

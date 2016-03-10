@@ -1,10 +1,6 @@
-body {
+body, button, input{
 	font-family: 'Old Standard TT', serif;
   overflow-x:hidden;
-}
-
-div#tinder-buttons {
-  text-align: center;
 }
 
 .slider {

@@ -33,7 +33,7 @@ var TinderTimesApp = React.createClass({
 	getInitialState: function() {
     return {
     	user: {},
-    	display: DisplayEnum.DISPLAY_LOGIN,
+    	display: DisplayEnum.DISPLAY_TINDERNEWS,
     	articles: [endArticle],
     };
 	},
