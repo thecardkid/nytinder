@@ -1,4 +1,5 @@
 var loginPage = React.createClass({
+
 	getInitialState: function() {
     return {
      	userId: '',
@@ -16,7 +17,6 @@ var loginPage = React.createClass({
 		}
 		// handles login with site account
 	},
-
 
 	handleUserInfoChange: function(ev) {
 		console.log(ev.target.value);

@@ -20660,7 +20660,6 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
     return {
     	user: {},
     	display: DisplayEnum.DISPLAY_LOGIN,
-    	mongoid: '',
     	articles: [{ 
     		url: '#',
 		    byline: '',
@@ -20698,9 +20697,8 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 		  	type: 'GET',
 		 	success: function(data) {
 		 		console.log(data)
-		    	this.setState({display: DisplayEnum.DISPLAY_DASHBOARD, mongoid: data.mongoid});
-		    	parentThis.loadArticlesFromServer();
-				parentThis.loadUserData();
+		 		this.loadArticlesFromServer(data._id);
+		    	this.setState({display: DisplayEnum.DISPLAY_DASHBOARD, user: data});
 		  	}.bind(this),
 		  	error: function(xhr, status, err) {
 		  		console.log("error!")
@@ -20728,7 +20726,7 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 		})
 	},
 
-	loadArticlesFromServer: function() {
+	loadArticlesFromServer: function(mongoid) {
 		// Get all articles from NYTimes and update this.state.display
 		$.ajax({
 			url: '/api/article',
@@ -20736,10 +20734,10 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 			cache: false,
 			type: 'POST',
 			data: {
-				'userId': this.state.mongoid,
+				'userId': mongoid,
 			},
 			success: function(serverArticles) {
-				// console.log('received', serverArticles.data);
+				console.log('received', serverArticles.data);
 				this.setState({articles: serverArticles.data.concat(this.state.articles)});
 			}.bind(this),
 			error: function(xhr, status, err) {
@@ -20748,14 +20746,15 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 		});
 	},
 
-	loadUserData: function () {
+	loadUserData: function (mongoid) {
 		$.ajax({
-			url: "/api/user/"+this.state.mongoid,
+			url: "/api/user/"+mongoid,
 			dataType: 'json',
 			type: 'GET',
 			cache: false,
 			success: function(user) {
-		  	this.setState({user: user});
+				console.log('loaded', user);
+		  		this.setState({user: user});
 			}.bind(this),
 			error: function(xhr, status, err) {
 				console.error(this.props.url, status, err.toString());
@@ -20781,8 +20780,7 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 				console.log('userarticles', this.state);
 				page = (
 					React.createElement("div", null, 
-						React.createElement(TimeTinderBox, {articles: this.state.user.savedArticles}
-						)
+						React.createElement(TimeTinderBox, {articles: this.state.user.savedArticles})
 					)
 				);
 				break;
@@ -20791,8 +20789,7 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 				page = (
 					React.createElement("div", null, 
 					  React.createElement(TinderNews, {articles: this.state.articles, 
-					  	updateSeen: this.updateUserSeenArticles}
-				  	)
+					  	updateSeen: this.updateUserSeenArticles})
 				  )
 				);
 				break;
@@ -21306,6 +21303,7 @@ module.exports = [
 ];
 },{}],181:[function(require,module,exports){
 var loginPage = React.createClass({displayName: "loginPage",
+
 	getInitialState: function() {
     return {
      	userId: '',
@@ -21323,7 +21321,6 @@ var loginPage = React.createClass({displayName: "loginPage",
 		}
 		// handles login with site account
 	},
-
 
 	handleUserInfoChange: function(ev) {
 		console.log(ev.target.value);
