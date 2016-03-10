@@ -13,16 +13,16 @@ var size = 40; // Number of viewwidths for background image
 
 var TinderNews = React.createClass({
 	propTypes: {
-		updateSeen: React.PropTypes.func.isRequired,
 		articles: React.PropTypes.array.isRequired,
+		currArticle: React.PropTypes.number.isRequired,
+		showNextArticle: React.PropTypes.func.isRequired,
+		addSavedArticle: React.PropTypes.func.isRequired,
 	},
 
 	getInitialState: function() {
 		console.log('received:', this.props.articles);
     return {
     	vw: size*document.documentElement.clientWidth/100,
-    	// articles: testdata, // TODO: change this to this.props.articles
-    	currArticle: 0,
     	hover: false,
     }
 	},
@@ -31,7 +31,6 @@ var TinderNews = React.createClass({
 		this.setState({
 			vw: size*document.documentElement.clientWidth/100
 		});
-		console.log(this.state.vw);
 	},
 
 	componentDidMount: function() {
@@ -39,17 +38,13 @@ var TinderNews = React.createClass({
 	},
 
 	handleNext: function() {
-		var next = Math.min(this.state.currArticle+1, this.props.articles.length-1);
-		this.setState({
-			currArticle: next
-		});
-		this.props.updateSeen();
+		this.props.onNext();
 	},
 
 	handleSave: function() {
 		var save;
-		if (this.state.currArticle+1 < this.props.articles.length)
-			save = this.state.currArticle;
+		if (this.props.currArticle+1 < this.props.articles.length)
+			save = this.props.currArticle;
 		console.log(this.props.articles[save]);
 		this.handleNext();
 		if (save) {
@@ -73,16 +68,16 @@ var TinderNews = React.createClass({
 
 		// Figure out how to line up the article divs to
 		// set them up for animation
-		var currWidth = photos[this.state.currArticle][0];
-		var currHeight = photos[this.state.currArticle][1];
+		var currWidth = photos[this.props.currArticle][0];
+		var currHeight = photos[this.props.currArticle][1];
 
 		var widths = photos.map(function(elem, i) {
 			return currHeight/elem[1] * elem[0];
 		});
 
 		var leftStartCoords = 0;
-		if (this.state.currArticle != 0) {
-			leftStartCoords = widths.slice(0, this.state.currArticle).reduce(function(prev, elem, i, arr) {
+		if (this.props.currArticle != 0) {
+			leftStartCoords = widths.slice(0, this.props.currArticle).reduce(function(prev, elem, i, arr) {
 				return prev-elem;
 			}, 0);
 		}
@@ -117,6 +112,7 @@ var TinderNews = React.createClass({
 			[w*unitvw, h*unitvw, 0, h*unitvw],
 			[w*unitvw, 0, w*unitvw, h*unitvw]
 		];
+
 		return (
       <div>
         <div id='tinder-buttons'>
@@ -126,6 +122,7 @@ var TinderNews = React.createClass({
         <div className="slider">
           <Motion style={{height: spring(currHeight), width: spring(currWidth)}}>
             {function(container) {
+            	console.log(root.props.currArticle);
               return (
               	<div className="slider-inner" 
               			style={container}

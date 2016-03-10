@@ -13,7 +13,8 @@ var TimeTinderBox = React.createClass({
     console.log('Tinderbox rendering', this.props.articles);
     return (
       <div className="timetinder-box">
-        <DashboardHistory articles={this.props.articles}/>
+        <DashboardHistory id={this.props.id} articles={this.props.articles} deleteUserArticle={this.props.deleteUserArticle}/>
+        <button onClick={this.props.pageChange.bind(null,1)}>Choose Articles</button>
       </div>
     );
   }

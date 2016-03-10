@@ -15,15 +15,13 @@ var Carousel = React.createClass({
         window.open(imagehref);
     },
     deletearticle: function (url) {
-
-        console.log("deleting", this.props.id);
-        console.log("deletingurl", url);
+        this.props.deleteUserArticle(this.props.id,url);
     },
-    onhover: function (url) {
-        document.getElementById(url).style.display = 'block';
+    onhover: function (articleId) {
+        document.getElementById(articleId).style.display = 'block';
     },
-    onmouseout: function (url) {
-        document.getElementById(url).style.display = 'none';
+    onmouseout: function (articleId) {
+        document.getElementById(articleId).style.display = 'none';
     },
     componentWillMount: function () {
         this.depot = Depot(this.getInitialState(), this.props, this.setState.bind(this));
@@ -39,22 +37,24 @@ var Carousel = React.createClass({
         var parentThis = this;
         var figures = this.state.figures.map(function (d, i) {
             var font_size = "3.5vw";
-            if ((d.headline).length > 55) {
+            if ((d.all_info.headline).length > 55) {
                 font_size = "2.5vw";
             };
             return (<figure key={i} style={Util.figureStyle(d)}>
-                <div className="imagedashdiv" onMouseLeave={parentThis.onmouseout.bind(null,d.url)} onMouseEnter={parentThis.onhover.bind(null,d.url)}>
+                <div className="imagedashdiv" onMouseLeave={parentThis.onmouseout.bind(null,d.all_info.articleId)} onMouseEnter={parentThis.onhover.bind(null,d.all_info.articleId)}>
                     <div className="imagedash">
                         <img className src={d.image} alt={i} height={"100%"} width={"100%"}/>
                     </div>
-                    <div className="imagetextdash" id={d.url}>
-                        <p style={{fontSize:font_size}}>"{d.headline}"</p>
-                        <div className="openbutton" onClick={parentThis.openimage.bind(null,d.url)}>
+                    <div className="imagetextdash" id={d.all_info.articleId}>
+                        <p className="imagedate">{d.all_info.date}</p>
+                        <p className="imageheadline" style={{fontSize:font_size}}>"{d.all_info.headline}"</p>
+                        <p className="imageauthor">{d.all_info.byline}</p>
+                        <div className="openbutton" onClick={parentThis.openimage.bind(null,d.all_info.url)}>
                             <button>
                               <span>Open</span>
                             </button>
                         </div>
-                        <div className="deletebutton" onClick={parentThis.deletearticle.bind(null,d.url)}>
+                        <div className="deletebutton" onClick={parentThis.deletearticle.bind(null,d.all_info.articleId)}>
                             <button>
                               <span>X</span>
                             </button>
@@ -76,6 +76,7 @@ var Carousel = React.createClass({
                 </section>
             );
         } else {
+
             return (
                 <section className='react-3d-carousel'>
                     <div className='carousel'

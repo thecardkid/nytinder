@@ -83,7 +83,7 @@ router.delete('/readArticle/', function(req,res, next) {
         res.status(500);
         return;
       }
-      res.status(200).json({'status': 'removed'});
+      res.status(200).json(data);
     })
   })
 });

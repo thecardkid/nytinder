@@ -20669,18 +20669,39 @@ var endArticle = {
 	} 
 };
 
+var noArticle = {
+	url: '#',
+  byline: '',
+  headline: 'Click the button to start browsing',
+  date: '',
+  articleId: 0,
+  img: { 
+  	url: 'http://www.mrwallpaper.com/wallpapers/Sad-Puppy.jpg',
+		height: 1200,
+		width: 1920,
+	} 
+}
+
 var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 	getInitialState: function() {
     return {
     	user: {},
     	display: DisplayEnum.DISPLAY_LOGIN,
     	articles: [endArticle],
+    	currArticle: 0,
     };
 	},
 
 	componentDidMount: function() {
 		this.loginFacebook();
     	return null;
+	},
+
+	showNextArticle: function() {
+		this.setState({
+			currArticle: Math.min(this.state.currArticle+1, this.state.articles.length-1)
+		});
+		// this.updateSeen();
 	},
 
 	handleUserLogin: function(username) {
@@ -20694,6 +20715,7 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 			},
 			success: function(user) {
 				this.loadArticlesFromServer(user._id);
+				if (user.savedArticles.length === 0) user.savedArticles = [noArticle];
 				this.setState({
 					user: user,
 					display: DisplayEnum.DISPLAY_DASHBOARD,
@@ -20735,6 +20757,10 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 				'seen': 1
 			},
 			success: function(status) {
+				// var copy = this.state.articles.slice(1);
+				// this.setState({
+				// 	articles: copy
+				// });
 				console.log(status);
 			}.bind(this),
 			error: function(xhr, status, err) {
@@ -20773,15 +20799,45 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 			data: {data: JSON.stringify(data0)},
 			success: function(data) {
 				if (data.status === 'added') {
-					this.state.user.savedArticles.push(newArticle);
+					if (this.state.user.savedArticles[0].articleId === 0) {
+						this.state.user.savedArticles = [newArticle];
+					} else {
+						this.state.user.savedArticles.push(newArticle);
+					}
 					this.setState({
 						user: this.state.user
 					});
-					console.log('saved');
 				}
 			}.bind(this),
 			error: function(xhr, status, err) {
 				console.error('/api/user/newArticle', status, err.toString());
+			}.bind(this)
+		});
+	},
+
+	deleteUserArticle: function(userId, articleId) {
+		console.log(userId,articleId);
+		//Delete Article From List of User's Articles
+		$.ajax({
+			url: '/api/user/readArticle',
+			dataType: 'json',
+			cache: false,
+			type: 'DELETE',
+			data: {
+				'userId': userId,
+				'articleId': articleId
+			},
+			success: function(articleRemoved) {
+				var copy = this.state.user.savedArticles.filter(function(elem) {
+					return elem.articleId !== articleId;
+				});
+				console.log('copy', copy);
+				this.setState({
+					user: copy.length === 0 ? [noArticle] : copy
+				});
+			}.bind(this),
+			error: function(xhr, status, err) {
+				console.error('/api/user/readArticle', status, err.toString());
 			}.bind(this)
 		});
 	},
@@ -20792,9 +20848,14 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 		});
 	},
 
+	handlePageChangeClick: function(ev) {
+		this.setState({
+			display: ev,
+		});
+	},
+
 	render: function() {
 		var page;
-		console.log('userarticles', this.state.user.displayName);
 
 		switch (this.state.display) {
 			case DisplayEnum.DISPLAY_DASHBOARD:
@@ -20807,7 +20868,10 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 		          onChange: this.handlePageChange}), 
 						React.createElement(Navbar, {displayName: this.state.user.displayName || ''}), 
 						React.createElement("div", null, 
-							React.createElement(TimeTinderBox, {articles: this.state.user.savedArticles || []})
+							React.createElement(TimeTinderBox, {pageChange: this.handlePageChangeClick, 
+								id: this.state.user._id || '', 
+								articles: this.state.user.savedArticles || [], 
+								deleteUserArticle: this.deleteUserArticle})
 						)
 					)
 				);
@@ -20824,8 +20888,9 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 						React.createElement(Navbar, {displayName: this.state.user.displayName || ''}), 
 						React.createElement("div", null, 
 						  React.createElement(TinderNews, {articles: this.state.articles || [], 
-						  	updateSeen: this.updateUserSeenArticles, 
-						  	addSavedArticle: this.addArticleToUser})
+						  	addSavedArticle: this.addArticleToUser, 
+						  	currArticle: this.state.currArticle, 
+						  	onNext: this.showNextArticle})
 					  )
 				  )
 				);
@@ -20918,15 +20983,13 @@ var Carousel = React.createClass({displayName: "Carousel",
         window.open(imagehref);
     },
     deletearticle: function (url) {
-
-        console.log("deleting", this.props.id);
-        console.log("deletingurl", url);
+        this.props.deleteUserArticle(this.props.id,url);
     },
-    onhover: function (url) {
-        document.getElementById(url).style.display = 'block';
+    onhover: function (articleId) {
+        document.getElementById(articleId).style.display = 'block';
     },
-    onmouseout: function (url) {
-        document.getElementById(url).style.display = 'none';
+    onmouseout: function (articleId) {
+        document.getElementById(articleId).style.display = 'none';
     },
     componentWillMount: function () {
         this.depot = Depot(this.getInitialState(), this.props, this.setState.bind(this));
@@ -20942,22 +21005,24 @@ var Carousel = React.createClass({displayName: "Carousel",
         var parentThis = this;
         var figures = this.state.figures.map(function (d, i) {
             var font_size = "3.5vw";
-            if ((d.headline).length > 55) {
+            if ((d.all_info.headline).length > 55) {
                 font_size = "2.5vw";
             };
             return (React.createElement("figure", {key: i, style: Util.figureStyle(d)}, 
-                React.createElement("div", {className: "imagedashdiv", onMouseLeave: parentThis.onmouseout.bind(null,d.url), onMouseEnter: parentThis.onhover.bind(null,d.url)}, 
+                React.createElement("div", {className: "imagedashdiv", onMouseLeave: parentThis.onmouseout.bind(null,d.all_info.articleId), onMouseEnter: parentThis.onhover.bind(null,d.all_info.articleId)}, 
                     React.createElement("div", {className: "imagedash"}, 
                         React.createElement("img", {className: true, src: d.image, alt: i, height: "100%", width: "100%"})
                     ), 
-                    React.createElement("div", {className: "imagetextdash", id: d.url}, 
-                        React.createElement("p", {style: {fontSize:font_size}}, "\"", d.headline, "\""), 
-                        React.createElement("div", {className: "openbutton", onClick: parentThis.openimage.bind(null,d.url)}, 
+                    React.createElement("div", {className: "imagetextdash", id: d.all_info.articleId}, 
+                        React.createElement("p", {className: "imagedate"}, d.all_info.date), 
+                        React.createElement("p", {className: "imageheadline", style: {fontSize:font_size}}, "\"", d.all_info.headline, "\""), 
+                        React.createElement("p", {className: "imageauthor"}, d.all_info.byline), 
+                        React.createElement("div", {className: "openbutton", onClick: parentThis.openimage.bind(null,d.all_info.url)}, 
                             React.createElement("button", null, 
                               React.createElement("span", null, "Open")
                             )
                         ), 
-                        React.createElement("div", {className: "deletebutton", onClick: parentThis.deletearticle.bind(null,d.url)}, 
+                        React.createElement("div", {className: "deletebutton", onClick: parentThis.deletearticle.bind(null,d.all_info.articleId)}, 
                             React.createElement("button", null, 
                               React.createElement("span", null, "X")
                             )
@@ -20979,6 +21044,7 @@ var Carousel = React.createClass({displayName: "Carousel",
                 )
             );
         } else {
+
             return (
                 React.createElement("section", {className: "react-3d-carousel"}, 
                     React.createElement("div", {className: "carousel", 
@@ -21154,8 +21220,7 @@ exports.prism = {
                 present: true,
                 key: d,
                 image: all_info[d].img.url,
-                url: all_info[d].url,
-                headline: all_info[d].headline
+                all_info: all_info[d]
             };
         });
     }
@@ -21179,8 +21244,7 @@ exports.classic = {
                 present: true,
                 key: d,
                 image: all_info[d].img.url,
-                url: all_info[d].url,
-                headline: all_info[d].headline
+                all_info: all_info[d]
             };
         });
     }
@@ -21303,7 +21367,8 @@ var DashboardHistory = React.createClass({displayName: "DashboardHistory",
                           ease: this.state.ease, 
                           duration: this.state.duration, 
                           layout: this.state.layout, 
-                          id: this.props.id})
+                          id: this.props.id, 
+                          deleteUserArticle: this.props.deleteUserArticle})
             )
         );
     }
@@ -21678,7 +21743,8 @@ var TimeTinderBox = React.createClass({displayName: "TimeTinderBox",
     console.log('Tinderbox rendering', this.props.articles);
     return (
       React.createElement("div", {className: "timetinder-box"}, 
-        React.createElement(DashboardHistory, {articles: this.props.articles})
+        React.createElement(DashboardHistory, {id: this.props.id, articles: this.props.articles, deleteUserArticle: this.props.deleteUserArticle}), 
+        React.createElement("button", {onClick: this.props.pageChange.bind(null,1)}, "Choose Articles")
       )
     );
   }
@@ -21726,16 +21792,16 @@ var size = 40; // Number of viewwidths for background image
 
 var TinderNews = React.createClass({displayName: "TinderNews",
 	propTypes: {
-		updateSeen: React.PropTypes.func.isRequired,
 		articles: React.PropTypes.array.isRequired,
+		currArticle: React.PropTypes.number.isRequired,
+		showNextArticle: React.PropTypes.func.isRequired,
+		addSavedArticle: React.PropTypes.func.isRequired,
 	},
 
 	getInitialState: function() {
 		console.log('received:', this.props.articles);
     return {
     	vw: size*document.documentElement.clientWidth/100,
-    	// articles: testdata, // TODO: change this to this.props.articles
-    	currArticle: 0,
     	hover: false,
     }
 	},
@@ -21744,7 +21810,6 @@ var TinderNews = React.createClass({displayName: "TinderNews",
 		this.setState({
 			vw: size*document.documentElement.clientWidth/100
 		});
-		console.log(this.state.vw);
 	},
 
 	componentDidMount: function() {
@@ -21752,17 +21817,13 @@ var TinderNews = React.createClass({displayName: "TinderNews",
 	},
 
 	handleNext: function() {
-		var next = Math.min(this.state.currArticle+1, this.props.articles.length-1);
-		this.setState({
-			currArticle: next
-		});
-		this.props.updateSeen();
+		this.props.onNext();
 	},
 
 	handleSave: function() {
 		var save;
-		if (this.state.currArticle+1 < this.props.articles.length)
-			save = this.state.currArticle;
+		if (this.props.currArticle+1 < this.props.articles.length)
+			save = this.props.currArticle;
 		console.log(this.props.articles[save]);
 		this.handleNext();
 		if (save) {
@@ -21786,16 +21847,16 @@ var TinderNews = React.createClass({displayName: "TinderNews",
 
 		// Figure out how to line up the article divs to
 		// set them up for animation
-		var currWidth = photos[this.state.currArticle][0];
-		var currHeight = photos[this.state.currArticle][1];
+		var currWidth = photos[this.props.currArticle][0];
+		var currHeight = photos[this.props.currArticle][1];
 
 		var widths = photos.map(function(elem, i) {
 			return currHeight/elem[1] * elem[0];
 		});
 
 		var leftStartCoords = 0;
-		if (this.state.currArticle != 0) {
-			leftStartCoords = widths.slice(0, this.state.currArticle).reduce(function(prev, elem, i, arr) {
+		if (this.props.currArticle != 0) {
+			leftStartCoords = widths.slice(0, this.props.currArticle).reduce(function(prev, elem, i, arr) {
 				return prev-elem;
 			}, 0);
 		}
@@ -21830,6 +21891,7 @@ var TinderNews = React.createClass({displayName: "TinderNews",
 			[w*unitvw, h*unitvw, 0, h*unitvw],
 			[w*unitvw, 0, w*unitvw, h*unitvw]
 		];
+
 		return (
       React.createElement("div", null, 
         React.createElement("div", {id: "tinder-buttons"}, 
@@ -21839,6 +21901,7 @@ var TinderNews = React.createClass({displayName: "TinderNews",
         React.createElement("div", {className: "slider"}, 
           React.createElement(Motion, {style: {height: spring(currHeight), width: spring(currWidth)}}, 
             function(container) {
+            	console.log(root.props.currArticle);
               return (
               	React.createElement("div", {className: "slider-inner", 
               			style: container, 

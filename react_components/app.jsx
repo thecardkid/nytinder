@@ -29,18 +29,39 @@ var endArticle = {
 	} 
 };
 
+var noArticle = {
+	url: '#',
+  byline: '',
+  headline: 'Click the button to start browsing',
+  date: '',
+  articleId: 0,
+  img: { 
+  	url: 'http://www.mrwallpaper.com/wallpapers/Sad-Puppy.jpg',
+		height: 1200,
+		width: 1920,
+	} 
+}
+
 var TinderTimesApp = React.createClass({
 	getInitialState: function() {
     return {
     	user: {},
     	display: DisplayEnum.DISPLAY_LOGIN,
     	articles: [endArticle],
+    	currArticle: 0,
     };
 	},
 
 	componentDidMount: function() {
 		this.loginFacebook();
     	return null;
+	},
+
+	showNextArticle: function() {
+		this.setState({
+			currArticle: Math.min(this.state.currArticle+1, this.state.articles.length-1)
+		});
+		// this.updateSeen();
 	},
 
 	handleUserLogin: function(username) {
@@ -54,6 +75,7 @@ var TinderTimesApp = React.createClass({
 			},
 			success: function(user) {
 				this.loadArticlesFromServer(user._id);
+				if (user.savedArticles.length === 0) user.savedArticles = [noArticle];
 				this.setState({
 					user: user,
 					display: DisplayEnum.DISPLAY_DASHBOARD,
@@ -95,6 +117,10 @@ var TinderTimesApp = React.createClass({
 				'seen': 1
 			},
 			success: function(status) {
+				// var copy = this.state.articles.slice(1);
+				// this.setState({
+				// 	articles: copy
+				// });
 				console.log(status);
 			}.bind(this),
 			error: function(xhr, status, err) {
@@ -133,15 +159,45 @@ var TinderTimesApp = React.createClass({
 			data: {data: JSON.stringify(data0)},
 			success: function(data) {
 				if (data.status === 'added') {
-					this.state.user.savedArticles.push(newArticle);
+					if (this.state.user.savedArticles[0].articleId === 0) {
+						this.state.user.savedArticles = [newArticle];
+					} else {
+						this.state.user.savedArticles.push(newArticle);
+					}
 					this.setState({
 						user: this.state.user
 					});
-					console.log('saved');
 				}
 			}.bind(this),
 			error: function(xhr, status, err) {
 				console.error('/api/user/newArticle', status, err.toString());
+			}.bind(this)
+		});
+	},
+
+	deleteUserArticle: function(userId, articleId) {
+		console.log(userId,articleId);
+		//Delete Article From List of User's Articles
+		$.ajax({
+			url: '/api/user/readArticle',
+			dataType: 'json',
+			cache: false,
+			type: 'DELETE',
+			data: {
+				'userId': userId,
+				'articleId': articleId
+			},
+			success: function(articleRemoved) {
+				var copy = this.state.user.savedArticles.filter(function(elem) {
+					return elem.articleId !== articleId;
+				});
+				console.log('copy', copy);
+				this.setState({
+					user: copy.length === 0 ? [noArticle] : copy
+				});
+			}.bind(this),
+			error: function(xhr, status, err) {
+				console.error('/api/user/readArticle', status, err.toString());
 			}.bind(this)
 		});
 	},
@@ -152,9 +208,14 @@ var TinderTimesApp = React.createClass({
 		});
 	},
 
+	handlePageChangeClick: function(ev) {
+		this.setState({
+			display: ev,
+		});
+	},
+
 	render: function() {
 		var page;
-		console.log('userarticles', this.state.user.displayName);
 
 		switch (this.state.display) {
 			case DisplayEnum.DISPLAY_DASHBOARD:
@@ -167,7 +228,10 @@ var TinderTimesApp = React.createClass({
 		          onChange={this.handlePageChange} />
 						<Navbar displayName={this.state.user.displayName || ''} />
 						<div>
-							<TimeTinderBox articles={this.state.user.savedArticles || []}/>
+							<TimeTinderBox pageChange={this.handlePageChangeClick} 
+								id={this.state.user._id || ''} 
+								articles={this.state.user.savedArticles || []}
+								deleteUserArticle={this.deleteUserArticle}/>
 						</div>
 					</div>
 				);
@@ -184,8 +248,9 @@ var TinderTimesApp = React.createClass({
 						<Navbar displayName={this.state.user.displayName || ''} />
 						<div>
 						  <TinderNews articles={this.state.articles || []}
-						  	updateSeen={this.updateUserSeenArticles}
-						  	addSavedArticle={this.addArticleToUser}/>
+						  	addSavedArticle={this.addArticleToUser}
+						  	currArticle={this.state.currArticle}
+						  	onNext={this.showNextArticle}/>
 					  </div>
 				  </div>
 				);
