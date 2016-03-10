@@ -47,7 +47,7 @@ var Carousel = React.createClass({
                     <div className="imagedash">
                         <img className src={d.image} alt={i} height={"100%"} width={"100%"}/>
                     </div>
-                    <div className="imagetextdash" id={d.url} style={{display:"none"}}>
+                    <div className="imagetextdash" id={d.url}>
                         <p style={{fontSize:font_size}}>"{d.headline}"</p>
                         <div className="openbutton" onClick={parentThis.openimage.bind(null,d.url)}>
                             <button>
