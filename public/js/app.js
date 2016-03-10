@@ -20936,22 +20936,24 @@ var Carousel = React.createClass({displayName: "Carousel",
         var parentThis = this;
         var figures = this.state.figures.map(function (d, i) {
             var font_size = "3.5vw";
-            if ((d.headline).length > 55) {
+            if ((d.all_info.headline).length > 55) {
                 font_size = "2.5vw";
             };
             return (React.createElement("figure", {key: i, style: Util.figureStyle(d)}, 
-                React.createElement("div", {className: "imagedashdiv", onMouseLeave: parentThis.onmouseout.bind(null,d.articleId), onMouseEnter: parentThis.onhover.bind(null,d.articleId)}, 
+                React.createElement("div", {className: "imagedashdiv", onMouseLeave: parentThis.onmouseout.bind(null,d.all_info.articleId), onMouseEnter: parentThis.onhover.bind(null,d.all_info.articleId)}, 
                     React.createElement("div", {className: "imagedash"}, 
                         React.createElement("img", {className: true, src: d.image, alt: i, height: "100%", width: "100%"})
                     ), 
-                    React.createElement("div", {className: "imagetextdash", id: d.articleId}, 
-                        React.createElement("p", {style: {fontSize:font_size}}, "\"", d.headline, "\""), 
-                        React.createElement("div", {className: "openbutton", onClick: parentThis.openimage.bind(null,d.url)}, 
+                    React.createElement("div", {className: "imagetextdash", id: d.all_info.articleId}, 
+                        React.createElement("p", {className: "imagedate"}, d.all_info.date), 
+                        React.createElement("p", {className: "imageheadline", style: {fontSize:font_size}}, "\"", d.all_info.headline, "\""), 
+                        React.createElement("p", {className: "imageauthor"}, d.all_info.byline), 
+                        React.createElement("div", {className: "openbutton", onClick: parentThis.openimage.bind(null,d.all_info.url)}, 
                             React.createElement("button", null, 
                               React.createElement("span", null, "Open")
                             )
                         ), 
-                        React.createElement("div", {className: "deletebutton", onClick: parentThis.deletearticle.bind(null,d.articleId)}, 
+                        React.createElement("div", {className: "deletebutton", onClick: parentThis.deletearticle.bind(null,d.all_info.articleId)}, 
                             React.createElement("button", null, 
                               React.createElement("span", null, "X")
                             )
@@ -21149,9 +21151,7 @@ exports.prism = {
                 present: true,
                 key: d,
                 image: all_info[d].img.url,
-                url: all_info[d].url,
-                headline: all_info[d].headline,
-                articleId: all_info[d].articleId
+                all_info: all_info[d]
             };
         });
     }
@@ -21175,9 +21175,7 @@ exports.classic = {
                 present: true,
                 key: d,
                 image: all_info[d].img.url,
-                url: all_info[d].url,
-                headline: all_info[d].headline,
-                articleId: all_info[d].articleId
+                all_info: all_info[d]
             };
         });
     }
