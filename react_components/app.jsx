@@ -52,9 +52,10 @@ var TinderTimesApp = React.createClass({
 			data: {
 				'username': username
 			},
-			success: function(data) {
+			success: function(user) {
+				this.loadArticlesFromServer(user._id);
 				this.setState({
-					user: data.user,
+					user: user,
 					display: DisplayEnum.DISPLAY_DASHBOARD,
 				});
 			}.bind(this),
@@ -71,10 +72,12 @@ var TinderTimesApp = React.createClass({
 		  	url: '/api/login',
 		  	dataType: 'json',
 		  	type: 'GET',
-		 	success: function(data) {
-		 		console.log(data)
-		 		this.loadArticlesFromServer(data._id);
-		    	this.setState({display: DisplayEnum.DISPLAY_DASHBOARD, user: data});
+		 	success: function(user) {
+		 		this.loadArticlesFromServer(user._id);
+		    	this.setState({
+		    		display: DisplayEnum.DISPLAY_DASHBOARD, 
+		    		user: user,
+	    		});
 		  	}.bind(this),
 		  	error: function(xhr, status, err) {
 		  		console.log("error!")
