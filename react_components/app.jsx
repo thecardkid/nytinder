@@ -66,8 +66,6 @@ var TinderTimesApp = React.createClass({
 	},
 
 	loginFacebook: function(){
-		console.log("HERE IN LOGIN FACEBOOK LAND")
-		var parentThis = this;
 		$.ajax({
 		  	url: '/api/login',
 		  	dataType: 'json',
@@ -93,7 +91,7 @@ var TinderTimesApp = React.createClass({
 			cache: false,
 			type: 'PUT',
 			data: {
-				'userId': this.state.mongoid,
+				'userId': this.state.user._id,
 				'seen': 1
 			},
 			success: function(status) {
@@ -106,7 +104,6 @@ var TinderTimesApp = React.createClass({
 	},
 
 	loadArticlesFromServer: function(mongoid) {
-		// Get all articles from NYTimes and update this.state.display
 		$.ajax({
 			url: '/api/article',
 			dataType: 'json',
@@ -125,8 +122,28 @@ var TinderTimesApp = React.createClass({
 		});
 	},
 
-	handleArticlePost: function() {
-		// Add new article to user's info
+	addArticleToUser: function(newArticle) {
+		console.log(newArticle);
+		var data0 = {'_id': this.state.user._id, newArticle: newArticle};
+		$.ajax({
+			url: '/api/user/newarticle/',
+			dataType: 'json',
+			cache: false,
+			type: 'POST',
+			data: {data: JSON.stringify(data0)},
+			success: function(data) {
+				if (data.status === 'added') {
+					this.state.user.savedArticles.push(newArticle);
+					this.setState({
+						user: this.state.user
+					});
+					console.log('saved');
+				}
+			}.bind(this),
+			error: function(xhr, status, err) {
+				console.error('/api/user/newArticle', status, err.toString());
+			}.bind(this)
+		});
 	},
 
 	handlePageChange: function(ev) {
@@ -143,7 +160,10 @@ var TinderTimesApp = React.createClass({
 			case DisplayEnum.DISPLAY_DASHBOARD:
 				page = (
 					<div>
-						<TimeTinderBox articles={this.state.user.savedArticles || []}/>
+						<Navbar displayName={this.state.user.displayName || ''} />
+						<div>
+							<TimeTinderBox articles={this.state.user.savedArticles || []}/>
+						</div>
 					</div>
 				);
 				break;
@@ -151,8 +171,12 @@ var TinderTimesApp = React.createClass({
 			case DisplayEnum.DISPLAY_TINDERNEWS:
 				page = (
 					<div>
-					  <TinderNews articles={this.state.articles || []}
-					  	updateSeen={this.updateUserSeenArticles}/>
+						<Navbar displayName={this.state.user.displayName || ''} />
+						<div>
+						  <TinderNews articles={this.state.articles || []}
+						  	updateSeen={this.updateUserSeenArticles}
+						  	addSavedArticle={this.addArticleToUser}/>
+					  </div>
 				  </div>
 				);
 				break;
@@ -174,7 +198,6 @@ var TinderTimesApp = React.createClass({
           max={2}
           value={this.state.display}
           onChange={this.handlePageChange} />
-          <Navbar displayName={this.state.user.displayName || ''} />
         {page}
 			</div>
 		);

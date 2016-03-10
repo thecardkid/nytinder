@@ -1,9 +1,8 @@
-- change displayed name to "logged in as ..."
-- logout button invisible in login page
+H - change displayed name to "logged in as ..." /
+H - logout button invisible in login page /
 
-- make default savedArticles array with one item in it which says "You have nothing" sad puppy face
-- button to go from dashboard to newsflash
-- 'swipe right' and 'swipe left' buttons in tinder news
-- delete functionality
-- dashboard div display authors, pub date
-- 
+C - make default savedArticles array with one item in it which says "You have nothing" sad puppy face
+C - button to go from dashboard to newsflash
+H - 'swipe right' and 'swipe left' buttons in tinder news
+C - delete functionality
+C - dashboard div display authors, pub date

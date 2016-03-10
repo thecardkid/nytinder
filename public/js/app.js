@@ -20706,8 +20706,6 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 	},
 
 	loginFacebook: function(){
-		console.log("HERE IN LOGIN FACEBOOK LAND")
-		var parentThis = this;
 		$.ajax({
 		  	url: '/api/login',
 		  	dataType: 'json',
@@ -20733,7 +20731,7 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 			cache: false,
 			type: 'PUT',
 			data: {
-				'userId': this.state.mongoid,
+				'userId': this.state.user._id,
 				'seen': 1
 			},
 			success: function(status) {
@@ -20746,7 +20744,6 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 	},
 
 	loadArticlesFromServer: function(mongoid) {
-		// Get all articles from NYTimes and update this.state.display
 		$.ajax({
 			url: '/api/article',
 			dataType: 'json',
@@ -20765,8 +20762,28 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 		});
 	},
 
-	handleArticlePost: function() {
-		// Add new article to user's info
+	addArticleToUser: function(newArticle) {
+		console.log(newArticle);
+		var data0 = {'_id': this.state.user._id, newArticle: newArticle};
+		$.ajax({
+			url: '/api/user/newarticle/',
+			dataType: 'json',
+			cache: false,
+			type: 'POST',
+			data: {data: JSON.stringify(data0)},
+			success: function(data) {
+				if (data.status === 'added') {
+					this.state.user.savedArticles.push(newArticle);
+					this.setState({
+						user: this.state.user
+					});
+					console.log('saved');
+				}
+			}.bind(this),
+			error: function(xhr, status, err) {
+				console.error('/api/user/newArticle', status, err.toString());
+			}.bind(this)
+		});
 	},
 
 	handlePageChange: function(ev) {
@@ -20783,7 +20800,10 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 			case DisplayEnum.DISPLAY_DASHBOARD:
 				page = (
 					React.createElement("div", null, 
-						React.createElement(TimeTinderBox, {articles: this.state.user.savedArticles || []})
+						React.createElement(Navbar, {displayName: this.state.user.displayName || ''}), 
+						React.createElement("div", null, 
+							React.createElement(TimeTinderBox, {articles: this.state.user.savedArticles || []})
+						)
 					)
 				);
 				break;
@@ -20791,8 +20811,12 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 			case DisplayEnum.DISPLAY_TINDERNEWS:
 				page = (
 					React.createElement("div", null, 
-					  React.createElement(TinderNews, {articles: this.state.articles || [], 
-					  	updateSeen: this.updateUserSeenArticles})
+						React.createElement(Navbar, {displayName: this.state.user.displayName || ''}), 
+						React.createElement("div", null, 
+						  React.createElement(TinderNews, {articles: this.state.articles || [], 
+						  	updateSeen: this.updateUserSeenArticles, 
+						  	addSavedArticle: this.addArticleToUser})
+					  )
 				  )
 				);
 				break;
@@ -20814,7 +20838,6 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
           max: 2, 
           value: this.state.display, 
           onChange: this.handlePageChange}), 
-          React.createElement(Navbar, {displayName: this.state.user.displayName || ''}), 
         page
 			)
 		);
@@ -20833,15 +20856,17 @@ var Article = React.createClass({displayName: "Article",
 		style: React.PropTypes.object.isRequired,
 		hovering: React.PropTypes.bool.isRequired,
 		article: React.PropTypes.object.isRequired,
+		vw: React.PropTypes.number.isRequired,
 	},
 
 	render: function() {
-		var h = this.props.article.headline.length > (this.props.style.width/16.1) ? 6.5 : 4.3; 
+		console.log('1vw', this.props.vw);
+		var h = this.props.article.headline.length > (this.props.style.width/this.props.vw) ? 6.5 : 4.3; 
 		var marginTop = 28;
 
 		var styleHeight = {'height': h+'vw', 'marginTop': marginTop+'vw'};
 
-		var lines = Math.ceil(this.props.article.abstract.length / (this.props.style.width/8.6));
+		var lines = Math.ceil(this.props.article.abstract.length / (this.props.style.width/(0.625*this.props.vw)));
 		if (lines >= 3) h += 0.6;
 		h += lines + 2.5;
 		var m = 27 - lines;
@@ -20921,7 +20946,7 @@ var Carousel = React.createClass({displayName: "Carousel",
                     React.createElement("div", {className: "imagedash"}, 
                         React.createElement("img", {className: true, src: d.image, alt: i, height: "100%", width: "100%"})
                     ), 
-                    React.createElement("div", {className: "imagetextdash", id: d.url, style: {display:"none"}}, 
+                    React.createElement("div", {className: "imagetextdash", id: d.url}, 
                         React.createElement("p", {style: {fontSize:font_size}}, "\"", d.headline, "\""), 
                         React.createElement("div", {className: "openbutton", onClick: parentThis.openimage.bind(null,d.url)}, 
                             React.createElement("button", null, 
@@ -21372,14 +21397,17 @@ var Navbar = React.createClass({displayName: "Navbar",
   },
   
   render: function(){
-    console.log('navbar', this.props.displayName);
     return (
       React.createElement("div", {className: "Navbar"}, 
           React.createElement("ul", {className: "navbar"}, 
-            React.createElement("li", {className: "linav"}, React.createElement("a", {className: "navbar-brand"}, " TimesTinder ")), 
+            
             React.createElement("ul", {className: "navbar", style: {float:"right"}}, 
-              React.createElement("li", {className: "linav"}, React.createElement("a", null, this.props.displayName)), 
-              React.createElement("li", {className: "linav"}, React.createElement("a", {href: "/logout"}, React.createElement("i", {className: "fa fa-facebook"}, "Logout")))
+              React.createElement("li", {className: "linav"}, 
+                React.createElement("a", null, 
+                  "Logged in as ", React.createElement("span", {className: "display-name"}, this.props.displayName)
+                )
+              ), 
+              React.createElement("li", {className: "linav logout"}, React.createElement("a", {href: "/logout"}, React.createElement("i", {className: "fa fa-facebook"}, "Logout")))
             )
           )
       )
@@ -21665,6 +21693,7 @@ var TinderNews = React.createClass({displayName: "TinderNews",
 		this.setState({
 			vw: size*document.documentElement.clientWidth/100
 		});
+		console.log(this.state.vw);
 	},
 
 	componentDidMount: function() {
@@ -21676,7 +21705,15 @@ var TinderNews = React.createClass({displayName: "TinderNews",
 		this.setState({
 			currArticle: next
 		});
-		this.props.updateSeen();
+		// this.props.updateSeen();
+	},
+
+	handleSave: function() {
+		if (this.state.currArticle+1 < this.props.articles.length)
+			var save = this.state.currArticle;
+		console.log(this.props.articles[save]);
+		this.handleNext();
+		this.props.addSavedArticle(this.props.articles[save]);
 	},
 
 	changeHover: function() {
@@ -21724,7 +21761,10 @@ var TinderNews = React.createClass({displayName: "TinderNews",
       return (
       	React.createElement(Motion, {key: i, style: style}, 
       		function (style) {
-      			return React.createElement(Article, {article: root.props.articles[i], style: style, hovering: root.state.hover})
+      			return React.createElement(Article, {article: root.props.articles[i], 
+      											style: style, 
+      											hovering: root.state.hover, 
+      											vw: root.state.vw/size})
       		}
         )
       )
@@ -21732,8 +21772,9 @@ var TinderNews = React.createClass({displayName: "TinderNews",
 
 		return (
       React.createElement("div", null, 
-        React.createElement("div", null, 
-        	React.createElement("button", {onClick: this.handleNext}, "Next")
+        React.createElement("div", {id: "tinder-buttons"}, 
+        	React.createElement("button", {onClick: this.handleNext}, "Next"), 
+        	React.createElement("button", {onClick: this.handleSave}, "Save")
       	), 
         React.createElement("div", {className: "slider"}, 
           React.createElement(Motion, {style: {height: spring(currHeight), width: spring(currWidth)}}, 

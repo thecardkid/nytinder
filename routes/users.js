@@ -43,17 +43,20 @@ router.post('/', function(req, res, next) {
 POST new article into user's list of article
 */
 router.post('/newArticle/', function(req,res, next) {
+  var body = JSON.parse(req.body.data);
+  console.log(body);
   User.findOne({
-    '_id': new ObjectId(req.body._id)
+    '_id': new ObjectId(body._id)
   }, function(err, user) { 
-    user.savedArticles.push(req.body.newArticle);
-    //save edited user with new article
+    user.savedArticles.push(body.newArticle);
     user.save(function(err) {
       if (err) {
+        console.log(err);
         res.status(500).json(err);
         return;
       }
-      res.status(200).send('Added');
+      console.log('Success');
+      res.status(200).json({'status': 'added'});
     });
   });
 });
@@ -80,7 +83,7 @@ router.delete('/readArticle/', function(req,res, next) {
         res.status(500);
         return;
       }
-      res.status(200).send('Removed');
+      res.status(200).json({'status': 'removed'});
     })
   })
 });

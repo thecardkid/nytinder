@@ -3,6 +3,10 @@ body {
   overflow-x:hidden;
 }
 
+div#tinder-buttons {
+  text-align: center;
+}
+
 .slider {
   display: flex;
   display: -webkit-flex;
@@ -103,7 +107,6 @@ div.slider-inner:hover > .container > .bg-image > img {
 }
 
 /*Navbar Stuff*/
-
 ul.navbar {
     list-style-type: none;
     margin: 0;

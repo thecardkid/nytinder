@@ -5,15 +5,17 @@ var Article = React.createClass({
 		style: React.PropTypes.object.isRequired,
 		hovering: React.PropTypes.bool.isRequired,
 		article: React.PropTypes.object.isRequired,
+		vw: React.PropTypes.number.isRequired,
 	},
 
 	render: function() {
-		var h = this.props.article.headline.length > (this.props.style.width/16.1) ? 6.5 : 4.3; 
+		console.log('1vw', this.props.vw);
+		var h = this.props.article.headline.length > (this.props.style.width/this.props.vw) ? 6.5 : 4.3; 
 		var marginTop = 28;
 
 		var styleHeight = {'height': h+'vw', 'marginTop': marginTop+'vw'};
 
-		var lines = Math.ceil(this.props.article.abstract.length / (this.props.style.width/8.6));
+		var lines = Math.ceil(this.props.article.abstract.length / (this.props.style.width/(0.625*this.props.vw)));
 		if (lines >= 3) h += 0.6;
 		h += lines + 2.5;
 		var m = 27 - lines;

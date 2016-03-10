@@ -30,6 +30,7 @@ var TinderNews = React.createClass({
 		this.setState({
 			vw: size*document.documentElement.clientWidth/100
 		});
+		console.log(this.state.vw);
 	},
 
 	componentDidMount: function() {
@@ -41,7 +42,15 @@ var TinderNews = React.createClass({
 		this.setState({
 			currArticle: next
 		});
-		this.props.updateSeen();
+		// this.props.updateSeen();
+	},
+
+	handleSave: function() {
+		if (this.state.currArticle+1 < this.props.articles.length)
+			var save = this.state.currArticle;
+		console.log(this.props.articles[save]);
+		this.handleNext();
+		this.props.addSavedArticle(this.props.articles[save]);
 	},
 
 	changeHover: function() {
@@ -89,7 +98,10 @@ var TinderNews = React.createClass({
       return (
       	<Motion key={i} style={style}>
       		{function (style) {
-      			return <Article article={root.props.articles[i]} style={style} hovering={root.state.hover}/>
+      			return <Article article={root.props.articles[i]} 
+      											style={style} 
+      											hovering={root.state.hover}
+      											vw={root.state.vw/size}/>
       		}}
         </Motion>
       )
@@ -97,8 +109,9 @@ var TinderNews = React.createClass({
 
 		return (
       <div>
-        <div>
+        <div id='tinder-buttons'>
         	<button onClick={this.handleNext}>Next</button>
+        	<button onClick={this.handleSave}>Save</button>
       	</div>
         <div className="slider">
           <Motion style={{height: spring(currHeight), width: spring(currWidth)}}>

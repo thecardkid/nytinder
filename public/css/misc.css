@@ -1,0 +1,8 @@
+span.display-name {
+	color: #B30303;
+	font-style: italic;	
+}
+
+li.logout {
+	border-left: 1px solid white;
+}
