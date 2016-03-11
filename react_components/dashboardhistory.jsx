@@ -1,6 +1,7 @@
+/* DashboardHistory Component that holds the Carousel*/
+
 var Carousel = require('./carouselstuff/carousel.jsx');
 var Ease = require('ease-functions');
-var images = require('./images');
 
 var DashboardHistory = React.createClass({
     propTypes: {

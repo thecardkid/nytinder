@@ -20901,7 +20901,7 @@ ReactDOM.render(
 	React.createElement(TinderTimesApp, null),
   document.getElementById('content')
 );
-},{"./loginPage.jsx":181,"./navbar.jsx":182,"./timetinderbox.jsx":184,"./tinderNews.jsx":186}],174:[function(require,module,exports){
+},{"./loginPage.jsx":180,"./navbar.jsx":181,"./timetinderbox.jsx":182,"./tinderNews.jsx":184}],174:[function(require,module,exports){
 var spring = require('react-motion').spring;
 
 var Article = React.createClass({displayName: "Article",
@@ -20949,6 +20949,9 @@ var Article = React.createClass({displayName: "Article",
 
 module.exports = Article;
 },{"react-motion":38}],175:[function(require,module,exports){
+/* Carousel Component with opening imaging functionality, deleting image from user's list of saved images
+and onhover display different things*/
+
 var Util = require('./util');
 var Layout = require('./layout');
 var Depot = require('./depot');
@@ -20973,19 +20976,23 @@ var Carousel = React.createClass({displayName: "Carousel",
     },
 
     openImage: function (imagehref) {
+        //open imagehref
         console.log("here", imagehref);
         window.open(imagehref);
     },
 
-    deleteArticle: function (url) {
-        this.props.deleteUserArticle(this.props.id,url);
+    deleteArticle: function (articleId) {
+        //call deleteUserarticle with articleid and userid
+        this.props.deleteUserArticle(this.props.id,articleId);
     },
 
     onHover: function (articleId) {
+        //display all of the text div on hover
         document.getElementById(articleId).style.display = 'block';
     },
 
     onMouseOut: function (articleId) {
+        //hide all of the text div on hover
         document.getElementById(articleId).style.display = 'none';
     },
 
@@ -21329,9 +21336,10 @@ exports.mapObj = function mapObj(fn,obj){
     return res;
 };
 },{}],179:[function(require,module,exports){
+/* DashboardHistory Component that holds the Carousel*/
+
 var Carousel = require('./carouselstuff/carousel.jsx');
 var Ease = require('ease-functions');
-var images = require('./images');
 
 var DashboardHistory = React.createClass({displayName: "DashboardHistory",
     propTypes: {
@@ -21385,30 +21393,7 @@ var DashboardHistory = React.createClass({displayName: "DashboardHistory",
 });
 
 module.exports = DashboardHistory; 
-},{"./carouselstuff/carousel.jsx":175,"./images":180,"ease-functions":1}],180:[function(require,module,exports){
-module.exports = [
-    'http://s7.postimg.org/dbamgegu3/zen8.jpg',
-    'http://s21.postimg.org/er8b066p3/zen2.jpg',
-    'http://s4.postimg.org/6mbbcgmwd/zen1.jpg',
-    'http://s30.postimg.org/x3cgpdtgx/zen3.jpg',
-    'http://s21.postimg.org/h1estw95z/zen4.jpg',
-    'http://s8.postimg.org/upypfrk8l/zen5.jpg',
-    'http://s7.postimg.org/goiv34aez/zen6.jpg',
-    'http://s30.postimg.org/n9zuqbgq9/zen7.jpg',
-    'http://s12.postimg.org/9kw5b42d9/zen9.jpg',
-    'http://s13.postimg.org/vwf92qbl3/zen10.jpg',
-    'http://s4.postimg.org/anf2w9rzh/zen11.jpg',
-    'http://s17.postimg.org/gpbiwdsu7/zen12.jpg',
-    'http://s9.postimg.org/n5uuedw3z/zen13.jpg',
-    'http://s9.postimg.org/x6zonp973/zen14.jpg',
-    'http://s2.postimg.org/r0vsbv8op/zen15.jpg',
-    'http://s21.postimg.org/szu5d0h2f/zen16.jpg',
-    'http://s15.postimg.org/xi59nxox7/zen17.jpg',
-    'http://s8.postimg.org/zexjdajw5/zen18.jpg',
-    'http://s24.postimg.org/st2ukrfz9/zen19.jpg',
-    'http://s15.postimg.org/40kb5u63v/zen20.jpg'
-];
-},{}],181:[function(require,module,exports){
+},{"./carouselstuff/carousel.jsx":175,"ease-functions":1}],180:[function(require,module,exports){
 var loginPage = React.createClass({displayName: "loginPage",
 
 	propTypes: {
@@ -21486,7 +21471,7 @@ var loginPage = React.createClass({displayName: "loginPage",
 });
 
 module.exports = loginPage;
-},{}],182:[function(require,module,exports){
+},{}],181:[function(require,module,exports){
 // Navigation/header bar on the top of the page. Holds login and search bar
 var Navbar = React.createClass({displayName: "Navbar",
   propTypes: {
@@ -21513,231 +21498,12 @@ var Navbar = React.createClass({displayName: "Navbar",
 });
 
 module.exports = Navbar;
-},{}],183:[function(require,module,exports){
-module.exports = {'data': [ 
-  { url: 'http://www.nytimes.com/interactive/2016/us/elections/primary-calendar-and-results.html',
-    byline: 'By WILSON ANDREWS, KITTY BENNETT and ALICIA PARLAPIANO',
-    abstract: 'The 2016 primaries and caucuses have begun. See results and upcoming primary dates.',
-    headline: '2016 Primary Results and Calendar',
-    date: '2016-03-08',
-    articleId: 100000003627564,
-    img: 
-     { url: 'http://static01.nyt.com/images/2015/04/14/us/elections/primary-calendar-and-results-1429026715315/primary-calendar-and-results-1429026715315-superJumbo-v8.png',
-       format: 'superJumbo',
-       height: 704,
-       width: 940 } },
-  { url: 'http://www.nytimes.com/2016/03/08/us/politics/michael-bloomberg-not-running-for-president.html',
-    byline: 'By MAGGIE HABERMAN and ALEXANDER BURNS',
-    abstract: 'In bowing out, Mr. Bloomberg cited his fear that a three-way race could lead to the election of Donald J. Trump.',
-    headline: 'Michael Bloomberg Says He Won’t Run for President',
-    date: '2016-03-08',
-    articleId: 100000004257123,
-    img: 
-     { url: 'http://static01.nyt.com/images/2016/03/08/us/08BLOOMBERG/08BLOOMBERG-superJumbo.jpg',
-       format: 'superJumbo',
-       height: 1366,
-       width: 2048 } },
-  { url: 'http://www.nytimes.com/2016/03/08/opinion/its-not-too-late.html',
-    byline: 'By DAVID BROOKS',
-    abstract: 'Republicans still have time to reject Donald Trump, avoid Ted Cruz and pick a nominee who allows them to maintain their standards.',
-    headline: 'It’s Not Too Late!',
-    date: '2016-03-08',
-    articleId: 100000004257168,
-    img: 
-     { url: 'http://static01.nyt.com/images/2014/11/01/opinion/brooks-circular/brooks-circular-superJumbo-v2.png',
-       format: 'superJumbo',
-       height: 228,
-       width: 228 } },
-  { url: 'http://www.nytimes.com/2016/03/08/sports/tennis/maria-sharapova-failed-drug-test.html',
-    byline: 'By CHRISTOPHER CLAREY and MIKE TIERNEY',
-    abstract: 'Sharapova, who has battled injuries in recent years, said that at the Australian Open, she tested positive for the drug meldonium, which aids oxygen flow.',
-    headline: 'Maria Sharapova Admits Taking Meldonium, Drug Newly Banned by Tennis',
-    date: '2016-03-08',
-    articleId: 100000004256561,
-    img: 
-     { url: 'http://static01.nyt.com/images/2016/03/08/sports/08SHARAPOVAvideo/08SHARAPOVAvideo-superJumbo.jpg',
-       format: 'superJumbo',
-       height: 1449,
-       width: 2048 } },
-  { url: 'http://www.nytimes.com/2016/03/09/us/politics/primary-elections-preview.html',
-    byline: 'By NATE COHN and JONATHAN MARTIN',
-    abstract: 'Is Donald J. Trump fading? Will Senator Marco Rubio continue his recent slide? These and other questions will be answered as voters in Hawaii, Idaho, Michigan and Mississippi have their say.',
-    headline: 'What We’re Watching as 4 States Vote and Both Parties Court Michigan',
-    date: '2016-03-09',
-    articleId: 100000004257860,
-    img: 
-     { url: 'http://static01.nyt.com/images/2016/03/09/us/elections/09elect1_hp/09elect1_hp-superJumbo.jpg',
-       format: 'superJumbo',
-       height: 1365,
-       width: 2048 } },
-  { url: 'http://well.blogs.nytimes.com/2016/03/07/intermittent-fasting-diets-are-gaining-acceptance/',
-    byline: 'By ANAHAD O\'CONNOR',
-    abstract: 'The health benefits of skipping meals are growing more apparent, though critics argue that the idea is still impractical for most people.',
-    headline: 'Fasting Diets Are Gaining Acceptance',
-    date: '2016-03-07',
-    articleId: 24,
-    img: 
-     { url: 'http://static01.nyt.com/images/2016/03/08/science/08FASTINGCOVER/08FASTINGCOVER-superJumbo.jpg',
-       format: 'superJumbo',
-       height: 2048,
-       width: 1465 } },
-  { url: 'http://www.nytimes.com/2016/03/08/us/trumps-rise-spurs-latino-immigrants-to-naturalize-to-vote-against-him.html',
-    byline: 'By JULIA PRESTON',
-    abstract: 'Mr. Trump’s harsh language against Mexican immigrants has compelled legal residents to seek citizenship in time to vote against him in November.',
-    headline: 'More Latinos Seek Citizenship to Vote Against Trump',
-    date: '2016-03-08',
-    articleId: 100000004249632,
-    img: 
-     { url: 'http://static01.nyt.com/images/2016/03/04/us/00naturalize-web01/00naturalize-web01-superJumbo.jpg',
-       format: 'superJumbo',
-       height: 1363,
-       width: 2048 } },
-  { url: 'http://www.nytimes.com/2016/03/08/opinion/an-anti-semitism-of-the-left.html',
-    byline: 'By ROGER COHEN',
-    abstract: 'Overheard at Oberlin: The Holocaust was mere "white on white crime."',
-    headline: 'An Anti-Semitism of the Left',
-    date: '2016-03-08',
-    articleId: 100000004255919,
-    img: 
-     { url: 'http://static01.nyt.com/images/2014/11/01/opinion/cohen-circular/cohen-circular-superJumbo-v2.png',
-       format: 'superJumbo',
-       height: 228,
-       width: 228 } },
-  { url: 'http://www.nytimes.com/2016/03/08/opinion/campaign-stops/the-presidential-plot-thickens.html',
-    byline: 'By ARTHUR C. BROOKS and GAIL COLLINS',
-    abstract: 'Arthur C. Brooks and Gail Collins on the rise of Cruz, the fall of Rubio, the persistence of Trump and the triumph of Don Rickles.',
-    headline: 'The Presidential Plot Thickens',
-    date: '2016-03-08',
-    articleId: 100000004257973,
-    img: 
-     { url: 'http://static01.nyt.com/images/2016/03/08/opinion/08conversationWeb/08conversationWeb-superJumbo.jpg',
-       format: 'superJumbo',
-       height: 1410,
-       width: 2048 } },
-  { url: 'http://www.nytimes.com/2016/03/08/world/asia/china-woman-elevator-death.html',
-    byline: 'By CHRIS BUCKLEY',
-    abstract: 'People expressed anger that lax building management could turn trivial acts, like riding an elevator, into fatal traps, news reports and Internet accounts said.',
-    headline: 'Death of Chinese Woman Trapped in Elevator for Month Stokes Uproar',
-    date: '2016-03-08',
-    articleId: 100000004255789,
-    img: 
-     { url: 'http://www.trbimg.com/img-56b0e859/turbine/la-na-inside-iowa-caucus-precinct-20160202',
-       width: 2048,
-       height: 1162 } },
-  { url: 'http://www.nytimes.com/2016/03/09/us/politics/fox-news-democratic-candidates.html',
-    byline: 'By NICK CORASANITI',
-    abstract: 'Hillary Clinton and Bernie Sanders appeared together on the channel, which has not hosted a presidential campaign event with all the Democratic candidates since 2004.',
-    headline: 'Fox News Forum May Signal Thaw Between Democrats and Network',
-    date: '2016-03-09',
-    articleId: 100000004258124,
-    img: 
-     { url: 'http://static01.nyt.com/images/2016/03/09/us/09foxdems/09foxdems-superJumbo.jpg',
-       format: 'superJumbo',
-       height: 1365,
-       width: 2048 } },
-  { url: 'http://www.nytimes.com/2016/03/08/arts/television/downton-abbey-season-6-finale-review.html',
-    byline: 'By MIKE HALE',
-    abstract: 'This show, with its six seasons and immense popularity, has taught us about our television viewing habits.',
-    headline: '‘Downton Abbey’: Lessons Learned After Six Seasons',
-    date: '2016-03-08',
-    articleId: 100000004253932,
-    img: 
-     { url: 'http://static01.nyt.com/images/2016/03/04/arts/04DOWNTON3/04DOWNTON3-superJumbo.jpg',
-       format: 'superJumbo',
-       height: 1271,
-       width: 2048 } },
-  { url: 'http://www.nytimes.com/2016/03/08/business/media/erin-andrews-awarded-55-million-in-lawsuit-over-nude-video-at-hotel.html',
-    byline: 'By DANIEL VICTOR',
-    abstract: 'The Fox sportscaster had sued for $75 million for negligence after a stalker secretly filmed her naked through a peephole at the Nashville Marriott.',
-    headline: 'Erin Andrews Awarded $55 Million in Lawsuit Over Nude Video at Hotel',
-    date: '2016-03-08',
-    articleId: 100000004257706,
-    img: 
-     { url: 'http://static01.nyt.com/images/2016/03/08/us/08xp-andrews-1/08xp-andrews-1-superJumbo.jpg',
-       format: 'superJumbo',
-       height: 1571,
-       width: 2048 } },
-  { url: 'http://www.nytimes.com/2016/03/08/nyregion/elizabeth-garrett-first-female-president-of-cornell-dies-at-52.html',
-    byline: 'By DANIEL E. SLOTNIK',
-    abstract: 'Ms. Garrett, who started the position last summer, announced a month ago that she had learned she had colon cancer.',
-    headline: 'Elizabeth Garrett, First Female President of Cornell, Dies at 52',
-    date: '2016-03-08',
-    articleId: 100000004256769,
-    img: 
-     { url: 'http://static01.nyt.com/images/2016/03/08/nyregion/08-Garrett-Obit-WEB/08-Garrett-Obit-WEB-superJumbo-v2.jpg',
-       format: 'superJumbo',
-       height: 750,
-       width: 1125 } },
-  { url: 'http://www.nytimes.com/2016/03/08/business/international/unease-after-trump-depicts-tokyo-as-an-economic-rival.html',
-    byline: 'By JONATHAN SOBLE and KEITH BRADSHER',
-    abstract: 'In an attack reminiscent of another era, Mr. Trump has chastised Japan as a country where “we are getting absolutely crushed on trade.”',
-    headline: 'Donald Trump Laces Into Japan With a Trade Tirade From the ’80s',
-    date: '2016-03-08',
-    articleId: 100000004252603,
-    img: 
-     { url: 'http://static01.nyt.com/images/2016/03/08/business/08TRUMPJAPAN1/08TRUMPJAPAN1-superJumbo.jpg',
-       format: 'superJumbo',
-       height: 2008,
-       width: 1709 } },
-  { url: 'http://www.nytimes.com/2016/03/08/us/politics/netanyahu-calls-off-washington-visit-and-fingers-point.html',
-    byline: 'By JULIE HIRSCHFELD DAVIS',
-    abstract: 'The Israeli prime minister abruptly canceled a trip to Washington that was to include a visit with President Obama, prompting speculation that a rift between two leaders lingers.',
-    headline: 'Netanyahu Calls Off Obama Visit, and Fingers Point',
-    date: '2016-03-08',
-    articleId: 100000004257807,
-    img: 
-     { url: 'http://www.trbimg.com/img-56b0e859/turbine/la-na-inside-iowa-caucus-precinct-20160202',
-       width: 2048,
-       height: 1162 } },
-  { url: 'http://www.nytimes.com/2016/03/08/world/africa/us-airstrikes-somalia.html',
-    byline: 'By HELENE COOPER',
-    abstract: 'The strikes hit a camp where officials said fighters with the Shabab militant group were preparing an attack against American troops and their allies.',
-    headline: 'U.S. Strikes in Somalia Kill 150 Shabab Fighters',
-    date: '2016-03-08',
-    articleId: 100000004256605,
-    img: 
-     { url: 'http://static01.nyt.com/images/2016/03/07/world/africa/attack-map-1457382251994/attack-map-1457382251994-superJumbo.png',
-       format: 'superJumbo',
-       height: 2048,
-       width: 1844 } },
-  { url: 'http://www.nytimes.com/interactive/2016/03/07/us/politics/document-Bloomberg.html',
-    byline: '',
-    abstract: 'The maps that Michael R. Bloomberg\'s aides used internally to guide their thinking about how he would affect the presidential race.',
-    headline: 'Maps Show Where Bloomberg Aides Thought He Would Be Competitive',
-    date: '2016-03-07',
-    articleId: 100000004257488,
-    img: 
-     { url: 'http://static01.nyt.com/images/2016/03/08/us/politics/08bloomberg-doc/08bloomberg-doc-superJumbo.png',
-       format: 'superJumbo',
-       height: 446,
-       width: 657 } },
-  { url: 'http://www.nytimes.com/2016/03/09/technology/in-san-francisco-and-rooting-for-a-tech-slowdown.html',
-    byline: 'By DAVID STREITFELD',
-    abstract: 'The city is bulging, the rents soaring, and residents are growing more vocal about wishing Silicon Valley would cool off, or at least pay up.',
-    headline: 'In San Francisco and Rooting for a Tech Comeuppance',
-    date: '2016-03-09',
-    articleId: 100000004218458,
-    img: 
-     { url: 'http://static01.nyt.com/images/2016/03/05/business/07fallout1/06fallout1-superJumbo.jpg',
-       format: 'superJumbo',
-       height: 1365,
-       width: 2048 } },
-  { url: 'http://www.nytimes.com/2016/03/08/us/prayer-dispute-between-somalis-and-plant-reshapes-a-colorado-town-again.html',
-    byline: 'By JULIE TURKEWITZ',
-    abstract: 'The conflict offers a case study on what happens when matters of religious accommodation knock heads with the demands of the American assembly line.',
-    headline: 'Prayer Dispute Between Somalis and Plant Reshapes a Colorado Town, Again',
-    date: '2016-03-08',
-    articleId: 100000004251445,
-    img: 
-     { url: 'http://static01.nyt.com/images/2016/03/06/us/00fortmorgan-web04/00fortmorgan-web04-superJumbo.jpg',
-       format: 'superJumbo',
-       height: 1357,
-       width: 2048 } } 
-]}
-},{}],184:[function(require,module,exports){
+},{}],182:[function(require,module,exports){
+/*Component for Dashboard History in the timetinderbox where we show saved articles and button to change to TinderNews*/
 var DashboardHistory = require('./dashboardhistory.jsx')
 
 var TimeTinderBox = React.createClass({displayName: "TimeTinderBox",
+  
   propTypes: {
     articles: React.PropTypes.array.isRequired,
     pageChange: React.PropTypes.func.isRequired,
@@ -21748,8 +21514,7 @@ var TimeTinderBox = React.createClass({displayName: "TimeTinderBox",
       React.createElement("div", {className: "timetinder-box"}, 
         React.createElement(DashboardHistory, {id: this.props.id, 
           articles: this.props.articles, 
-          deleteUserArticle: this.props.deleteUserArticle}
-        ), 
+          deleteUserArticle: this.props.deleteUserArticle}), 
         React.createElement("div", {className: "centering-div"}, 
           React.createElement("button", {onClick: this.props.pageChange}, "Browse TinderNews")
         )
@@ -21759,7 +21524,7 @@ var TimeTinderBox = React.createClass({displayName: "TimeTinderBox",
 });
 
 module.exports = TimeTinderBox;
-},{"./dashboardhistory.jsx":179}],185:[function(require,module,exports){
+},{"./dashboardhistory.jsx":179}],183:[function(require,module,exports){
 var spring = require('react-motion').spring;
 
 module.exports = React.createClass({displayName: "exports",
@@ -21784,9 +21549,8 @@ module.exports = React.createClass({displayName: "exports",
 		)
 	}
 });
-},{"react-motion":38}],186:[function(require,module,exports){
+},{"react-motion":38}],184:[function(require,module,exports){
 var Article = require('./article.jsx');
-var testdata = require('./testdata').data;
 var TinderButton = require('./tinderButton.jsx');
 
 // Animation modules
@@ -21935,4 +21699,4 @@ module.exports = TinderNews;
 
 
 
-},{"./article.jsx":174,"./testdata":183,"./tinderButton.jsx":185,"react-motion":38}]},{},[173]);
+},{"./article.jsx":174,"./tinderButton.jsx":183,"react-motion":38}]},{},[173]);

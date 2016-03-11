@@ -1,3 +1,6 @@
+/* Carousel Component with opening imaging functionality, deleting image from user's list of saved images
+and onhover display different things*/
+
 var Util = require('./util');
 var Layout = require('./layout');
 var Depot = require('./depot');
@@ -22,19 +25,23 @@ var Carousel = React.createClass({
     },
 
     openImage: function (imagehref) {
+        //open imagehref
         console.log("here", imagehref);
         window.open(imagehref);
     },
 
-    deleteArticle: function (url) {
-        this.props.deleteUserArticle(this.props.id,url);
+    deleteArticle: function (articleId) {
+        //call deleteUserarticle with articleid and userid
+        this.props.deleteUserArticle(this.props.id,articleId);
     },
 
     onHover: function (articleId) {
+        //display all of the text div on hover
         document.getElementById(articleId).style.display = 'block';
     },
 
     onMouseOut: function (articleId) {
+        //hide all of the text div on hover
         document.getElementById(articleId).style.display = 'none';
     },
 

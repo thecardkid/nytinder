@@ -1,5 +1,4 @@
 var Article = require('./article.jsx');
-var testdata = require('./testdata').data;
 var TinderButton = require('./tinderButton.jsx');
 
 // Animation modules
