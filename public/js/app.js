@@ -20785,7 +20785,7 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 	},
 
 	addArticleToUser: function(newArticle) {
-		console.log(newArticle);
+		console.log('new', newArticle);
 		var data0 = {'_id': this.state.user._id, newArticle: newArticle};
 		$.ajax({
 			url: '/api/user/newarticle/',
@@ -20954,6 +20954,16 @@ var Layout = require('./layout');
 var Depot = require('./depot');
 
 var Carousel = React.createClass({displayName: "Carousel",
+    propTypes: {
+        all_info: React.PropTypes.array.isRequired,
+        width: React.PropTypes.number.isRequired,
+        ease: React.PropTypes.string.isRequired,
+        duration: React.PropTypes.number.isRequired,
+        layout: React.PropTypes.string.isRequired,
+        id: React.PropTypes.string.isRequired,
+        deleteUserArticle: React.PropTypes.func.isRequired,
+    },
+
     getInitialState: function () {
         return {
             all_info: this.props.all_info,
@@ -20961,26 +20971,33 @@ var Carousel = React.createClass({displayName: "Carousel",
             rotationY: 0
         };
     },
-    openimage: function (imagehref) {
+
+    openImage: function (imagehref) {
         console.log("here", imagehref);
         window.open(imagehref);
     },
-    deletearticle: function (url) {
+
+    deleteArticle: function (url) {
         this.props.deleteUserArticle(this.props.id,url);
     },
-    onhover: function (articleId) {
+
+    onHover: function (articleId) {
         document.getElementById(articleId).style.display = 'block';
     },
-    onmouseout: function (articleId) {
+
+    onMouseOut: function (articleId) {
         document.getElementById(articleId).style.display = 'none';
     },
+
     componentWillMount: function () {
         this.depot = Depot(this.getInitialState(), this.props, this.setState.bind(this));
         this.onRotate = this.depot.onRotate.bind(this);
     },
+
     componentWillReceiveProps: function (nextProps) {
         this.depot.onNextProps(nextProps);
     },
+    
     render: function () {
         var angle = (2 * Math.PI) / this.state.figures.length;
         var translateZ = -Layout[this.props.layout].distance(this.props.width,
@@ -20992,18 +21009,20 @@ var Carousel = React.createClass({displayName: "Carousel",
                 font_size = "2.5vw";
             };
             return (React.createElement("figure", {key: i, style: Util.figureStyle(d)}, 
-                React.createElement("div", {className: "imagedashdiv", onMouseLeave: parentThis.onmouseout.bind(null,d.all_info.articleId), onMouseEnter: parentThis.onhover.bind(null,d.all_info.articleId)}, 
+                React.createElement("div", {className: "imagedashdiv", onMouseLeave: parentThis.onMouseOut.bind(null,d.all_info.articleId), onMouseEnter: parentThis.onHover.bind(null,d.all_info.articleId)}, 
                     React.createElement("div", {className: "imagedash"}, 
                         React.createElement("img", {className: true, src: d.image, alt: i, height: "100%", width: "100%"})
                     ), 
                     React.createElement("div", {className: "imagetextdash", id: d.all_info.articleId}, 
-                        React.createElement("p", {className: "imageheadline", style: {fontSize:font_size}}, "\"", d.all_info.headline, "\""), 
+                        React.createElement("p", {className: "imageheadline", style: {fontSize:font_size}}, 
+                            "\"", d.all_info.headline.replace('&amp;', '&').replace('&#8216;', "'").replace('&#8217;', "'"), "\""
+                        ), 
                         React.createElement("p", {className: "imageauthor"}, d.all_info.byline), 
                         React.createElement("div", {className: "carousel-button"}, 
-                            React.createElement("button", {onClick: parentThis.openimage.bind(null,d.all_info.url)}, 
+                            React.createElement("button", {onClick: parentThis.openImage.bind(null,d.all_info.url)}, 
                               React.createElement("img", {src: "img/newtab.png", width: "20", height: "20"})
                             ), 
-                            React.createElement("button", {onClick: parentThis.deletearticle.bind(null,d.all_info.articleId)}, 
+                            React.createElement("button", {onClick: parentThis.deleteArticle.bind(null,d.all_info.articleId)}, 
                               React.createElement("img", {src: "img/close.png", width: "20", height: "20"})
                             )
                         )
@@ -21315,6 +21334,12 @@ var Ease = require('ease-functions');
 var images = require('./images');
 
 var DashboardHistory = React.createClass({displayName: "DashboardHistory",
+    propTypes: {
+        id: React.PropTypes.string.isRequired,
+        articles: React.PropTypes.array.isRequired,
+        deleteUserArticle: React.PropTypes.func.isRequired,
+    },
+
     getInitialState: function () {
         return {
             width: 400,
@@ -21323,6 +21348,7 @@ var DashboardHistory = React.createClass({displayName: "DashboardHistory",
             duration: 400
         };
     },
+
     componentWillMount: function () {
         this.onSides = function (event) {
             this.setState( {images: this.state.all_info.slice(0, event.target.value) });
@@ -21337,6 +21363,7 @@ var DashboardHistory = React.createClass({displayName: "DashboardHistory",
             this.setState({ease:  event.target.value});
         }.bind(this);
     },
+
     render: function () {
         return (
             React.createElement("div", {className: "carouselhistory"}, 
@@ -21719,7 +21746,10 @@ var TimeTinderBox = React.createClass({displayName: "TimeTinderBox",
   render: function(){
     return (
       React.createElement("div", {className: "timetinder-box"}, 
-        React.createElement(DashboardHistory, {id: this.props.id, articles: this.props.articles, deleteUserArticle: this.props.deleteUserArticle}), 
+        React.createElement(DashboardHistory, {id: this.props.id, 
+          articles: this.props.articles, 
+          deleteUserArticle: this.props.deleteUserArticle}
+        ), 
         React.createElement("div", {className: "centering-div"}, 
           React.createElement("button", {onClick: this.props.pageChange}, "Browse TinderNews")
         )
@@ -21802,7 +21832,9 @@ var TinderNews = React.createClass({displayName: "TinderNews",
 		if (this.props.currArticle+1 < this.props.articles.length)
 			save = this.props.currArticle;
 		this.handleNext();
-		if (save) {
+		console.log(save);
+		if (save+1) {
+			console.log('saving');
 			this.props.addSavedArticle(this.props.articles[save]);
 		}
 	},

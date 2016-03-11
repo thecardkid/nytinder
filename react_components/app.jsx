@@ -145,7 +145,7 @@ var TinderTimesApp = React.createClass({
 	},
 
 	addArticleToUser: function(newArticle) {
-		console.log(newArticle);
+		console.log('new', newArticle);
 		var data0 = {'_id': this.state.user._id, newArticle: newArticle};
 		$.ajax({
 			url: '/api/user/newarticle/',

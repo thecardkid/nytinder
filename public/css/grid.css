@@ -6,18 +6,16 @@ div#login-background-grid {
 	border-collapse: collapse;
 }
 
-
-
 div#login-background-grid table tr td img {
 	margin-top: -4.8vw;
 	width: 13.95vw;
 	height: 9.765vw;
 	display: block;
-	-webkit-filter: grayscale(90%) blur(0px);
-  -moz-filter: grayscale(90%) blur(0px);
-  -o-filter: grayscale(90%) blur(0px);
-  -ms-filter: grayscale(90%) blur(0px);
-  filter: grayscale(90%) blur(0px);
+	-webkit-filter: grayscale(80%) blur(0px);
+  -moz-filter: grayscale(80%) blur(0px);
+  -o-filter: grayscale(80%) blur(0px);
+  -ms-filter: grayscale(80%) blur(0px);
+  filter: grayscale(80%) blur(0px);
   -webkit-transform: scale(1);
 	transform: scale(1);
   -moz-transition: all 0.4s ease-in-out;

@@ -3,6 +3,16 @@ var Layout = require('./layout');
 var Depot = require('./depot');
 
 var Carousel = React.createClass({
+    propTypes: {
+        all_info: React.PropTypes.array.isRequired,
+        width: React.PropTypes.number.isRequired,
+        ease: React.PropTypes.string.isRequired,
+        duration: React.PropTypes.number.isRequired,
+        layout: React.PropTypes.string.isRequired,
+        id: React.PropTypes.string.isRequired,
+        deleteUserArticle: React.PropTypes.func.isRequired,
+    },
+
     getInitialState: function () {
         return {
             all_info: this.props.all_info,
@@ -10,26 +20,33 @@ var Carousel = React.createClass({
             rotationY: 0
         };
     },
-    openimage: function (imagehref) {
+
+    openImage: function (imagehref) {
         console.log("here", imagehref);
         window.open(imagehref);
     },
-    deletearticle: function (url) {
+
+    deleteArticle: function (url) {
         this.props.deleteUserArticle(this.props.id,url);
     },
-    onhover: function (articleId) {
+
+    onHover: function (articleId) {
         document.getElementById(articleId).style.display = 'block';
     },
-    onmouseout: function (articleId) {
+
+    onMouseOut: function (articleId) {
         document.getElementById(articleId).style.display = 'none';
     },
+
     componentWillMount: function () {
         this.depot = Depot(this.getInitialState(), this.props, this.setState.bind(this));
         this.onRotate = this.depot.onRotate.bind(this);
     },
+
     componentWillReceiveProps: function (nextProps) {
         this.depot.onNextProps(nextProps);
     },
+    
     render: function () {
         var angle = (2 * Math.PI) / this.state.figures.length;
         var translateZ = -Layout[this.props.layout].distance(this.props.width,
@@ -41,18 +58,20 @@ var Carousel = React.createClass({
                 font_size = "2.5vw";
             };
             return (<figure key={i} style={Util.figureStyle(d)}>
-                <div className="imagedashdiv" onMouseLeave={parentThis.onmouseout.bind(null,d.all_info.articleId)} onMouseEnter={parentThis.onhover.bind(null,d.all_info.articleId)}>
+                <div className="imagedashdiv" onMouseLeave={parentThis.onMouseOut.bind(null,d.all_info.articleId)} onMouseEnter={parentThis.onHover.bind(null,d.all_info.articleId)}>
                     <div className="imagedash">
                         <img className src={d.image} alt={i} height={"100%"} width={"100%"}/>
                     </div>
                     <div className="imagetextdash" id={d.all_info.articleId}>
-                        <p className="imageheadline" style={{fontSize:font_size}}>"{d.all_info.headline}"</p>
+                        <p className="imageheadline" style={{fontSize:font_size}}>
+                            "{d.all_info.headline.replace('&amp;', '&').replace('&#8216;', "'").replace('&#8217;', "'")}"
+                        </p>
                         <p className="imageauthor">{d.all_info.byline}</p>
                         <div className="carousel-button" >
-                            <button onClick={parentThis.openimage.bind(null,d.all_info.url)}>
+                            <button onClick={parentThis.openImage.bind(null,d.all_info.url)}>
                               <img src='img/newtab.png' width='20' height='20'/>
                             </button>
-                            <button onClick={parentThis.deletearticle.bind(null,d.all_info.articleId)}>
+                            <button onClick={parentThis.deleteArticle.bind(null,d.all_info.articleId)}>
                               <img src='img/close.png' width='20' height='20'/>
                             </button>
                         </div>

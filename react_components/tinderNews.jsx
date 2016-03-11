@@ -45,7 +45,9 @@ var TinderNews = React.createClass({
 		if (this.props.currArticle+1 < this.props.articles.length)
 			save = this.props.currArticle;
 		this.handleNext();
-		if (save) {
+		console.log(save);
+		if (save+1) {
+			console.log('saving');
 			this.props.addSavedArticle(this.props.articles[save]);
 		}
 	},

@@ -3,6 +3,12 @@ var Ease = require('ease-functions');
 var images = require('./images');
 
 var DashboardHistory = React.createClass({
+    propTypes: {
+        id: React.PropTypes.string.isRequired,
+        articles: React.PropTypes.array.isRequired,
+        deleteUserArticle: React.PropTypes.func.isRequired,
+    },
+
     getInitialState: function () {
         return {
             width: 400,
@@ -11,6 +17,7 @@ var DashboardHistory = React.createClass({
             duration: 400
         };
     },
+
     componentWillMount: function () {
         this.onSides = function (event) {
             this.setState( {images: this.state.all_info.slice(0, event.target.value) });
@@ -25,6 +32,7 @@ var DashboardHistory = React.createClass({
             this.setState({ease:  event.target.value});
         }.bind(this);
     },
+
     render: function () {
         return (
             <div className="carouselhistory">
