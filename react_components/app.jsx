@@ -94,6 +94,7 @@ var TinderTimesApp = React.createClass({
 		  	type: 'GET',
 		 	success: function(user) {
 		 		this.loadArticlesFromServer(user._id);
+		 		if (user.savedArticles.length === 0) user.savedArticles = [noArticle];
 		    	this.setState({
 		    		display: DisplayEnum.DISPLAY_DASHBOARD, 
 		    		user: user,

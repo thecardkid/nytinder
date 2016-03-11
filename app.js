@@ -8,6 +8,7 @@ var mongoose = require('mongoose');
 var login = require('./routes/login');
 var users = require('./routes/users');
 var articles = require('./routes/articles');
+var index = require('./routes/index');
 
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
@@ -61,6 +62,7 @@ app.get("/logout", function(req, res) {
 });
 
 // Routes for Our Backend Models
+app.use('/', index);
 app.use('/api/login', login);
 app.use('/api/user', users);
 app.use('/api/article', articles);
