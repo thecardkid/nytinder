@@ -1,0 +1,5 @@
+module.exports = {
+	ARTICLE_API: "c04efa76d04374a2607b195978c711e8:6:74636034",
+	// MOVIE_API: "240c3bc13a8ee9f11fc93a4368c4243a:1:74636034",
+	most_popular: "4a69270ec9e2a1da2750eb1db333ebaf:6:74636034"
+};
