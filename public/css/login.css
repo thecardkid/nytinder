@@ -48,10 +48,6 @@ div#login-form {
   padding: 0.2vw;
 }
 
-.login-username:focus {
-	border-bottom: solid 4px #969696;
-}
-
 div#login-error-message {
 	color: #AE0202;
 	display: inline;

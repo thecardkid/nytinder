@@ -20917,7 +20917,8 @@ var Article = React.createClass({displayName: "Article",
 	},
 
 	render: function() {
-		var h = this.props.article.headline.length > (this.props.style.width/this.props.vw) ? 6.5 : 4.3; 
+		var headline = $('<textarea />').html(this.props.article.headline).text();
+		var h = headline.length > (this.props.style.width/this.props.vw) ? 6.5 : 4.3; 
 		var marginTop = 28;
 
 		var styleHeight = {'height': h+'vw', 'marginTop': marginTop+'vw'};
@@ -20939,7 +20940,7 @@ var Article = React.createClass({displayName: "Article",
 				), 
 				React.createElement("div", {className: "article-words", style: styleHeight}, 
 					React.createElement("div", {className: "article-header"}, 
-						React.createElement("h1", null, this.props.article.headline.replace('&amp;', '&').replace('&#8216;', "'").replace('&#8217;', "'"))
+						React.createElement("h1", null, headline)
 					), 
 					React.createElement("div", {className: "article-content"}, 
 						this.props.article.abstract
@@ -21013,27 +21014,29 @@ var Carousel = React.createClass({displayName: "Carousel",
         var angle = (2 * Math.PI) / this.state.figures.length;
         var translateZ = -Layout[this.props.layout].distance(this.props.width,
             this.state.figures.length);
-        var parentThis = this;
+        var root = this;
         var figures = this.state.figures.map(function (d, i) {
             var font_size = "3.5vw";
-            if ((d.all_info.headline).length > 55) {
+            var headline = $('<textarea />').html(d.all_info.headline).text();
+            if (headline.length > 55) {
                 font_size = "2.5vw";
             };
+
             return (React.createElement("figure", {key: i, style: Util.figureStyle(d)}, 
-                React.createElement("div", {className: "imagedashdiv", onMouseLeave: parentThis.onMouseOut.bind(null,d.all_info.articleId), onMouseEnter: parentThis.onHover.bind(null,d.all_info.articleId)}, 
+                React.createElement("div", {className: "imagedashdiv", onMouseLeave: root.onMouseOut.bind(null,d.all_info.articleId), onMouseEnter: root.onHover.bind(null,d.all_info.articleId)}, 
                     React.createElement("div", {className: "imagedash"}, 
                         React.createElement("img", {className: true, src: d.image, alt: i, height: "100%", width: "100%"})
                     ), 
                     React.createElement("div", {className: "imagetextdash", id: d.all_info.articleId}, 
                         React.createElement("p", {className: "imageheadline", style: {fontSize:font_size}}, 
-                            "\"", d.all_info.headline.replace('&amp;', '&').replace('&#8216;', "'").replace('&#8217;', "'"), "\""
+                            "\"", headline, "\""
                         ), 
                         React.createElement("p", {className: "imageauthor"}, d.all_info.byline), 
                         React.createElement("div", {className: "carousel-button"}, 
-                            React.createElement("button", {onClick: parentThis.openImage.bind(null,d.all_info.url)}, 
+                            React.createElement("button", {onClick: root.openImage.bind(null,d.all_info.url)}, 
                               React.createElement("img", {src: "img/newtab.png", width: "20", height: "20"})
                             ), 
-                            React.createElement("button", {onClick: parentThis.deleteArticle.bind(null,d.all_info.articleId)}, 
+                            React.createElement("button", {onClick: root.deleteArticle.bind(null,d.all_info.articleId)}, 
                               React.createElement("img", {src: "img/close.png", width: "20", height: "20"})
                             )
                         )

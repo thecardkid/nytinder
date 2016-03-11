@@ -58,27 +58,29 @@ var Carousel = React.createClass({
         var angle = (2 * Math.PI) / this.state.figures.length;
         var translateZ = -Layout[this.props.layout].distance(this.props.width,
             this.state.figures.length);
-        var parentThis = this;
+        var root = this;
         var figures = this.state.figures.map(function (d, i) {
             var font_size = "3.5vw";
-            if ((d.all_info.headline).length > 55) {
+            var headline = $('<textarea />').html(d.all_info.headline).text();
+            if (headline.length > 55) {
                 font_size = "2.5vw";
             };
+
             return (<figure key={i} style={Util.figureStyle(d)}>
-                <div className="imagedashdiv" onMouseLeave={parentThis.onMouseOut.bind(null,d.all_info.articleId)} onMouseEnter={parentThis.onHover.bind(null,d.all_info.articleId)}>
+                <div className="imagedashdiv" onMouseLeave={root.onMouseOut.bind(null,d.all_info.articleId)} onMouseEnter={root.onHover.bind(null,d.all_info.articleId)}>
                     <div className="imagedash">
                         <img className src={d.image} alt={i} height={"100%"} width={"100%"}/>
                     </div>
                     <div className="imagetextdash" id={d.all_info.articleId}>
                         <p className="imageheadline" style={{fontSize:font_size}}>
-                            "{d.all_info.headline.replace('&amp;', '&').replace('&#8216;', "'").replace('&#8217;', "'")}"
+                            "{headline}"
                         </p>
                         <p className="imageauthor">{d.all_info.byline}</p>
                         <div className="carousel-button" >
-                            <button onClick={parentThis.openImage.bind(null,d.all_info.url)}>
+                            <button onClick={root.openImage.bind(null,d.all_info.url)}>
                               <img src='img/newtab.png' width='20' height='20'/>
                             </button>
-                            <button onClick={parentThis.deleteArticle.bind(null,d.all_info.articleId)}>
+                            <button onClick={root.deleteArticle.bind(null,d.all_info.articleId)}>
                               <img src='img/close.png' width='20' height='20'/>
                             </button>
                         </div>

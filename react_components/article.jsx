@@ -11,7 +11,8 @@ var Article = React.createClass({
 	},
 
 	render: function() {
-		var h = this.props.article.headline.length > (this.props.style.width/this.props.vw) ? 6.5 : 4.3; 
+		var headline = $('<textarea />').html(this.props.article.headline).text();
+		var h = headline.length > (this.props.style.width/this.props.vw) ? 6.5 : 4.3; 
 		var marginTop = 28;
 
 		var styleHeight = {'height': h+'vw', 'marginTop': marginTop+'vw'};
@@ -33,7 +34,7 @@ var Article = React.createClass({
 				</div>
 				<div className='article-words' style={styleHeight}>
 					<div className='article-header'>
-						<h1>{this.props.article.headline.replace('&amp;', '&').replace('&#8216;', "'").replace('&#8217;', "'")}</h1>
+						<h1>{headline}</h1>
 					</div>
 					<div className='article-content'>
 						{this.props.article.abstract}
