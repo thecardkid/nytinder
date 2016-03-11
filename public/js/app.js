@@ -20850,6 +20850,7 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 	render: function() {
 		var page;
 
+		// Decide whether to show login page, tinder news wheel, or dashboard
 		switch (this.state.display) {
 			case DisplayEnum.DISPLAY_DASHBOARD:
 				page = (
@@ -20901,7 +20902,9 @@ ReactDOM.render(
 	React.createElement(TinderTimesApp, null),
   document.getElementById('content')
 );
-},{"./loginPage.jsx":180,"./navbar.jsx":181,"./timetinderbox.jsx":182,"./tinderNews.jsx":184}],174:[function(require,module,exports){
+},{"./loginPage.jsx":180,"./navbar.jsx":181,"./timetinderbox.jsx":182,"./tinderNews.jsx":183}],174:[function(require,module,exports){
+// Component for an article div in the tinder news wheel
+
 var spring = require('react-motion').spring;
 
 var Article = React.createClass({displayName: "Article",
@@ -21394,6 +21397,8 @@ var DashboardHistory = React.createClass({displayName: "DashboardHistory",
 
 module.exports = DashboardHistory; 
 },{"./carouselstuff/carousel.jsx":175,"ease-functions":1}],180:[function(require,module,exports){
+// Component to control the login page
+
 var loginPage = React.createClass({displayName: "loginPage",
 
 	propTypes: {
@@ -21473,6 +21478,7 @@ var loginPage = React.createClass({displayName: "loginPage",
 module.exports = loginPage;
 },{}],181:[function(require,module,exports){
 // Navigation/header bar on the top of the page. Holds login and search bar
+
 var Navbar = React.createClass({displayName: "Navbar",
   propTypes: {
     displayName: React.PropTypes.string.isRequired,
@@ -21525,33 +21531,9 @@ var TimeTinderBox = React.createClass({displayName: "TimeTinderBox",
 
 module.exports = TimeTinderBox;
 },{"./dashboardhistory.jsx":179}],183:[function(require,module,exports){
-var spring = require('react-motion').spring;
+// Tinder news wheel component. Controls all articles, scrolling animations and saving functionality
 
-module.exports = React.createClass({displayName: "exports",
-	propTypes: {
-		handleClick: React.PropTypes.func.isRequired,
-		lines: React.PropTypes.array.isRequired,
-		text: React.PropTypes.string.isRequired,
-	},
-
-	render: function() {
-		var ln = this.props.lines;
-		return (
-			React.createElement("div", {className: "box", id: this.props.text.toLowerCase(), onClick: this.props.handleClick}, 
-    		React.createElement("svg", {xmlns: "http://www.w3.org/2000/svg", width: "100%", height: "100%"}, 
-					React.createElement("line", {className: "top", x1: ln[0][0], y1: ln[0][1], x2: ln[0][2], y2: ln[0][3]}), 
-					React.createElement("line", {className: "left", x1: ln[1][0], y1: ln[1][1], x2: ln[1][2], y2: ln[1][3]}), 
-					React.createElement("line", {className: "bottom", x1: ln[2][0], y1: ln[2][1], x2: ln[2][2], y2: ln[2][3]}), 
-					React.createElement("line", {className: "right", x1: ln[3][0], y1: ln[3][1], x2: ln[3][2], y2: ln[3][3]})
-				), 
-				React.createElement("span", null, this.props.text)
-			)
-		)
-	}
-});
-},{"react-motion":38}],184:[function(require,module,exports){
 var Article = require('./article.jsx');
-var TinderButton = require('./tinderButton.jsx');
 
 // Animation modules
 var spring = require('react-motion').spring;
@@ -21699,4 +21681,4 @@ module.exports = TinderNews;
 
 
 
-},{"./article.jsx":174,"./tinderButton.jsx":183,"react-motion":38}]},{},[173]);
+},{"./article.jsx":174,"react-motion":38}]},{},[173]);

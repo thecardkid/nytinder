@@ -6,13 +6,7 @@ var ObjectId = require('mongoose').Types.ObjectId;
 var keys = require('../keys');
 var request = require('request');
 
-/*
-POST a new article. Creates a new Article model object
-using relevant information received from the NYTimes API.
-Then it finds the user, and pushes the new article's id onto
-user.article.
-*/
-
+// Convert verbose API response from NYTimes to more succinct object to take up less space
 function processJSON(response) {
 	var newAll = [];
 	response.map(function(elem, i) {
@@ -42,6 +36,12 @@ function processJSON(response) {
 	return newAll;
 }
 
+/*
+POST a new article. Creates a new Article model object
+using relevant information received from the NYTimes API.
+Then it finds the user, and pushes the new article's id onto
+user.article.
+*/
 router.post('/', function(req, res, next) {
 	Article.find().exec(function(findErr, articleModel) {
 		User.findOne({'_id': new ObjectId(req.body.userId)}).exec(function(userFindErr, userModel) {

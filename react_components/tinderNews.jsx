@@ -1,5 +1,6 @@
+// Tinder news wheel component. Controls all articles, scrolling animations and saving functionality
+
 var Article = require('./article.jsx');
-var TinderButton = require('./tinderButton.jsx');
 
 // Animation modules
 var spring = require('react-motion').spring;
