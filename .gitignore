@@ -30,3 +30,5 @@ node_modules
 npm-debug.log
 
 # Facebook Auth Codes
+auth.js
+keys.js
