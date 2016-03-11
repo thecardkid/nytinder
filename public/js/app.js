@@ -20825,7 +20825,11 @@ var TinderTimesApp = React.createClass({displayName: "TinderTimesApp",
 				'articleId': articleId
 			},
 			success: function(returnedArticles) {
-				this.state.user.savedArticles = returnedArticles;
+				if (returnedArticles.length === 0) {
+					this.state.user.savedArticles = [noArticle];
+				} else {
+					this.state.user.savedArticles = returnedArticles;
+				}
 				this.setState({
 					user: this.state.user
 				});

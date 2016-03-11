@@ -26,16 +26,14 @@ body, button, input{
 .article-words {
 	background: #CCCCCC;
 	width: 85%;
-	/*margin-top: 28vw;*/
 	-moz-transition: all 0.55s ease-in-out;
   -o-transition: all 0.55s ease-in-out;
   -ms-transition: all 0.55s ease-in-out;
   transition: all 0.55s ease-in-out;
-  /*height: 4.3vw;*/
 }
 
 .article-words h1 {
-	font-size: 1.6vw;
+	font-size: 1.4vw;
 	text-align: left;
 }
 
