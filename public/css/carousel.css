@@ -1,6 +1,6 @@
 /*Dashboard History Carousel*/
 .carouselhistory {
-  width: 40vw;
+  width: 43vw;
   margin: 2% auto 10% auto;
 }
 
@@ -30,7 +30,7 @@
     display: block;
     position: absolute;
     width: 100%;
-    height: 30vw;
+    height: 28vw;
     left: 10px;
     top: 10px;
     line-height: 116px;
@@ -132,68 +132,37 @@
   transition: all 0.3s ease-in-out;
 }
 
-.openbutton {
-  float: left;
+.carousel-button {
   position: relative;
   z-index: 2;
+  text-align: center;
 }
 
-.openbutton button {
-  display: block;
-  width: 100px;
-  height: 50px;
+.carousel-button button {
+  /*display: block;*/
+  width: 3vw;
+  height: 3vw;
   border: 2px solid white;
   border-radius: 40px;
-  background: transparent;
-  color: #CCC;
-  letter-spacing: 1px;
-  font-weight: bold;
-  font-size: 20px;
-  font-family: 'Montserrat', sans-serif;
+  margin: 0 1%;
+  background-color: #999;
   -moz-transition: all 0.3s ease-in-out;
   -o-transition: all 0.3s ease-in-out;
   -ms-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
-}
-
-.openbutton button:hover {
-  background-color: #999999;
-  color: #fff;
-}
-
-.openbutton button:focus {
-  outline: none;
-}
-
-.deletebutton {
-  float: right;
   position: relative;
-  z-index: 2;
 }
 
-.deletebutton button {
-  display: block;
-  width: 50px;
-  height: 50px;
-  border: 2px solid white;
-  border-radius: 40px;
-  background: transparent;
-  color: #CCC;
-  letter-spacing: 1px;
-  font-weight: bold;
-  font-size: 20px;
-  font-family: 'Montserrat', sans-serif;
-  -webkit-transition: background-color 0.3s, color 0.3s, width 0.3s, border-width 0.3s, border-color 0.3s;
-  transition: background-color 0.3s, color 0.3s, width 0.3s, border-width 0.3s, border-color 0.3s;
+.carousel-button button:hover {
+  background-color: #eee;
 }
 
-.deletebutton button:hover {
-  background-color: #999999;
-  color: #fff;
-}
-
-.deletebutton button:focus {
+.carousel-button button:focus {
   outline: none;
+}
+
+.carousel-button button img {
+  margin-top: 1px;
 }
 
 .imageheadline, .imageauthor {

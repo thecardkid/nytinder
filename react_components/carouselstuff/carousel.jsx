@@ -46,17 +46,14 @@ var Carousel = React.createClass({
                         <img className src={d.image} alt={i} height={"100%"} width={"100%"}/>
                     </div>
                     <div className="imagetextdash" id={d.all_info.articleId}>
-                        <p className="imagedate">{d.all_info.date}</p>
                         <p className="imageheadline" style={{fontSize:font_size}}>"{d.all_info.headline}"</p>
                         <p className="imageauthor">{d.all_info.byline}</p>
-                        <div className="openbutton" onClick={parentThis.openimage.bind(null,d.all_info.url)}>
-                            <button>
-                              <span>Open</span>
+                        <div className="carousel-button" >
+                            <button onClick={parentThis.openimage.bind(null,d.all_info.url)}>
+                              <img src='img/newtab.png' width='20' height='20'/>
                             </button>
-                        </div>
-                        <div className="deletebutton" onClick={parentThis.deletearticle.bind(null,d.all_info.articleId)}>
-                            <button>
-                              <span>X</span>
+                            <button onClick={parentThis.deletearticle.bind(null,d.all_info.articleId)}>
+                              <img src='img/close.png' width='20' height='20'/>
                             </button>
                         </div>
                     </div>

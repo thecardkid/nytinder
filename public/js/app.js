@@ -20997,17 +20997,14 @@ var Carousel = React.createClass({displayName: "Carousel",
                         React.createElement("img", {className: true, src: d.image, alt: i, height: "100%", width: "100%"})
                     ), 
                     React.createElement("div", {className: "imagetextdash", id: d.all_info.articleId}, 
-                        React.createElement("p", {className: "imagedate"}, d.all_info.date), 
                         React.createElement("p", {className: "imageheadline", style: {fontSize:font_size}}, "\"", d.all_info.headline, "\""), 
                         React.createElement("p", {className: "imageauthor"}, d.all_info.byline), 
-                        React.createElement("div", {className: "openbutton", onClick: parentThis.openimage.bind(null,d.all_info.url)}, 
-                            React.createElement("button", null, 
-                              React.createElement("span", null, "Open")
-                            )
-                        ), 
-                        React.createElement("div", {className: "deletebutton", onClick: parentThis.deletearticle.bind(null,d.all_info.articleId)}, 
-                            React.createElement("button", null, 
-                              React.createElement("span", null, "X")
+                        React.createElement("div", {className: "carousel-button"}, 
+                            React.createElement("button", {onClick: parentThis.openimage.bind(null,d.all_info.url)}, 
+                              React.createElement("img", {src: "img/newtab.png", width: "20", height: "20"})
+                            ), 
+                            React.createElement("button", {onClick: parentThis.deletearticle.bind(null,d.all_info.articleId)}, 
+                              React.createElement("img", {src: "img/close.png", width: "20", height: "20"})
                             )
                         )
                     )
