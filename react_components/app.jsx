@@ -210,6 +210,7 @@ var TinderTimesApp = React.createClass({
 	render: function() {
 		var page;
 
+		// Decide whether to show login page, tinder news wheel, or dashboard
 		switch (this.state.display) {
 			case DisplayEnum.DISPLAY_DASHBOARD:
 				page = (

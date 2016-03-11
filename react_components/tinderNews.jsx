@@ -1,3 +1,5 @@
+// Tinder news wheel component. Controls all articles, scrolling animations and saving functionality
+
 var Article = require('./article.jsx');
 var testdata = require('./testdata').data;
 var TinderButton = require('./tinderButton.jsx');

@@ -1,4 +1,5 @@
 // Navigation/header bar on the top of the page. Holds login and search bar
+
 var Navbar = React.createClass({
   propTypes: {
     displayName: React.PropTypes.string.isRequired,

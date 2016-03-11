@@ -1,3 +1,5 @@
+// Component to control the login page
+
 var loginPage = React.createClass({
 
 	propTypes: {

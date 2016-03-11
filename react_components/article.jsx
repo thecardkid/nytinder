@@ -1,3 +1,5 @@
+// Component for an article div in the tinder news wheel
+
 var spring = require('react-motion').spring;
 
 var Article = React.createClass({

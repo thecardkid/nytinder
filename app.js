@@ -6,7 +6,6 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var login = require('./routes/login');
-var index = require('./routes/index');
 var users = require('./routes/users');
 var articles = require('./routes/articles');
 
@@ -62,8 +61,7 @@ app.get("/logout", function(req, res) {
     res.redirect("/");
 });
 
-app.use('/', index);
-app.use("/api/login", login);
+app.use('/api/login', login);
 app.use('/api/user', users);
 app.use('/api/article', articles);
 
