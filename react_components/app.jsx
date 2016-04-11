@@ -1,5 +1,5 @@
 // Top component of app.
-
+// Love the modular code structure - also grunt ftwwww 
 var TimeTinderBox = require('./timetinderbox.jsx');
 
 // Different views
