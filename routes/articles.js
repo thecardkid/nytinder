@@ -1,3 +1,5 @@
+// Some more documentation of code would be appreciated.
+
 var express = require('express');
 var router = express.Router();
 var User = require('../models/user');
