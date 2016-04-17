@@ -20,10 +20,10 @@ var TinderNews = React.createClass({
 	},
 
 	getInitialState: function() {
-    return {
-    	vw: size*document.documentElement.clientWidth/100,
-    	hover: false,
-    }
+        return {
+            vw: size*document.documentElement.clientWidth/100,
+            hover: false,
+        }
 	},
 
 	updateVw: function() {
@@ -33,7 +33,7 @@ var TinderNews = React.createClass({
 	},
 
 	componentDidMount: function() {
-    window.addEventListener('resize', this.updateVw);
+        window.addEventListener('resize', this.updateVw);
 	},
 
 	handleNext: function() {
@@ -43,12 +43,12 @@ var TinderNews = React.createClass({
 	handleSave: function() {
 		var save;
 		if (this.props.currArticle+1 < this.props.articles.length)
-			save = this.props.currArticle;
+		    save = this.props.currArticle;
 		this.handleNext();
 		console.log(save);
 		if (save+1) {
-			console.log('saving');
-			this.props.addSavedArticle(this.props.articles[save]);
+            console.log('saving');
+            this.props.addSavedArticle(this.props.articles[save]);
 		}
 	},
 
@@ -97,8 +97,8 @@ var TinderNews = React.createClass({
       return (
       	<Motion key={i} style={style}>
       		{function (style) {
-      			return <Article article={root.props.articles[i]} 
-      											style={style} 
+      			return <Article article={root.props.articles[i]}
+      											style={style}
       											hovering={root.state.hover}
       											vw={root.state.vw/size}/>
       		}}
@@ -123,7 +123,7 @@ var TinderNews = React.createClass({
           <Motion style={{height: spring(currHeight), width: spring(currWidth)}}>
             {function(container) {
               return (
-              	<div className="slider-inner" 
+              	<div className="slider-inner"
               			style={container}
               			onMouseOver={root.changeHover}
               			onMouseOut={root.changeHover}>

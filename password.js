@@ -27,6 +27,7 @@ module.exports = function(passport) {
         callbackURL: auth.FACEBOOK_CALLBACK_URL
       },
       function(accessToken, refreshToken, profile, done) {
+        // Lol is this supposed to be here? The person below is right though
         //This is not what you want to do here. 
         //Here you should search the connected DB if the user exists and load that in, or add it to db.
         done(null, profile);

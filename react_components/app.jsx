@@ -15,18 +15,18 @@ var DisplayEnum = Object.freeze({
 	DISPLAY_LOGIN: 2,
 });
 
-var endArticle = { 
+var endArticle = {
 	url: '#',
   byline: '',
   abstract: 'There are no more new articles',
   headline: 'Check again tomorrow!',
   date: '',
   articleId: 0,
-  img: { 
+  img: {
   	url: 'http://vignette1.wikia.nocookie.net/playstationallstarsfanfictionroyale/images/b/b3/Sad-Puppy-Face-Picture.jpg/revision/latest/scale-to-width-down/628?cb=20130529190645',
 		height: 480,
-		width: 628 
-	} 
+		width: 628
+	}
 };
 
 var noArticle = {
@@ -35,25 +35,26 @@ var noArticle = {
   headline: 'Click the button to start browsing',
   date: '',
   articleId: 0,
-  img: { 
+  img: {
   	url: 'http://www.mrwallpaper.com/wallpapers/Sad-Puppy.jpg',
 		height: 1200,
 		width: 1920,
-	} 
+	}
 }
 
 var TinderTimesApp = React.createClass({
 	getInitialState: function() {
-    return {
-    	user: {},
-    	display: DisplayEnum.DISPLAY_LOGIN,
-    	articles: [endArticle],
-    	currArticle: 0,
-    };
+        return {
+            user: {},
+            display: DisplayEnum.DISPLAY_LOGIN,
+            articles: [endArticle],
+            currArticle: 0,
+        };
 	},
 
 	componentDidMount: function() {
 		this.loginFacebook();
+        // per the react docs componentDidMount should be void and not return anything so you don't need this
     	return null;
 	},
 
@@ -96,7 +97,7 @@ var TinderTimesApp = React.createClass({
 		 		this.loadArticlesFromServer(user._id);
 		 		if (user.savedArticles.length === 0) user.savedArticles = [noArticle];
 		    	this.setState({
-		    		display: DisplayEnum.DISPLAY_DASHBOARD, 
+		    		display: DisplayEnum.DISPLAY_DASHBOARD,
 		    		user: user,
 	    		});
 		  	}.bind(this),
@@ -131,8 +132,10 @@ var TinderTimesApp = React.createClass({
 			url: '/api/article',
 			dataType: 'json',
 			cache: false,
+            //should this be a POST, you don't seem to be sending any new data
 			type: 'POST',
 			data: {
+                // shouldn't this be in req.user on the server?
 				'userId': mongoid,
 			},
 			success: function(serverArticles) {
@@ -147,6 +150,7 @@ var TinderTimesApp = React.createClass({
 
 	addArticleToUser: function(newArticle) {
 		console.log('new', newArticle);
+        //why data0, I feel like there could be a more descriptive variable name
 		var data0 = {'_id': this.state.user._id, newArticle: newArticle};
 		$.ajax({
 			url: '/api/user/newarticle/',
@@ -216,14 +220,15 @@ var TinderTimesApp = React.createClass({
 		var page;
 
 		// Decide whether to show login page, tinder news wheel, or dashboard
+        // this a great spot for react router
 		switch (this.state.display) {
 			case DisplayEnum.DISPLAY_DASHBOARD:
 				page = (
 					<div>
 						<Navbar displayName={this.state.user.displayName || ''} />
 						<div>
-							<TimeTinderBox pageChange={this.showTinderNews} 
-								id={this.state.user._id || ''} 
+							<TimeTinderBox pageChange={this.showTinderNews}
+								id={this.state.user._id || ''}
 								articles={this.state.user.savedArticles || []}
 								deleteUserArticle={this.deleteUserArticle}/>
 						</div>

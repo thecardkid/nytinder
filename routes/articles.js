@@ -10,6 +10,7 @@ var request = require('request');
 function processJSON(response) {
 	var newAll = [];
 	response.map(function(elem, i) {
+        // might be more efficent to do this as an else in your if(elem.media)
 		var selectImg = {
 			url: "http://www.trbimg.com/img-56b0e859/turbine/la-na-inside-iowa-caucus-precinct-20160202",
 			width: 2048,
@@ -43,8 +44,11 @@ Then it finds the user, and pushes the new article's id onto
 user.article.
 */
 router.post('/', function(req, res, next) {
+    // I don't think you need an exec unless you are chaining queries or using promises
 	Article.find().exec(function(findErr, articleModel) {
+        // I don't think you need to convert the id to an Object Id (it does the coercion for you
 		User.findOne({'_id': new ObjectId(req.body.userId)}).exec(function(userFindErr, userModel) {
+            // might want to clean up debugging logs
 			console.log(userModel);
 			if (findErr || userFindErr) {
 				res.send(findErr || userFindErr);
@@ -101,12 +105,4 @@ router.post('/', function(req, res, next) {
 });
 
 module.exports = router;
-
-
-
-
-
-
-
-
 
