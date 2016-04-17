@@ -53,7 +53,7 @@ var Carousel = React.createClass({
     componentWillReceiveProps: function (nextProps) {
         this.depot.onNextProps(nextProps);
     },
-    
+
     render: function () {
         var angle = (2 * Math.PI) / this.state.figures.length;
         var translateZ = -Layout[this.props.layout].distance(this.props.width,
@@ -67,6 +67,7 @@ var Carousel = React.createClass({
             };
 
             return (<figure key={i} style={Util.figureStyle(d)}>
+                {//css classes are normally hypen separated, but really anything but this below}
                 <div className="imagedashdiv" onMouseLeave={root.onMouseOut.bind(null,d.all_info.articleId)} onMouseEnter={root.onHover.bind(null,d.all_info.articleId)}>
                     <div className="imagedash">
                         <img className src={d.image} alt={i} height={"100%"} width={"100%"}/>
@@ -88,7 +89,7 @@ var Carousel = React.createClass({
                 </div>
             </figure>);
         });
-        
+
         if ((figures).length > 1) {
             return (
                 <section className='react-3d-carousel'>

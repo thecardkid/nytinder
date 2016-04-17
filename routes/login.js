@@ -5,6 +5,7 @@ var Article = require('../models/article');
 var ObjectId = require('mongoose').Types.ObjectId;
 
 // logs you in through facebook and adds user if you never logged in before
+// inconsitent tab spacing or weird tab to spaces issue?
 router.get('/', function(req, res, next) {
   if (req.session.passport) {
     var username = req.session.passport.user.displayName;

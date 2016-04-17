@@ -1,3 +1,4 @@
+// Build Process! yay, happy face. Have you looked into webpack, its like this on steroids
 module.exports = function(grunt) {
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
